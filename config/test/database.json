@@ -1,0 +1,51 @@
+{
+    "ucc": [
+      {
+        "genus": "Escherichia",
+        "species": "coli",
+        "allele_files": [
+            "t/data/bbb.fas",
+            "t/data/ccc.fas",
+            "t/data/ddd.fas"
+          ],
+        "strain_files":
+          [ "t/data/eee.fas"]
+      },
+      {
+        "genus": "Homo",
+        "species": "sapiens",
+        "allele_files":
+          [
+            "t/data/fff.fas",
+            "t/data/ggg.fas",
+            "t/data/hhh.fas"
+          ],
+        "strain_files":
+          [ "t/data/iii.fas"]
+      }
+      
+    ],
+    "pasteur": [
+      {
+        "genus": "BBB",
+        "species": "CCC",
+        "allele_files": [
+            "t/data/bbb.fas"
+          ],
+        "strain_files":
+          [ "t/data/eee.fas"]
+      },
+      {
+        "genus": "Homo",
+        "species": "sapiens",
+        "allele_files":
+          [
+            "t/data/fff.fas",
+            "t/data/ggg.fas",
+            "t/data/hhh.fas"
+          ],
+        "strain_files":
+          [ "t/data/iii.fas"]
+      }
+    ]
+}
