@@ -47,7 +47,7 @@ sub _download_file
   }
   else
   {
-    getstore($filename, $self->_get_filename_from_url($filename));
+    getstore($filename, join('/',($self->destination_directory,$self->_get_filename_from_url($filename))));
   }
   1;
 }
