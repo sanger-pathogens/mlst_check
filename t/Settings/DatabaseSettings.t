@@ -9,15 +9,16 @@ BEGIN {
     use_ok('MLST::DatabaseSettings');
 }
 
-ok((my $database_settings = MLST::DatabaseSettings->new(filename     => 'config/test/database.json')), 'initialise database settings');
+ok((my $database_settings = MLST::DatabaseSettings->new(filename     => 't/data/overall_databases.xml')), 'initialise database settings');
 ok((my $settings  = $database_settings->settings), 'get settings datastructure');
 
-is($settings->{ucc}->[0]->{genus}, "Escherichia", 'get first genus');
-is($settings->{ucc}->[1]->{species}, "sapiens", 'get second species');
-is($settings->{ucc}->[1]->{allele_files}->[1],"t/data/ggg.fas", 'get a file'); 
+is($settings->{"Bordetella spp."}->{profiles}, "t/data/bordetella.txt", 'get profile url');
+is($settings->{"Bordetella spp."}->{alleles}->[0],"t/data/abc.fas", 'get an allele file'); 
+is($settings->{"Bordetella spp."}->{alleles}->[1],"t/data/bbb.fas", 'get another allele file');
 
-is($settings->{pasteur}->[0]->{genus}, "BBB", 'get first genus');
-is($settings->{pasteur}->[1]->{species}, "sapiens", 'get second species');
-is($settings->{pasteur}->[1]->{allele_files}->[1],"t/data/ggg.fas", 'get a file');
+
+is($settings->{"Homo sapiens#1"}->{profiles}, "t/data/homo_sapiens.txt", 'get a different profile url');
+is($settings->{"Homo sapiens#1"}->{alleles}->[0],"t/data/ddd.fas", 'get an allele file'); 
+is($settings->{"Homo sapiens#1"}->{alleles}->[1],"t/data/eee.fas", 'get another allele file');
 
 done_testing();
