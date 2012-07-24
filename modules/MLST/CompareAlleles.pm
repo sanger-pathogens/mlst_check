@@ -11,7 +11,8 @@ my $compare_alleles = MLST::CompareAlleles->new(
   sequence_filename => 'contigs.fa',
   allele_filenames => ['abc.tfa','efg.tfa']
 );
-$compare_alleles->find_matching_sequences;
+$compare_alleles->found_sequence_names;
+$compare_alleles->matching_sequences;
 =cut
 
 package MLST::CompareAlleles;
@@ -23,6 +24,8 @@ has 'allele_filenames'  => ( is => 'ro', isa => 'ArrayRef', required => 1 );
 
 has '_sequence_handle'  => ( is => 'ro', isa => 'Bio::SeqIO::fasta',           lazy => 1,  builder => '_build__sequence_handle');
 has '_allele_handles'   => ( is => 'ro', isa => 'ArrayRef[Bio::SeqIO::fasta]', lazy => 1,  builder => '_build__allele_handles' );
+
+has 'matching_sequences'   => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build_matching_sequences' );
 
 sub _build__allele_handles
 {
@@ -41,10 +44,17 @@ sub _build__sequence_handle
   return Bio::SeqIO->new( -file => $self->sequence_filename , -format => 'Fasta');
 }
 
-sub find_matching_sequences
+sub found_sequence_names
 {
   my ($self) = @_;
-  my @matching_sequence_names;
+  my @sequence_names = sort(keys %{$self->matching_sequences});
+  return \@sequence_names;
+}
+
+sub _build_matching_sequences
+{
+  my ($self) = @_;
+  my %matching_sequence_names;
   
   while( my $input_sequence_obj = $self->_sequence_handle->next_seq() ) 
   {
@@ -59,14 +69,14 @@ sub find_matching_sequences
         my $allele_sequence = $allele_sequence_obj->seq();
         if( $input_sequence =~ m/$allele_sequence/)
         {
-          push(@matching_sequence_names, $allele_sequence_obj->id);
+          $matching_sequence_names{$allele_sequence_obj->id} = $allele_sequence;
           last;
         }
       }
     }
     
   }
-  return \@matching_sequence_names;
+  return \%matching_sequence_names;
 }
 
 no Moose;

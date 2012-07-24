@@ -14,7 +14,7 @@ ok((my $compare_alleles = MLST::CompareAlleles->new(
   allele_filenames => ['t/data/allele1.tfa','t/data/allele2.tfa','t/data/allele3.tfa']
 )), 'initialise comparison');
 
-is_deeply(['adk-2','purA-3','recA-1'], $compare_alleles->find_matching_sequences, 'correct sequences found');
+is_deeply(sort(['adk-2','purA-3','recA-1']), $compare_alleles->found_sequence_names, 'correct sequences found');
 
 done_testing();
 

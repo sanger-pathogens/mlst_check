@@ -27,17 +27,18 @@ use Getopt::Long;
 use MLST::SearchForFiles;
 use MLST::CompareAlleles;
 
-my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $help);
+my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $base_directory, $help);
 
 GetOptions ('f|fasta_file=s'       => \$fasta_file,
             's|species=s'          => \$species,
             'o|output_directory=s' => \$output_directory,
             'c|concat_alleles'     => \$concat_alleles,
             'a|available_databases' => \$available_databases,
+            'b|mlst_base_directory' => \$base_directory,
             'h|help'               => \$help,
 );
 
-( (-e $fasta_file) && (defined($species))  && ! $help)or die <<USAGE;
+(  (defined($species)) && (-e $fasta_file) && ! $help)or die <<USAGE;
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
@@ -68,10 +69,13 @@ my $search_results = MLST::SearchForFiles->new(
 
 my $compare_alleles = MLST::CompareAlleles->new(
   sequence_filename => $fasta_file,
-  allele_filenames => $search_results->allele_filenames()
+  allele_filenames  => $search_results->allele_filenames()
 );
 
-for my $sequence_name (@{$compare_alleles->find_matching_sequences})
-{
-  print $sequence_name."\n";
-}
+# Find ST
+
+# unknown alleles
+
+# write out fasta file of sequences
+
+print "Found alleles:\t".join("\t",@{$compare_alleles->found_sequence_names});
