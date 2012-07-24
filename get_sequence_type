@@ -1,0 +1,61 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+get_sequence_type
+
+=head1 SYNOPSIS
+
+get_sequence_type - Given a Fasta file (assembly) lookup the MLST data and work out the sequence type
+
+=head1 DESCRIPTION
+
+Given a Fasta file and a Species regex, lookup the relevant MLST data and output the sequence type to a file
+
+=head1 CONTACT
+
+path-help@sanger.ac.uk
+
+=head1 METHODS
+
+=cut
+package SequenceType::Main;
+
+BEGIN { unshift(@INC, './modules') }
+use Moose;
+use Getopt::Long;
+
+
+my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $help);
+
+GetOptions ('f|fasta_file=s'       => \$fasta_file,
+            's|species=s'          => \$species,
+            'o|output_directory=s' => \$output_directory,
+            'c|concat_alleles'     => \$concat_alleles,
+            'a|available_databases' => \$available_databases,
+            'h|help'               => \$help,
+);
+
+(! $help)or die <<USAGE;
+Usage: $0 [options]
+
+# Basic usage, sequence type result written to my_assembly.fa.st
+get_sequence_type -f my_assembly.fa -s "Clostridium difficile"
+
+# output a fasta file with the alleles
+get_sequence_type -f my_assembly.fa -s "Clostridium difficile" -c 
+
+# Specify an output directory 
+get_sequence_type -f my_assembly.fa -s "Clostridium difficile" -o /path/to/results
+
+# list all available MLST databases
+get_sequence_type -a
+
+# This help message
+get_sequence_type -h
+
+USAGE
+;
+
+$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+

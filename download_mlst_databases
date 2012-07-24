@@ -19,7 +19,7 @@ path-help@sanger.ac.uk
 =head1 METHODS
 
 =cut
-package ReferenceTrack;
+package Download::Main;
 
 BEGIN { unshift(@INC, './modules') }
 use Moose;
