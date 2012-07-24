@@ -52,7 +52,7 @@ USAGE
 ;
 
 $config_file    ||= 'http://pubmlst.org/data/dbases.xml';
-$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/prokaryotes/mlst';
+$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 
 my $database_settings = MLST::DatabaseSettings->new(filename => $config_file)->settings;
 my $databases = MLST::Download::Databases->new(
