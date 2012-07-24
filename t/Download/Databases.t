@@ -13,32 +13,23 @@ BEGIN {
 my $destination_directory_obj = File::Temp->newdir(CLEANUP =>1);
 my $destination_directory = $destination_directory_obj->dirname();
 
-ok((my $database_settings = MLST::DatabaseSettings->new(filename => 'config/test/database.json')->settings),"get config file settings");
+ok((my $database_settings = MLST::DatabaseSettings->new(filename => 't/data/overall_databases.xml')->settings),"get overall list of databases");
 
 ok((my $databases = MLST::Download::Databases->new(
-  site_attributes => $database_settings,
+  databases_attributes => $database_settings,
   base_directory  => $destination_directory
 )), 'download databases initialisation');
 ok($databases->update(),'download all databases');
 
 
-ok((-e $destination_directory.'/ucc/Escherichia_coli/bbb.fas'));
-ok((-e $destination_directory.'/ucc/Escherichia_coli/ccc.fas'));
-ok((-e $destination_directory.'/ucc/Escherichia_coli/ddd.fas'));
-ok((-e $destination_directory.'/ucc/Escherichia_coli/eee.fas'));
+ok((-e $destination_directory.'/Bordetella_spp/alleles/abc.fas'));
+ok((-e $destination_directory.'/Bordetella_spp/alleles/bbb.fas'));
+ok((-e $destination_directory.'/Bordetella_spp/alleles/ccc.fas'));
+ok((-e $destination_directory.'/Bordetella_spp/profiles/bordetella.txt'));
 
-ok((-e $destination_directory.'/ucc/Homo_sapiens/fff.fas'));
-ok((-e $destination_directory.'/ucc/Homo_sapiens/ggg.fas'));
-ok((-e $destination_directory.'/ucc/Homo_sapiens/hhh.fas'));
-ok((-e $destination_directory.'/ucc/Homo_sapiens/iii.fas'));
-
-ok((-e $destination_directory.'/pasteur/BBB_CCC/bbb.fas'));
-ok((-e $destination_directory.'/pasteur/BBB_CCC/eee.fas'));
-
-ok((-e $destination_directory.'/pasteur/Homo_sapiens/fff.fas'));
-ok((-e $destination_directory.'/pasteur/Homo_sapiens/ggg.fas'));
-ok((-e $destination_directory.'/pasteur/Homo_sapiens/hhh.fas'));
-ok((-e $destination_directory.'/pasteur/Homo_sapiens/iii.fas'));
+ok((-e $destination_directory.'/Homo_sapiens_1/alleles/ddd.fas'));
+ok((-e $destination_directory.'/Homo_sapiens_1/alleles/eee.fas'));
+ok((-e $destination_directory.'/Homo_sapiens_1/profiles/homo_sapiens.txt'));
 
 done_testing();
 

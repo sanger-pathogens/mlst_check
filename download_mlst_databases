@@ -42,7 +42,7 @@ Downloads all the MLST databases to disk
 # download everything with defaults
 download_mlst_databases
 
-# config file defaults to the one stored in the repository
+# XML file containing details of the MLST databases (from pubmlst)
 download_mlst_databases -c my_config_file.json
 
 # destination base directory defaults to /lustre/scratch108/pathogen/pathpipe/prokaryotes/mlst
@@ -51,12 +51,12 @@ download_mlst_databases -b /path/to/destination
 USAGE
 ;
 
-$config_file    ||= '/software/pathogen/projects/mlst_check/config/production/database.json';
+$config_file    ||= 'http://pubmlst.org/data/dbases.xml';
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/prokaryotes/mlst';
 
 my $database_settings = MLST::DatabaseSettings->new(filename => $config_file)->settings;
 my $databases = MLST::Download::Databases->new(
-  site_attributes => $database_settings,
+  databases_attributes => $database_settings,
   base_directory  => $base_directory
 );
 $databases->update();
