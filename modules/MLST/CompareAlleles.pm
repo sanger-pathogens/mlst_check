@@ -69,5 +69,6 @@ sub find_matching_sequences
   return \@matching_sequence_names;
 }
 
-
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;

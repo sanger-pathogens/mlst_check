@@ -1,0 +1,32 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use File::Temp;
+
+BEGIN { unshift(@INC, './modules') }
+BEGIN {
+    use Test::Most;
+    use_ok('MLST::SearchForFiles');
+}
+
+my $search_results;
+for my $species_regex (('coli', 'escheric', 'E.Coli', 'E coli', 'Escherichia_coli_1', 'Escherichia coli', 'Escherichia_coli '))
+{
+  species_name_regex($species_regex);
+}
+
+
+
+done_testing();
+
+sub species_name_regex
+{
+ my $regex = shift;
+  ok(($search_results = MLST::SearchForFiles->new(
+    species_name => $regex,
+    base_directory => 't/data'
+  )),"initialise searching for files with $regex");
+  is_deeply(['t/data/Escherichia_coli_1/alleles/aaa.tfa', 't/data/Escherichia_coli_1/alleles/bbb.tfa'],$search_results->allele_filenames(),"allele filenames for $regex");
+  is('t/data/Escherichia_coli_1/profiles/escherichia_coli.txt', $search_results->profiles_filename(),"profiles filename for $regex");
+  
+}

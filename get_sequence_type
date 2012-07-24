@@ -24,7 +24,8 @@ package SequenceType::Main;
 BEGIN { unshift(@INC, './modules') }
 use Moose;
 use Getopt::Long;
-
+use MLST::SearchForFiles;
+use MLST::CompareAlleles;
 
 my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $help);
 
@@ -36,7 +37,7 @@ GetOptions ('f|fasta_file=s'       => \$fasta_file,
             'h|help'               => \$help,
 );
 
-(! $help)or die <<USAGE;
+( (-e $fasta_file) && (defined($species))  && ! $help)or die <<USAGE;
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
@@ -59,3 +60,18 @@ USAGE
 
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 
+
+my $search_results = MLST::SearchForFiles->new(
+  species_name   => $species,
+  base_directory => $base_directory
+);
+
+my $compare_alleles = MLST::CompareAlleles->new(
+  sequence_filename => $fasta_file,
+  allele_filenames => $search_results->allele_filenames()
+);
+
+for my $sequence_name (@{$compare_alleles->find_matching_sequences})
+{
+  print $sequence_name."\n";
+}
