@@ -1,35 +1,43 @@
 =head1 NAME
 
-Databases - represents a multiple genus-species databases on multiple sites
+Databases - represents multiple databases of species
 
 =head1 SYNOPSIS
 
 use MLST::Download::Databases;
 my $databases = MLST::Download::Databases->new(
-  site_attributes     => \@site_attributes
+  databases_attributes     => \@databases_attributes
+  base_directory => '/path/to/dir'
 );
 $databases->update;
 =cut
 
 package MLST::Download::Databases;
 use Moose;
-use MLST::Download::SiteDatabases;
+use MLST::Download::Database;
+use Parallel::ForkManager;
 
-has 'site_attributes' => ( is => 'ro', isa => 'HashRef', required => 1 );
-has 'base_directory'  => ( is => 'ro', isa => 'Str',     required => 1 );
+has 'databases_attributes' => ( is => 'ro', isa => 'HashRef', required => 1 );
+has 'base_directory'       => ( is => 'ro', isa => 'Str',     required => 1 );
+
+has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 4 );
 
 sub update
 {
   my($self) = @_;
-  for my $site (keys %{$self->site_attributes})
+  my $pm = new Parallel::ForkManager($self->parallel_processes); 
+  for my $species (keys %{$self->databases_attributes})
   {
-    my $database = MLST::Download::SiteDatabases->new(
-      site                => $site,
-      multiple_database_attributes => $self->site_attributes->{$site},
-      base_directory      => join('/',($self->base_directory,$site))
+    $pm->start and next; # do the fork
+    my $database = MLST::Download::Database->new(
+      species => $species,
+      database_attributes => $self->databases_attributes->{$species},
+      base_directory      => join('/',($self->base_directory))
     );
     $database->update();
+    $pm->finish; # do the exit in the child process
   }
+  $pm->wait_all_children;
   1;
 }
 
