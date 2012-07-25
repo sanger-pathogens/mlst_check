@@ -24,10 +24,13 @@ package SequenceType::Main;
 BEGIN { unshift(@INC, './modules') }
 use Moose;
 use Getopt::Long;
+use Cwd;
 use MLST::SearchForFiles;
 use MLST::CompareAlleles;
+use MLST::SequenceType;
+use MLST::OutputFasta;
 
-my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $base_directory, $help);
+my ($fasta_file, $species, $concat_alleles, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $help);
 
 GetOptions ('f|fasta_file=s'       => \$fasta_file,
             's|species=s'          => \$species,
@@ -35,6 +38,8 @@ GetOptions ('f|fasta_file=s'       => \$fasta_file,
             'c|concat_alleles'     => \$concat_alleles,
             'a|available_databases' => \$available_databases,
             'b|mlst_base_directory' => \$base_directory,
+            'm|makeblastdb_exec'    => \$makeblastdb_exec,
+            'n|blastn_exec'         => \$blastn_exec,
             'h|help'               => \$help,
 );
 
@@ -60,6 +65,10 @@ USAGE
 ;
 
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+$makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/makeblastdb';
+$blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
+
+$output_directory ||= getcwd;
 
 
 my $search_results = MLST::SearchForFiles->new(
@@ -69,7 +78,9 @@ my $search_results = MLST::SearchForFiles->new(
 
 my $compare_alleles = MLST::CompareAlleles->new(
   sequence_filename => $fasta_file,
-  allele_filenames  => $search_results->allele_filenames()
+  allele_filenames  => $search_results->allele_filenames(),
+  makeblastdb_exec  => $makeblastdb_exec,
+  blastn_exec       => $blastn_exec
 );
 
 my $sequence_type_obj = MLST::SequenceType->new(
@@ -87,4 +98,14 @@ else
   print "Nearest ST:\t".$sequence_type_obj->nearest_sequence_type."\t".join("\t",@{$compare_alleles->found_sequence_names})."\n";
 }
 
-# write out fasta file of sequences
+
+if(defined($concat_alleles))
+{
+  MLST::OutputFasta->new(
+    matching_sequences     => $compare_alleles->matching_sequences,
+    non_matching_sequences => $compare_alleles->non_matching_sequences,
+    output_directory => $output_directory,
+    input_fasta_file => $fasta_file
+  )->create_files();
+}
+
