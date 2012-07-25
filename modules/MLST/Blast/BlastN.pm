@@ -29,7 +29,7 @@ has 'exec'               => ( is => 'ro', isa => 'Str', required => 1 );
 
 # Generated
 
-has 'top_hit'           => ( is => 'ro', isa => 'Str', lazy => 1,  builder => '_build_top_hit' ); 
+has 'top_hit'           => ( is => 'ro', isa => 'Maybe[HashRef]', lazy => 1,  builder => '_build_top_hit' ); 
 
 sub _blastn_cmd
 {
@@ -54,8 +54,18 @@ sub _build_top_hit
       $top_hit{allele_name} = $blast_raw_results[0];
       $top_hit{percentage_identity} = $blast_raw_results[2];
       $top_hit{source_name} = $blast_raw_results[1];
-      $top_hit{source_start} = $blast_raw_results[8];
-      $top_hit{source_end} = $blast_raw_results[9];
+      
+      my $start  = $blast_raw_results[8]
+      my $end  = $blast_raw_results[9];
+      if($start > $end)
+      {
+        my $tmp = $start;
+        $start = $end;
+        $end = $tmp;
+      }
+      
+      $top_hit{source_start} = $start;
+      $top_hit{source_end} = $end;
       $highest_identity = $blast_raw_results[2];
     }
   }

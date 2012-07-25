@@ -18,7 +18,8 @@ $compare_alleles->matching_sequences;
 package MLST::CompareAlleles;
 use Moose;
 use Bio::SeqIO;
-use MLST::Blast::Database
+use MLST::Blast::Database;
+use MLST::Blast::BlastN;
 
 has 'sequence_filename' => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'allele_filenames'  => ( is => 'ro', isa => 'ArrayRef', required => 1 );
