@@ -55,7 +55,7 @@ sub _build_top_hit
       $top_hit{percentage_identity} = $blast_raw_results[2];
       $top_hit{source_name} = $blast_raw_results[1];
       
-      my $start  = $blast_raw_results[8]
+      my $start  = $blast_raw_results[8];
       my $end  = $blast_raw_results[9];
       if($start > $end)
       {

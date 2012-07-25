@@ -44,7 +44,7 @@ sub create_files
   
   if($self->matching_sequences)
   {
-    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename, '.matching.fa'));
+    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.matching.fa'));
     my $out = Bio::SeqIO->new(-file => "+>$matching_output_filename" , '-format' => 'Fasta');
     for my $sequence_name (keys %{$self->matching_sequences})
     {
@@ -54,7 +54,7 @@ sub create_files
   
   if($self->non_matching_sequences)
   {
-    my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename, '.nonmatching.fa'));
+    my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename'.nonmatching.fa'));
     my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
     for my $sequence_name (keys %{$self->non_matching_sequences})
     {
