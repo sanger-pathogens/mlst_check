@@ -72,10 +72,19 @@ my $compare_alleles = MLST::CompareAlleles->new(
   allele_filenames  => $search_results->allele_filenames()
 );
 
-# Find ST
+my $sequence_type_obj = MLST::SequenceType->new(
+  profiles_filename => $search_results->profiles_filename(),
+  sequence_names => $compare_alleles->found_sequence_names
+);
 
-# unknown alleles
+if(defined($sequence_type_obj->sequence_type))
+{
+  print $sequence_type_obj->sequence_type."\n";
+}
+else
+{
+  # Unknown so output the nearest match
+  print "Nearest ST:\t".$sequence_type_obj->nearest_sequence_type."\t".join("\t",@{$compare_alleles->found_sequence_names})."\n";
+}
 
 # write out fasta file of sequences
-
-print "Found alleles:\t".join("\t",@{$compare_alleles->found_sequence_names});

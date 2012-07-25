@@ -21,8 +21,10 @@ use Moose;
 has 'profiles_filename' => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'sequence_names'    => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
 
-has '_allele_to_number' => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__allele_to_number' ); 
-has '_profiles'          => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__profiles' ); 
+has '_allele_to_number'  => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__allele_to_number' ); 
+has '_profiles'          => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__profiles' );
+
+has 'nearest_sequence_type' => ( is => 'rw', isa => 'Maybe[Int]');
 
 
 sub _build__profiles
@@ -33,7 +35,7 @@ sub _build__profiles
   while(<$fh>)
   {
     chomp;
-    $line = $_;
+    my $line = $_;
     my @profile_row = split("\t",$line);
     push(@profile, \@profile_row);
   }
@@ -55,28 +57,50 @@ sub _build__allele_to_number
   return \%allele_to_number;
 }
 
-
-
 sub sequence_type
 {
   my($self) = @_;
   
   my @header_row = @{$self->_profiles->[0]};
+  my $num_loci = 0;
+  my %sequence_type_freq;
   
   for(my $row = 1; $row < @{$self->_profiles}; $row++)
   {
     my @current_row = @{$self->_profiles->[$row]};
-    for(my $col = 1; $col< @current_row -1; $col++)
+    for(my $col = 0; $col< @current_row; $col++)
     {
-      return undef if(!defined($self->allele_to_number->{$header_row[$col]}) );
+      next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex");
+      $num_loci++ if($row == 1);
+       
+      next if(!defined($self->_allele_to_number->{$header_row[$col]}) );
+      next if($self->_allele_to_number->{$header_row[$col]} != $current_row[$col]);
       
-      # keep a running total of how many match so you can out put a closest match
-      xxxxx
-      return next if($self->allele_to_number->{$header_row[$col]} != $current_row[$col]);
+      $sequence_type_freq{$current_row[0]}++;
     }
   }
+  
+  return $self->_get_sequence_type_or_set_nearest_match(\%sequence_type_freq, $num_loci);	
+}
 
-  return undef;	
+sub _get_sequence_type_or_set_nearest_match
+{
+  my($self,$sequence_type_f, $num_loci) = @_;
+  my %sequence_type_freq = %{$sequence_type_f};
+  
+  for my $sequence_type (sort { $sequence_type_freq{$b} <=> $sequence_type_freq{$a} } keys %sequence_type_freq) 
+  {
+    if($sequence_type_freq{$sequence_type} == $num_loci)
+    {
+      return $sequence_type;
+    }
+    else
+    {
+      $self->nearest_sequence_type($sequence_type);
+      return undef;	
+    }
+  }
+  return undef;
 }
 
 no Moose;
