@@ -54,7 +54,7 @@ sub create_files
   
   if($self->non_matching_sequences)
   {
-    my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename'.nonmatching.fa'));
+    my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.nonmatching.fa'));
     my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
     for my $sequence_name (keys %{$self->non_matching_sequences})
     {
