@@ -31,7 +31,7 @@ has 'fasta_file'          => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'makeblastdb_exec'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'blastn_exec'         => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'output_directory'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
-has 'output_fasta_files'  => ( is => 'ro', isa => 'Boolean',  default  => 0 ); 
+has 'output_fasta_files'  => ( is => 'ro', isa => 'Bool',  default  => 0 ); 
 
 has '_search_results'     => ( is => 'ro', isa => 'MLST::SearchForFiles',  lazy => 1, builder => '_build__search_results' ); 
 has '_compare_alleles'    => ( is => 'ro', isa => 'MLST::CompareAlleles',  lazy => 1, builder => '_build__compare_alleles' ); 

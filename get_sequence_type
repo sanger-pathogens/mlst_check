@@ -40,7 +40,7 @@ GetOptions ('s|species=s'           => \$species,
             'h|help'                => \$help,
 );
 
-(  (defined($species)) && (-e $fasta_file) && ! $help)or die <<USAGE;
+(  (defined($species)) && (@ARGV > 0) && ! $help)or die <<USAGE;
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
@@ -72,7 +72,7 @@ $output_directory ||= getcwd;
 $fasta_files ||= 0;
 
 # check all fasta files exist first
-for $fastafile (@ARGV)
+for my $fastafile (@ARGV)
 {
   if(!(-e $fastafile ))
   {
@@ -81,7 +81,7 @@ for $fastafile (@ARGV)
 }
 
 my @spreadsheet_rows;
-for $fastafile (@ARGV)
+for my $fastafile (@ARGV)
 {
   my $fasta_sequence_type_results = MLST::ProcessFasta->new(
     'species'            => $species,
