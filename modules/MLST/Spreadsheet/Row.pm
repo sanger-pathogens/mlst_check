@@ -23,10 +23,10 @@ has 'compare_alleles'    => ( is => 'ro', isa => 'MLST::CompareAlleles',   requi
                         
 has 'allele_numbers_row' => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_numbers_row'); 
 has 'genomic_row'        => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_genomic_row'); 
+has 'header_row'         => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_header_row'); 
 has '_common_cells'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__common_cells'); 
 has '_allele_order'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__allele_order'); 
 
-# Isolate, ST, New ST, contamination, alleles/genomes
 sub _build__common_cells
 {
   my($self) = @_;
@@ -77,22 +77,21 @@ sub _build_genomic_row
   
   for my $allele_name (@{$self->_allele_order})
   {
-    if(defined($self->compare_alleles->matching_sequences->{$allele_name}))
+    if(defined($self->sequence_type_obj->allele_to_number->{$allele_name}))
     {
-      push(@allele_cells,$self->compare_alleles->non_matching_sequences->{$allele_name});
-    }
-    elsif(defined($self->sequence_type_obj->allele_to_number->{$allele_name}))
-    {
-      my $original_allele_name = $allele_name.'-'.$self->sequence_type_obj->allele_to_number->{$allele_name};
-
-      if(defined($self->compare_alleles->matching_sequences->{$original_allele_name}))
-      {
-        push(@allele_cells,$self->compare_alleles->matching_sequences->{$original_allele_name});
-      }
-      else
-      {
-         push(@allele_cells,'U');
-      }
+       my $original_allele_name = $allele_name.'-'.$self->sequence_type_obj->allele_to_number->{$allele_name};
+       if(defined($self->compare_alleles->matching_sequences->{$original_allele_name}))
+       {
+         push(@allele_cells,$self->compare_alleles->matching_sequences->{$original_allele_name});
+       }
+       elsif(defined($self->compare_alleles->non_matching_sequences->{$original_allele_name}))
+       {
+         push(@allele_cells,$self->compare_alleles->non_matching_sequences->{$original_allele_name});
+       }
+       else
+       {
+          push(@allele_cells,'U');
+       }
     }
     else
     {
@@ -102,6 +101,13 @@ sub _build_genomic_row
   }
   my @complete_row = (@common_cells,@allele_cells);
   return \@complete_row;
+}
+
+sub _build_header_row
+{
+  my($self) = @_;
+  my @header_cells = (('Isolate', 'ST','New ST', 'Contamination'), @{$self->_allele_order});
+  return \@header_cells;
 }
 
 
