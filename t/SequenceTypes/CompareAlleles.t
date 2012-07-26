@@ -11,10 +11,38 @@ BEGIN {
 
 ok((my $compare_alleles = MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
-  allele_filenames => ['t/data/allele1.tfa','t/data/allele2.tfa','t/data/allele3.tfa']
+  allele_filenames => ['t/data/adk.tfa','t/data/purA.tfa','t/data/recA.tfa']
 )), 'initialise comparison');
+is_deeply( $compare_alleles->found_sequence_names,sort(['adk-2','purA-3','recA-1']), 'correct sequences found');
+is_deeply( $compare_alleles->non_matching_sequences, {}, 'no non matching sequences returned');
+is($compare_alleles->new_st, 0, 'existing ST found');
+is($compare_alleles->contamination, 0, 'no contamination found');
 
-is_deeply(sort(['adk-2','purA-3','recA-1']), $compare_alleles->found_sequence_names, 'correct sequences found');
+ok(($compare_alleles = MLST::CompareAlleles->new(
+  sequence_filename => 't/data/contigs.fa',
+  allele_filenames => ['t/data/adk_top_hit_low_hit.tfa']
+)), 'initialise comparison where there are multiple close matches');
+is_deeply( $compare_alleles->found_sequence_names,sort(['adk-2']), 'correct sequences identified from closely related');
+is_deeply( $compare_alleles->non_matching_sequences, {}, 'no non matching sequences returned');
+is($compare_alleles->new_st, 0, 'existing ST found');
+is($compare_alleles->contamination, 0, 'contamination found');
+
+ok(($compare_alleles = MLST::CompareAlleles->new(
+  sequence_filename => 't/data/contigs.fa',
+  allele_filenames => ['t/data/adk_contamination.tfa']
+)), 'initialise comparison where there is contamination');
+is_deeply( $compare_alleles->found_sequence_names,sort(['adk-3']), 'last top hit returned if more than 1 is 100%');
+is($compare_alleles->new_st, 0, 'existing ST found');
+is($compare_alleles->contamination, 1, 'contamination found');
+
+ok(($compare_alleles = MLST::CompareAlleles->new(
+  sequence_filename => 't/data/contigs.fa',
+  allele_filenames => ['t/data/adk_less_than_95_percent.tfa']
+)), 'initialise comparison where no hits are returned');
+is_deeply( $compare_alleles->found_sequence_names, [], 'no matching sequences found');
+is_deeply( $compare_alleles->non_matching_sequences, {'adk_less_than_95_percent' => 'U'}, 'non matching sequences returned');
+is($compare_alleles->new_st, 1, 'new ST found');
+is($compare_alleles->contamination, 0, 'no contamination found');
 
 done_testing();
 

@@ -17,22 +17,24 @@ $compare_alleles->matching_sequences;
 
 package MLST::CompareAlleles;
 use Moose;
+use File::Basename;
 use Bio::SeqIO;
 use MLST::Blast::Database;
 use MLST::Blast::BlastN;
 
-has 'sequence_filename' => ( is => 'ro', isa => 'Str',      required => 1 );
-has 'allele_filenames'  => ( is => 'ro', isa => 'ArrayRef', required => 1 );
-has 'makeblastdb_exec'  => ( is => 'ro', isa => 'Str',      required => 1 );
-has 'blastn_exec'       => ( is => 'ro', isa => 'Str',      required => 1 );
+has 'sequence_filename'      => ( is => 'ro', isa => 'Str',      required => 1 );
+has 'allele_filenames'       => ( is => 'ro', isa => 'ArrayRef', required => 1 );
+has 'makeblastdb_exec'       => ( is => 'ro', isa => 'Str',      default  => 'makeblastdb' );
+has 'blastn_exec'            => ( is => 'ro', isa => 'Str',      default  => 'blastn' );
 
-has '_sequence_handle'   => ( is => 'ro', isa => 'Bio::SeqIO::fasta',           lazy => 1,  builder => '_build__sequence_handle');
-
-has '_blast_db_location_obj' => ( is => 'ro', isa => 'MLST::Blast::Database',   lazy => 1,  builder => '_build__blast_db_location_obj');
-has '_blast_db_location' => ( is => 'ro', isa => 'Str',                         lazy => 1,  builder => '_build__blast_db_location');
+has '_sequence_handle'       => ( is => 'ro', isa => 'Bio::SeqIO::fasta',     lazy => 1,  builder => '_build__sequence_handle');
+has '_blast_db_location_obj' => ( is => 'ro', isa => 'MLST::Blast::Database', lazy => 1,  builder => '_build__blast_db_location_obj');
+has '_blast_db_location'     => ( is => 'ro', isa => 'Str',                   lazy => 1,  builder => '_build__blast_db_location');
 
 has 'matching_sequences'     => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build_matching_sequences' );
 has 'non_matching_sequences' => ( is => 'rw', isa => 'HashRef', default => sub {{}});
+has 'contamination'          => ( is => 'rw', isa => 'Bool',    default => 0);
+has 'new_st'                 => ( is => 'rw', isa => 'Bool',    default => 0);
 
 sub _build__blast_db_location
 {
@@ -83,17 +85,29 @@ sub _build_matching_sequences
       exec           => $self->blastn_exec
     );
     my %top_blast_hit = %{$blast_results->top_hit()};
-    # TODO: no hits found - could be a deletion?
-    next if(! %top_blast_hit);
+   
+    # unknown allele
+    if(! %top_blast_hit)
+    {
+      $non_matching_sequence_names{$self->_get_base_filename($allele_filename)} = 'U';
+      $self->new_st(1);
+      next;
+    }
     
-    if($top_blast_hit{percentage_identity} == 100.0)
+    # more than 1 allele has 100% match
+    if(defined($top_blast_hit{contamination}))
+    {
+      $self->contamination(1);
+    }
+    
+    if($top_blast_hit{percentage_identity} == 100 )
     {
       $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end});
     }
     else
     {
-      my $non_matching_hit_name = join('___',('similar',$top_blast_hit{allele_name},'start',$top_blast_hit{source_start},'end',$top_blast_hit{source_end},'contig',$top_blast_hit{source_name}));
-      $non_matching_sequence_names{$non_matching_hit_name} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end});
+      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end});
+      $self->new_st(1);
     }
   }
 
@@ -112,7 +126,14 @@ sub _get_blast_hit_sequence
      return $input_sequence_obj->subseq($start, $end);
    }
 
-   return "";
+   return 'U';
+}
+
+sub _get_base_filename
+{
+  my($self, $filename) = @_;
+  my $filename_root  = fileparse($filename, qr/\.[^.]*$/);
+  return $filename_root;
 }
 
 no Moose;
