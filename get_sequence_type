@@ -25,22 +25,19 @@ BEGIN { unshift(@INC, './modules') }
 use Moose;
 use Getopt::Long;
 use Cwd;
-use MLST::SearchForFiles;
-use MLST::CompareAlleles;
-use MLST::SequenceType;
-use MLST::OutputFasta;
+use MLST::ProcessFasta;
 
 my ($fasta_file, $species, $fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $help);
 
-GetOptions ('f|fasta_file=s'       => \$fasta_file,
-            's|species=s'          => \$species,
-            'o|output_directory=s' => \$output_directory,
-            'c|fasta_files'     => \$fasta_files,
+GetOptions ('f|fasta_file=s'        => \$fasta_file,
+            's|species=s'           => \$species,
+            'o|output_directory=s'  => \$output_directory,
+            'c|fasta_files'         => \$fasta_files,
             'a|available_databases' => \$available_databases,
             'b|mlst_base_directory' => \$base_directory,
             'm|makeblastdb_exec'    => \$makeblastdb_exec,
             'n|blastn_exec'         => \$blastn_exec,
-            'h|help'               => \$help,
+            'h|help'                => \$help,
 );
 
 (  (defined($species)) && (-e $fasta_file) && ! $help)or die <<USAGE;
@@ -69,43 +66,16 @@ $makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/makeblastdb';
 $blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
 
 $output_directory ||= getcwd;
+$fasta_files ||= 0;
 
-
-my $search_results = MLST::SearchForFiles->new(
-  species_name   => $species,
-  base_directory => $base_directory
+MLST::ProcessFasta->new(
+  'species'            => $species,
+  'base_directory'     => $base_directory,
+  'fasta_file'         => $fasta_file,
+  'makeblastdb_exec'   => $makeblastdb_exec,
+  'blastn_exec'        => $blastn_exec,
+  'output_directory'   => $output_directory,
+  'output_fasta_files' => $fasta_files
 );
 
-my $compare_alleles = MLST::CompareAlleles->new(
-  sequence_filename => $fasta_file,
-  allele_filenames  => $search_results->allele_filenames(),
-  makeblastdb_exec  => $makeblastdb_exec,
-  blastn_exec       => $blastn_exec
-);
-
-my $sequence_type_obj = MLST::SequenceType->new(
-  profiles_filename => $search_results->profiles_filename(),
-  sequence_names => $compare_alleles->found_sequence_names
-);
-
-if(defined($sequence_type_obj->sequence_type))
-{
-  print $sequence_type_obj->sequence_type."\n";
-}
-else
-{
-  # Unknown so output the nearest match
-  print "Nearest ST:\t".$sequence_type_obj->nearest_sequence_type."\t".join("\t",@{$compare_alleles->found_sequence_names})."\n";
-}
-
-
-if(defined($fasta_files))
-{
-  MLST::OutputFasta->new(
-    matching_sequences     => $compare_alleles->matching_sequences,
-    non_matching_sequences => $compare_alleles->non_matching_sequences,
-    output_directory => $output_directory,
-    input_fasta_file => $fasta_file
-  )->create_files();
-}
 
