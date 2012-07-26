@@ -55,10 +55,23 @@ sub _build__sequence_handle
   return Bio::SeqIO->new( -file => $self->sequence_filename , -format => 'Fasta');
 }
 
+sub sequence_filename_root
+{
+  my ($self) = @_;
+  $self->_get_base_filename($self->sequence_filename);
+}
+
 sub found_sequence_names
 {
   my ($self) = @_;
   my @sequence_names = sort(keys %{$self->matching_sequences});
+  return \@sequence_names;
+}
+
+sub found_non_matching_sequence_names
+{
+  my ($self) = @_;
+  my @sequence_names = sort(keys %{$self->non_matching_sequences});
   return \@sequence_names;
 }
 

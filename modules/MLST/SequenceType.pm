@@ -18,14 +18,22 @@ $st->sequence_type();
 package MLST::SequenceType;
 use Moose;
 
-has 'profiles_filename' => ( is => 'ro', isa => 'Str',      required => 1 ); 
-has 'sequence_names'    => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
+has 'profiles_filename'     => ( is => 'ro', isa => 'Str',        required => 1 ); 
+has 'sequence_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 ); 
 
-has '_allele_to_number'  => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__allele_to_number' ); 
-has '_profiles'          => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__profiles' );
+has 'allele_to_number'     => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 
+has '_profiles'             => ( is => 'ro', isa => 'ArrayRef',   lazy => 1, builder => '_build__profiles' );
+has 'sequence_type'         => ( is => 'ro', isa => 'Maybe[Int]', lazy => 1, builder => '_build_sequence_type' );
 
 has 'nearest_sequence_type' => ( is => 'rw', isa => 'Maybe[Int]');
 
+
+sub sequence_type_or_nearest
+{
+  my($self) = @_;
+  return $self->sequence_type if(defined($self->sequence_type));
+  return $self->nearest_sequence_type;
+}
 
 sub _build__profiles
 {
@@ -43,7 +51,7 @@ sub _build__profiles
   return \@profile;
 }
 
-sub _build__allele_to_number
+sub _build_allele_to_number
 {
   my($self) = @_;
   my %allele_to_number;
@@ -57,7 +65,7 @@ sub _build__allele_to_number
   return \%allele_to_number;
 }
 
-sub sequence_type
+sub _build_sequence_type
 {
   my($self) = @_;
   
@@ -73,8 +81,8 @@ sub sequence_type
       next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex");
       $num_loci++ if($row == 1);
        
-      next if(!defined($self->_allele_to_number->{$header_row[$col]}) );
-      next if($self->_allele_to_number->{$header_row[$col]} != $current_row[$col]);
+      next if(!defined($self->allele_to_number->{$header_row[$col]}) );
+      next if($self->allele_to_number->{$header_row[$col]} != $current_row[$col]);
       
       $sequence_type_freq{$current_row[0]}++;
     }
