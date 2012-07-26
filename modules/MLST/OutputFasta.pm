@@ -33,8 +33,14 @@ has '_fasta_filename'         => ( is => 'ro', isa => 'Str',          lazy => 1,
 sub _build__fasta_filename
 {
   my($self) = @_;
-  my($filename, $directories, $suffix) = fileparse($self->input_fasta_file);
+  my $filename  = fileparse($self->input_fasta_file, qr/\.[^.]*$/);
   return $filename;
+}
+
+sub _sort_and_join_sequences
+{
+  my($self, $combined_sequences) = @_;
+  join("",sort(values(%{$combined_sequences})));
 }
 
 sub create_files
@@ -42,27 +48,47 @@ sub create_files
   my($self) = @_;
   make_path($self->output_directory);
   
-  if($self->matching_sequences)
+  if(defined($self->matching_sequences) && %{$self->matching_sequences})
   {
-    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.matching.fa'));
+    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.mlst_loci.fa'));
     my $out = Bio::SeqIO->new(-file => "+>$matching_output_filename" , '-format' => 'Fasta');
-    for my $sequence_name (keys %{$self->matching_sequences})
+    
+    my %matching_sequences = %{$self->matching_sequences};
+    my %combined_sequences = (%matching_sequences);
+    
+    if(defined($self->non_matching_sequences) && %{$self->non_matching_sequences})
     {
-      $out->write_seq(Bio::PrimarySeq->new(-seq => $self->matching_sequences->{$sequence_name}, -id  => $sequence_name));
+      my %non_matching_sequences = %{$self->non_matching_sequences};
+      %combined_sequences = (%matching_sequences, %non_matching_sequences);
     }
+    my $concat_sequence = $self->_sort_and_join_sequences(\%combined_sequences);
+    
+    $out->write_seq(Bio::PrimarySeq->new(-seq => $concat_sequence, -id  => $self->_fasta_filename));
   }
   
-  if($self->non_matching_sequences)
+  if(defined($self->non_matching_sequences) && %{$self->non_matching_sequences})
   {
-    my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.nonmatching.fa'));
-    my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
+   # create 1 FASTA file for each unknown allele with a close match to another allele
     for my $sequence_name (keys %{$self->non_matching_sequences})
     {
+      next if(length($self->non_matching_sequences->{$sequence_name}) < 2);
+      next if($self->_does_sequence_contain_all_unknowns($self->non_matching_sequences->{$sequence_name}));
+      my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_locus.'.$sequence_name.'.fa'));
+      my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
       $out->write_seq(Bio::PrimarySeq->new(-seq => $self->non_matching_sequences->{$sequence_name}, -id  => $sequence_name));
     }
   }
   1;
 }
+
+sub _does_sequence_contain_all_unknowns
+{
+  my($self, $sequence) = @_;
+  return 1 if($sequence =~ m/^N+$/);
+  return 0;
+}
+
+
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

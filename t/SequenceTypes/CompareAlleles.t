@@ -40,7 +40,7 @@ ok(($compare_alleles = MLST::CompareAlleles->new(
   allele_filenames => ['t/data/adk_less_than_95_percent.tfa']
 )), 'initialise comparison where no hits are returned');
 is_deeply( $compare_alleles->found_sequence_names, [], 'no matching sequences found');
-is_deeply( $compare_alleles->non_matching_sequences, {'adk_less_than_95_percent' => 'U'}, 'non matching sequences returned');
+is_deeply( $compare_alleles->non_matching_sequences, {'adk_less_than_95_percent' => 'NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN'}, 'non matching sequences returned');
 is($compare_alleles->new_st, 1, 'new ST found');
 is($compare_alleles->contamination, 0, 'no contamination found');
 

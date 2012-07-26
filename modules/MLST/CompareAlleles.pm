@@ -78,10 +78,11 @@ sub _build_matching_sequences
   
   for my $allele_filename (@{$self->allele_filenames})
   {
+    my $word_size = $self->_word_size_for_given_allele_file($allele_filename);
     my $blast_results = MLST::Blast::BlastN->new(
       blast_database => $self->_blast_db_location,
       query_file     => $allele_filename,
-      word_size      => $self->_word_size_for_given_allele_file($allele_filename),
+      word_size      => $word_size,
       exec           => $self->blastn_exec
     );
     my %top_blast_hit = %{$blast_results->top_hit()};
@@ -89,7 +90,7 @@ sub _build_matching_sequences
     # unknown allele
     if(! %top_blast_hit)
     {
-      $non_matching_sequence_names{$self->_get_base_filename($allele_filename)} = 'U';
+      $non_matching_sequence_names{$self->_get_base_filename($allele_filename)} = $self->_pad_out_sequence("", $word_size);
       $self->new_st(1);
       next;
     }
@@ -102,11 +103,11 @@ sub _build_matching_sequences
     
     if($top_blast_hit{percentage_identity} == 100 )
     {
-      $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end});
+      $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size);
     }
     else
     {
-      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end});
+      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size);
       $self->new_st(1);
     }
   }
@@ -117,16 +118,18 @@ sub _build_matching_sequences
 
 sub _get_blast_hit_sequence
 {
-   my ($self, $contig_name, $start, $end) = @_;
+   my ($self, $contig_name, $start, $end, $word_size) = @_;
    seek($self->_sequence_handle->_fh, 0,0);
    while( my $input_sequence_obj = $self->_sequence_handle->next_seq() ) 
    {
 
      next if( $input_sequence_obj->id ne $contig_name);
-     return $input_sequence_obj->subseq($start, $end);
+     my $sequence = $input_sequence_obj->subseq($start, $end);
+     $sequence = $self->_pad_out_sequence($sequence, $word_size);
+     return $sequence;
    }
-
-   return 'U';
+   
+   return $self->_pad_out_sequence("", $word_size);
 }
 
 sub _get_base_filename
@@ -134,6 +137,23 @@ sub _get_base_filename
   my($self, $filename) = @_;
   my $filename_root  = fileparse($filename, qr/\.[^.]*$/);
   return $filename_root;
+}
+
+sub _pad_out_sequence
+{
+  my($self, $input_sequence, $length_of_main_sequence) = @_; 
+  return $input_sequence if(length($input_sequence) == $length_of_main_sequence);
+  if(length($input_sequence) > $length_of_main_sequence)
+  {
+    $input_sequence = substr($input_sequence,0,$length_of_main_sequence);
+  }
+  $input_sequence = "" if($input_sequence eq 'U');
+  
+  for(my $i=length($input_sequence); $i < $length_of_main_sequence; $i++)
+  {
+    $input_sequence .= "N";
+  }
+  return $input_sequence;
 }
 
 no Moose;
