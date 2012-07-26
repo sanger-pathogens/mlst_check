@@ -26,11 +26,11 @@ use Moose;
 use Getopt::Long;
 use Cwd;
 use MLST::ProcessFasta;
+use MLST::Spreadsheet::File;
 
-my ($fasta_file, $species, $fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $help);
+my ($species, $fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $help);
 
-GetOptions ('f|fasta_file=s'        => \$fasta_file,
-            's|species=s'           => \$species,
+GetOptions ('s|species=s'           => \$species,
             'o|output_directory=s'  => \$output_directory,
             'c|fasta_files'         => \$fasta_files,
             'a|available_databases' => \$available_databases,
@@ -44,13 +44,16 @@ GetOptions ('f|fasta_file=s'        => \$fasta_file,
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
-get_sequence_type -f my_assembly.fa -s "Clostridium difficile"
+get_sequence_type -s "Clostridium difficile" my_assembly.fa
+
+# Multiple fasta files 
+get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
 
 # output a fasta file with the concatinated alleles and unknown sequences
-get_sequence_type -f my_assembly.fa -s "Clostridium difficile" -c 
+get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
 
 # Specify an output directory 
-get_sequence_type -f my_assembly.fa -s "Clostridium difficile" -o /path/to/results
+get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
 
 # list all available MLST databases
 get_sequence_type -a
@@ -68,14 +71,35 @@ $blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
 $output_directory ||= getcwd;
 $fasta_files ||= 0;
 
-MLST::ProcessFasta->new(
-  'species'            => $species,
-  'base_directory'     => $base_directory,
-  'fasta_file'         => $fasta_file,
-  'makeblastdb_exec'   => $makeblastdb_exec,
-  'blastn_exec'        => $blastn_exec,
-  'output_directory'   => $output_directory,
-  'output_fasta_files' => $fasta_files
+# check all fasta files exist first
+for $fastafile (@ARGV)
+{
+  if(!(-e $fastafile ))
+  {
+    die "Input file doesnt exist: $fastafile\n";
+  }
+}
+
+my @spreadsheet_rows;
+for $fastafile (@ARGV)
+{
+  my $fasta_sequence_type_results = MLST::ProcessFasta->new(
+    'species'            => $species,
+    'base_directory'     => $base_directory,
+    'fasta_file'         => $fastafile,
+    'makeblastdb_exec'   => $makeblastdb_exec,
+    'blastn_exec'        => $blastn_exec,
+    'output_directory'   => $output_directory,
+    'output_fasta_files' => $fasta_files
+  );
+  push(@spreadsheet_rows, $fasta_sequence_type_results->_spreadsheet_row_obj);
+}
+
+my $spreadsheet = MLST::Spreadsheet::File->new(
+  spreadsheet_rows => \@spreadsheet_rows,
+  output_directory => $output_directory,
+  spreadsheet_basename => 'mlst_results'
 );
+$spreadsheet->create();
 
-
+# list all available MLST databases
