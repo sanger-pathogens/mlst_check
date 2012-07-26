@@ -36,14 +36,16 @@ sub create
   
   my $allele_csv = Text::CSV->new();
   my $genomic_csv = Text::CSV->new();
+  $allele_csv->eol ("\r\n");
+  $genomic_csv->eol ("\r\n");
   
-  $allele_csv->print ($allele_fh, $_) for @{$self->_header};
-  $genomic_csv->print ($genomic_fh, $_) for @{$self->_header};
+  $allele_csv->print ($allele_fh, $_) for $self->_header;
+  $genomic_csv->print ($genomic_fh, $_) for $self->_header;
   
   for my $row (@{$self->spreadsheet_rows})
   {
-    $allele_csv->print ($allele_fh, $_) for @{$row->allele_numbers_row};
-    $genomic_csv->print ($genomic_fh, $_) for @{$row->genomic_row};
+    $allele_csv->print ($allele_fh, $_) for $row->allele_numbers_row;
+    $genomic_csv->print ($genomic_fh, $_) for $row->genomic_row;
   }
   close($allele_fh);
   close($genomic_fh);

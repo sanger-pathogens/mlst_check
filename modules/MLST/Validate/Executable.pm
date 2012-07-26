@@ -13,6 +13,8 @@ use File::Which;
 sub does_executable_exist
 {
   my($self, $exec) = @_;
+  # if its a full path then skip over it
+  return 1 if($exec =~ m!/!);
 
   my @full_paths_to_exec = which($exec);
   return 0 if(@full_paths_to_exec == 0);
