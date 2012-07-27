@@ -127,6 +127,7 @@ sub create_result_files
     my $out = Bio::SeqIO->new(-file => "+>output_filename" , '-format' => 'Fasta');
     for(my $i = 0;  $i < @{$self->_concat_names}; $i++)
     {
+      next unless(defined( $self->_concat_sequences->[$i]));
       $out->write_seq(Bio::PrimarySeq->new(-seq => $self->_concat_sequences->[$i], -id  => $self->_concat_names->[$i]));
     }
   }
