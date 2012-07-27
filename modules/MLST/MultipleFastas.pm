@@ -34,14 +34,31 @@ has 'spreadsheet_basename'  => ( is => 'ro', isa => 'Str',      default  => 'mls
 
 has 'parallel_processes'    => ( is => 'ro', isa => 'Int',      default  => 1 ); 
 
-has '_spreadsheet_rows'     => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__spreadsheet_rows' ); 
+has '_spreadsheet_header'              => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
+has '_spreadsheet_allele_numbers_rows' => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
+has '_spreadsheet_genomic_rows'        => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
 has '_input_fasta_files'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__input_fasta_files'); 
 
-sub _build__spreadsheet_rows
+
+sub _generate_spreadsheet_rows
 {
   my($self) = @_;
-  my @spreadsheet_rows;
+
   my $pm = new Parallel::ForkManager($self->parallel_processes); 
+  $pm -> run_on_finish (
+    sub {
+      my ($pid, $exit_code, $ident, $exit_signal, $core_dump, $data_structure_reference) = @_;
+      # retrieve data structure from child
+      if (defined($data_structure_reference)) {  # children are not forced to send anything
+        push(@{$self->_spreadsheet_header}, $data_structure_reference->[0]);
+        push(@{$self->_spreadsheet_allele_numbers_rows}, $data_structure_reference->[1]);
+        push(@{$self->_spreadsheet_genomic_rows}, $data_structure_reference->[2]);
+      } else {  # problems occuring during storage or retrieval will throw a warning
+        print qq|No message received from child process $pid!\n|;
+      }
+    }
+  );
+  
   for my $fastafile (@{$self->_input_fasta_files})
   {
     $pm->start and next; # do the fork
@@ -54,11 +71,15 @@ sub _build__spreadsheet_rows
       output_directory   => $self->output_directory,
       output_fasta_files => $self->output_fasta_files
     );
-    push(@spreadsheet_rows, $fasta_sequence_type_results->_spreadsheet_row_obj);
-    $pm->finish; # do the exit in the child process
+    my @result_rows;
+    push(@result_rows, ($fasta_sequence_type_results->_spreadsheet_row_obj->header_row,
+                        $fasta_sequence_type_results->_spreadsheet_row_obj->allele_numbers_row,
+                        $fasta_sequence_type_results->_spreadsheet_row_obj->genomic_row));
+     
+    $pm->finish(0,\@result_rows); # do the exit in the child process
   }
   $pm->wait_all_children;
-  return \@spreadsheet_rows;
+  1;
 }
 
 sub _build__input_fasta_files
@@ -81,10 +102,14 @@ sub _build__input_fasta_files
 sub create_result_files
 {
   my($self) = @_;
+  $self->_generate_spreadsheet_rows;
+  
   my $spreadsheet = MLST::Spreadsheet::File->new(
-    spreadsheet_rows => $self->_spreadsheet_rows,
-    output_directory => $self->output_directory,
-    spreadsheet_basename => $self->spreadsheet_basename
+    header                          => pop(@{$self->_spreadsheet_header}),
+    spreadsheet_allele_numbers_rows => $self->_spreadsheet_allele_numbers_rows,
+    spreadsheet_genomic_rows        => $self->_spreadsheet_genomic_rows,
+    output_directory                => $self->output_directory,
+    spreadsheet_basename            => $self->spreadsheet_basename
   );
   $spreadsheet->create();
   1;

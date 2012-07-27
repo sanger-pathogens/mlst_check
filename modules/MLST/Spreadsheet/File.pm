@@ -20,11 +20,12 @@ use Moose;
 use Text::CSV;
 use MLST::Spreadsheet::Row;
 
-has 'spreadsheet_rows'      => ( is => 'ro', isa => 'ArrayRef[MLST::Spreadsheet::Row]', required => 1 ); 
+has 'spreadsheet_allele_numbers_rows'      => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
+has 'spreadsheet_genomic_rows'             => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
 has 'output_directory'      => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'spreadsheet_basename'  => ( is => 'ro', isa => 'Str', required => 1 ); 
 
-has '_header'           => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__header' ); 
+has 'header'           => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
 
 sub create
 {
@@ -42,21 +43,18 @@ sub create
   $allele_csv->print ($allele_fh, $_) for $self->_header;
   $genomic_csv->print ($genomic_fh, $_) for $self->_header;
   
-  for my $row (@{$self->spreadsheet_rows})
+  for my $row (@{$self->spreadsheet_allele_numbers_rows})
   {
     $allele_csv->print ($allele_fh, $_) for $row->allele_numbers_row;
+  }
+  for my $row (@{$self->spreadsheet_genomic_rows})
+  {
     $genomic_csv->print ($genomic_fh, $_) for $row->genomic_row;
   }
   close($allele_fh);
   close($genomic_fh);
 }
 
-sub _build__header
-{
-  my($self) = @_;
-  my @rows = @{$self->spreadsheet_rows};
-  return $rows[0]->header_row;
-}
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
