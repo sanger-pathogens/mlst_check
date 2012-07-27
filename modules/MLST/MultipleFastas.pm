@@ -39,6 +39,8 @@ has '_spreadsheet_allele_numbers_rows' => ( is => 'rw', isa => 'ArrayRef', defau
 has '_spreadsheet_genomic_rows'        => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
 has '_input_fasta_files'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__input_fasta_files'); 
 
+has '_concat_names'      => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
+has '_concat_sequences' => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
 
 sub _generate_spreadsheet_rows
 {
@@ -53,6 +55,10 @@ sub _generate_spreadsheet_rows
         push(@{$self->_spreadsheet_header}, $data_structure_reference->[0]);
         push(@{$self->_spreadsheet_allele_numbers_rows}, $data_structure_reference->[1]);
         push(@{$self->_spreadsheet_genomic_rows}, $data_structure_reference->[2]);
+        
+        push(@{$self->_concat_names}, $data_structure_reference->[3]);
+        push(@{$self->_concat_sequences}, $data_structure_reference->[4]);
+
       } else {  # problems occuring during storage or retrieval will throw a warning
         print qq|No message received from child process $pid!\n|;
       }
@@ -74,7 +80,9 @@ sub _generate_spreadsheet_rows
     my @result_rows;
     push(@result_rows, ($fasta_sequence_type_results->_spreadsheet_row_obj->header_row,
                         $fasta_sequence_type_results->_spreadsheet_row_obj->allele_numbers_row,
-                        $fasta_sequence_type_results->_spreadsheet_row_obj->genomic_row));
+                        $fasta_sequence_type_results->_spreadsheet_row_obj->genomic_row,
+                        $fasta_sequence_type_results->concat_name,
+                        $fasta_sequence_type_results->concat_sequence));
      
     $pm->finish(0,\@result_rows); # do the exit in the child process
   }
@@ -112,6 +120,16 @@ sub create_result_files
     spreadsheet_basename            => $self->spreadsheet_basename
   );
   $spreadsheet->create();
+  
+  if($self->output_fasta_files)
+  {
+    my $output_filename = join('/',($self->output_directory,'concatenated_alleles.fa'));
+    my $out = Bio::SeqIO->new(-file => "+>output_filename" , '-format' => 'Fasta');
+    for(my $i = 0;  $i < @{$self->_concat_names}; $i++)
+    {
+      $out->write_seq(Bio::PrimarySeq->new(-seq => $self->_concat_sequences->[$i], -id  => $self->_concat_names->[$i]));
+    }
+  }
   1;
 }
 

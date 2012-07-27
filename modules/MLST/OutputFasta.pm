@@ -29,6 +29,8 @@ has 'output_directory'        => ( is => 'ro', isa => 'Str',          required =
 has 'input_fasta_file'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
 
 has '_fasta_filename'         => ( is => 'ro', isa => 'Str',          lazy => 1, builder => '_build__fasta_filename' ); 
+has 'concat_sequence'         => ( is => 'rw', isa => 'Maybe[Str]' );
+
 
 sub _build__fasta_filename
 {
@@ -50,9 +52,7 @@ sub create_files
   
   if(defined($self->matching_sequences) && %{$self->matching_sequences})
   {
-    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.mlst_loci.fa'));
-    my $out = Bio::SeqIO->new(-file => "+>$matching_output_filename" , '-format' => 'Fasta');
-    
+
     my %matching_sequences = %{$self->matching_sequences};
     my %combined_sequences = (%matching_sequences);
     
@@ -63,7 +63,7 @@ sub create_files
     }
     my $concat_sequence = $self->_sort_and_join_sequences(\%combined_sequences);
     
-    $out->write_seq(Bio::PrimarySeq->new(-seq => $concat_sequence, -id  => $self->_fasta_filename));
+    $self->concat_sequence($concat_sequence);
   }
   
   if(defined($self->non_matching_sequences) && %{$self->non_matching_sequences})

@@ -38,6 +38,9 @@ has '_compare_alleles'    => ( is => 'ro', isa => 'MLST::CompareAlleles',  lazy 
 has '_sequence_type_obj'  => ( is => 'ro', isa => 'MLST::SequenceType',    lazy => 1, builder => '_build__sequence_type_obj' ); 
 has '_spreadsheet_row_obj' => ( is => 'ro', isa => 'MLST::Spreadsheet::Row',    lazy => 1, builder => '_build__spreadsheet_row_obj' ); 
 
+has 'concat_name'       => ( is => 'rw', isa => 'Maybe[Str]' );
+has 'concat_sequence'   => ( is => 'rw', isa => 'Maybe[Str]' );
+
 sub _build__search_results
 {
   my($self) = @_;
@@ -59,12 +62,14 @@ sub _build__compare_alleles
   
   if(defined($self->output_fasta_files))
   {
-    MLST::OutputFasta->new(
+    my $output_fasta = MLST::OutputFasta->new(
       matching_sequences     => $compare_alleles->matching_sequences,
       non_matching_sequences => $compare_alleles->non_matching_sequences,
       output_directory       => $self->output_directory,
       input_fasta_file       => $self->fasta_file
     )->create_files();
+    $self->concat_name($output_fasta->_fasta_filename);
+    $self->concat_sequence($output_fasta->concat_sequence);
   }
   return $compare_alleles;
 }

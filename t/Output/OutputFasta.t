@@ -19,9 +19,6 @@ ok((my $output_fasta = MLST::OutputFasta->new(
   input_fasta_file => '/path/to/myfasta.fa'
 )), "Initialise matching seq");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
-AAAACCCC
-");
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
@@ -43,9 +40,6 @@ ok(($output_fasta = MLST::OutputFasta->new(
   input_fasta_file => '/path/to/myfasta.fa'
 )), "Initialise matching and non matching");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
-AAAACCCCGGGGTTTT
-");
 compare_file_content($tmpdirectory."/myfasta.unknown_allele.EEE.fa", '>EEE
 GGGG
 ');
@@ -62,9 +56,6 @@ ok(($output_fasta = MLST::OutputFasta->new(
   input_fasta_file => '/path/to/myfasta.fa'
 )), "Initialise non matching with an unknown sequence");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
-AAAACCCCNNNNTTTT
-");
 ok(!(-e $tmpdirectory."/myfasta.unknown_allele.EEE.fa"), 'No output files created for unknown loci');
 compare_file_content($tmpdirectory."/myfasta.unknown_allele.FFF.fa", '>FFF
 TTTT
@@ -79,9 +70,6 @@ ok(($output_fasta = MLST::OutputFasta->new(
   input_fasta_file => '/path/to/myfasta.fa'
 )), "Initialise non matching has a short sequence");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
-AAAACCCCGGNNTTTT
-");
 compare_file_content($tmpdirectory."/myfasta.unknown_allele.EEE.fa", '>EEE
 GGNN
 ');

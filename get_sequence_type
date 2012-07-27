@@ -56,7 +56,7 @@ get_sequence_type -s "Clostridium difficile" *.fa
 # Split into 8 parallel processes (much faster), default is 1
 get_sequence_type -s "Clostridium difficile" -d 8 *.fa
 
-# output a fasta file with the concatinated alleles and unknown sequences
+# output a fasta file with the concatenated alleles and unknown sequences
 get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
 
 # Specify an output directory 
