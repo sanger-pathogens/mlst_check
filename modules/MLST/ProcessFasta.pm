@@ -60,17 +60,14 @@ sub _build__compare_alleles
     blastn_exec       => $self->blastn_exec
   );
   
-  if(defined($self->output_fasta_files))
-  {
-    my $output_fasta = MLST::OutputFasta->new(
-      matching_sequences     => $compare_alleles->matching_sequences,
-      non_matching_sequences => $compare_alleles->non_matching_sequences,
-      output_directory       => $self->output_directory,
-      input_fasta_file       => $self->fasta_file
-    )->create_files();
-    $self->concat_name($output_fasta->_fasta_filename);
-    $self->concat_sequence($output_fasta->concat_sequence);
-  }
+  my $output_fasta = MLST::OutputFasta->new(
+    matching_sequences     => $compare_alleles->matching_sequences,
+    non_matching_sequences => $compare_alleles->non_matching_sequences,
+    output_directory       => $self->output_directory,
+    input_fasta_file       => $self->fasta_file
+  )->create_files();
+  $self->concat_name($output_fasta->_fasta_filename);
+  $self->concat_sequence($output_fasta->concat_sequence);
   return $compare_alleles;
 }
 
