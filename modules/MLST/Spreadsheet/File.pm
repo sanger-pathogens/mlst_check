@@ -39,6 +39,8 @@ sub create
   my $genomic_csv = Text::CSV->new();
   $allele_csv->eol ("\r\n");
   $genomic_csv->eol ("\r\n");
+  $allele_csv->sep_char("\t");
+  $genomic_csv->sep_char("\t");
   
   $allele_csv->print ($allele_fh, $_) for $self->header;
   $genomic_csv->print ($genomic_fh, $_) for $self->header;
