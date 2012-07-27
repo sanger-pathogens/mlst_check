@@ -46,10 +46,10 @@ ok(($output_fasta->create_files()),'created output files');
 compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
 AAAACCCCGGGGTTTT
 ");
-compare_file_content($tmpdirectory."/myfasta.unknown_locus.EEE.fa", '>EEE
+compare_file_content($tmpdirectory."/myfasta.unknown_allele.EEE.fa", '>EEE
 GGGG
 ');
-compare_file_content($tmpdirectory."/myfasta.unknown_locus.FFF.fa", '>FFF
+compare_file_content($tmpdirectory."/myfasta.unknown_allele.FFF.fa", '>FFF
 TTTT
 ');
 
@@ -65,8 +65,8 @@ ok(($output_fasta->create_files()),'created output files');
 compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
 AAAACCCCNNNNTTTT
 ");
-ok(!(-e $tmpdirectory."/myfasta.unknown_locus.EEE.fa"), 'No output files created for unknown loci');
-compare_file_content($tmpdirectory."/myfasta.unknown_locus.FFF.fa", '>FFF
+ok(!(-e $tmpdirectory."/myfasta.unknown_allele.EEE.fa"), 'No output files created for unknown loci');
+compare_file_content($tmpdirectory."/myfasta.unknown_allele.FFF.fa", '>FFF
 TTTT
 ');
 
@@ -82,10 +82,10 @@ ok(($output_fasta->create_files()),'created output files');
 compare_file_content($tmpdirectory."/myfasta.mlst_loci.fa", ">myfasta
 AAAACCCCGGNNTTTT
 ");
-compare_file_content($tmpdirectory."/myfasta.unknown_locus.EEE.fa", '>EEE
+compare_file_content($tmpdirectory."/myfasta.unknown_allele.EEE.fa", '>EEE
 GGNN
 ');
-compare_file_content($tmpdirectory."/myfasta.unknown_locus.FFF.fa", '>FFF
+compare_file_content($tmpdirectory."/myfasta.unknown_allele.FFF.fa", '>FFF
 TTTT
 ');
 

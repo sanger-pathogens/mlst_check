@@ -73,7 +73,7 @@ sub create_files
     {
       next if(length($self->non_matching_sequences->{$sequence_name}) < 2);
       next if($self->_does_sequence_contain_all_unknowns($self->non_matching_sequences->{$sequence_name}));
-      my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_locus.'.$sequence_name.'.fa'));
+      my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_allele.'.$sequence_name.'.fa'));
       my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
       $out->write_seq(Bio::PrimarySeq->new(-seq => $self->non_matching_sequences->{$sequence_name}, -id  => $sequence_name));
     }
