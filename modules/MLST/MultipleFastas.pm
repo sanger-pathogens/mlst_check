@@ -124,7 +124,7 @@ sub create_result_files
   if($self->output_fasta_files)
   {
     my $output_filename = join('/',($self->output_directory,'concatenated_alleles.fa'));
-    my $out = Bio::SeqIO->new(-file => "+>output_filename" , '-format' => 'Fasta');
+    my $out = Bio::SeqIO->new(-file => "+>$output_filename" , '-format' => 'Fasta');
     for(my $i = 0;  $i < @{$self->_concat_names}; $i++)
     {
       next unless(defined( $self->_concat_sequences->[$i]));
