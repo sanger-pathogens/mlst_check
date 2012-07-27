@@ -52,7 +52,7 @@ sub _build__spreadsheet_rows
       makeblastdb_exec   => $self->makeblastdb_exec,
       blastn_exec        => $self->blastn_exec,
       output_directory   => $self->output_directory,
-      output_fasta_files => $self->fasta_files
+      output_fasta_files => $self->output_fasta_files
     );
     push(@spreadsheet_rows, $fasta_sequence_type_results->_spreadsheet_row_obj);
     $pm->finish; # do the exit in the child process
