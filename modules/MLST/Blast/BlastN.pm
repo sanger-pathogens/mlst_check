@@ -36,8 +36,10 @@ has 'top_hit'           => ( is => 'ro', isa => 'Maybe[HashRef]', lazy => 1,  bu
 sub _blastn_cmd
 {
   my($self) = @_;
+  my $word_size = int(100/(100 - $self->perc_identity ));
+  $word_size = 11 if($word_size < 11);
   
-  join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt 6', '-word_size', $self->word_size, '-perc_identity', $self->perc_identity ));
+  join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt 6', '-word_size', $word_size , '-perc_identity', $self->perc_identity ));
 }
 
 sub _build_top_hit
@@ -53,6 +55,7 @@ sub _build_top_hit
     chomp;
     my $line = $_;
     my @blast_raw_results = split(/\t/,$line);
+    next unless($blast_raw_results[3] == $self->word_size);
     if(@blast_raw_results  > 8 && $blast_raw_results[2] >= $highest_identity)
     {
       $top_hit{allele_name} = $blast_raw_results[0];

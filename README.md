@@ -9,4 +9,5 @@ New, unseen alleles are saved in FASTA format, with 1 per file, for submission t
 
 It requires NCBI Blast+ to be installed and uses blastn and makeblastdb.
 
+
 For any queries, contact path-help@sanger.ac.uk

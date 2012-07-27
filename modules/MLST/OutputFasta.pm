@@ -29,6 +29,8 @@ has 'output_directory'        => ( is => 'ro', isa => 'Str',          required =
 has 'input_fasta_file'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
 
 has '_fasta_filename'         => ( is => 'ro', isa => 'Str',          lazy => 1, builder => '_build__fasta_filename' ); 
+has 'concat_sequence'         => ( is => 'rw', isa => 'Maybe[Str]' );
+
 
 sub _build__fasta_filename
 {
@@ -47,12 +49,10 @@ sub create_files
 {
   my($self) = @_;
   make_path($self->output_directory);
-  
+  $self->_fasta_filename;
   if(defined($self->matching_sequences) && %{$self->matching_sequences})
   {
-    my $matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.mlst_loci.fa'));
-    my $out = Bio::SeqIO->new(-file => "+>$matching_output_filename" , '-format' => 'Fasta');
-    
+
     my %matching_sequences = %{$self->matching_sequences};
     my %combined_sequences = (%matching_sequences);
     
@@ -63,7 +63,7 @@ sub create_files
     }
     my $concat_sequence = $self->_sort_and_join_sequences(\%combined_sequences);
     
-    $out->write_seq(Bio::PrimarySeq->new(-seq => $concat_sequence, -id  => $self->_fasta_filename));
+    $self->concat_sequence($concat_sequence);
   }
   
   if(defined($self->non_matching_sequences) && %{$self->non_matching_sequences})
@@ -73,7 +73,7 @@ sub create_files
     {
       next if(length($self->non_matching_sequences->{$sequence_name}) < 2);
       next if($self->_does_sequence_contain_all_unknowns($self->non_matching_sequences->{$sequence_name}));
-      my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_locus.'.$sequence_name.'.fa'));
+      my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_allele.'.$sequence_name.'.fa'));
       my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
       $out->write_seq(Bio::PrimarySeq->new(-seq => $self->non_matching_sequences->{$sequence_name}, -id  => $sequence_name));
     }
