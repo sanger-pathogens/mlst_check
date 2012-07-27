@@ -82,7 +82,7 @@ sub create_result_files
 {
   my($self) = @_;
   my $spreadsheet = MLST::Spreadsheet::File->new(
-    spreadsheet_rows => $self->spreadsheet_rows,
+    spreadsheet_rows => $self->_spreadsheet_rows,
     output_directory => $self->output_directory,
     spreadsheet_basename => $self->spreadsheet_basename
   );

@@ -26,7 +26,7 @@ sub _builder_database_names
   opendir(my $dh,$self->base_directory);
   my @database_names = grep { /^[^\.]/ } readdir($dh);
 
-  for my $file_or_dir_name (@database_names)
+  for my $file_or_dir_name (sort(@database_names))
   {
     next unless(-d ($self->base_directory.'/'.$file_or_dir_name));
     push(@only_directories, $file_or_dir_name);
