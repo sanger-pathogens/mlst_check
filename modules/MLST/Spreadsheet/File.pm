@@ -40,16 +40,16 @@ sub create
   $allele_csv->eol ("\r\n");
   $genomic_csv->eol ("\r\n");
   
-  $allele_csv->print ($allele_fh, $_) for $self->_header;
-  $genomic_csv->print ($genomic_fh, $_) for $self->_header;
+  $allele_csv->print ($allele_fh, $_) for $self->header;
+  $genomic_csv->print ($genomic_fh, $_) for $self->header;
   
   for my $row (@{$self->spreadsheet_allele_numbers_rows})
   {
-    $allele_csv->print ($allele_fh, $_) for $row->allele_numbers_row;
+    $allele_csv->print ($allele_fh, $_) for $row;
   }
   for my $row (@{$self->spreadsheet_genomic_rows})
   {
-    $genomic_csv->print ($genomic_fh, $_) for $row->genomic_row;
+    $genomic_csv->print ($genomic_fh, $_) for $row;
   }
   close($allele_fh);
   close($genomic_fh);
