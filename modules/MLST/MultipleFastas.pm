@@ -19,6 +19,7 @@ MLST::MultipleFastas->new(
 
 package MLST::MultipleFastas;
 use Moose;
+use Parallel::ForkManager;
 use MLST::ProcessFasta;
 use MLST::Spreadsheet::File;
 
@@ -31,6 +32,8 @@ has 'output_directory'      => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'output_fasta_files'    => ( is => 'ro', isa => 'Bool',     default  => 0 ); 
 has 'spreadsheet_basename'  => ( is => 'ro', isa => 'Str',      default  => 'mlst_results' ); 
 
+has 'parallel_processes'    => ( is => 'ro', isa => 'Int',      default  => 1 ); 
+
 has '_spreadsheet_rows'     => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__spreadsheet_rows' ); 
 has '_input_fasta_files'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__input_fasta_files'); 
 
@@ -38,8 +41,10 @@ sub _build__spreadsheet_rows
 {
   my($self) = @_;
   my @spreadsheet_rows;
+  my $pm = new Parallel::ForkManager($self->parallel_processes); 
   for my $fastafile (@{$self->_input_fasta_files})
   {
+    $pm->start and next; # do the fork
     my $fasta_sequence_type_results = MLST::ProcessFasta->new(
       species            => $self->species,
       base_directory     => $self->base_directory,
@@ -50,7 +55,9 @@ sub _build__spreadsheet_rows
       output_fasta_files => $self->fasta_files
     );
     push(@spreadsheet_rows, $fasta_sequence_type_results->_spreadsheet_row_obj);
+    $pm->finish; # do the exit in the child process
   }
+  $pm->wait_all_children;
   return \@spreadsheet_rows;
 }
 
