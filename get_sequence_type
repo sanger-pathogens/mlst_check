@@ -25,22 +25,23 @@ BEGIN { unshift(@INC, './modules') }
 use Moose;
 use Getopt::Long;
 use Cwd;
-use MLST::ProcessFasta;
-use MLST::Spreadsheet::File;
+use MLST::MultipleFastas;
+use MLST::Databases;
 
-my ($species, $fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $help);
+my ($species, $output_fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename, $help);
 
-GetOptions ('s|species=s'           => \$species,
-            'o|output_directory=s'  => \$output_directory,
-            'c|fasta_files'         => \$fasta_files,
-            'a|available_databases' => \$available_databases,
-            'b|mlst_base_directory' => \$base_directory,
-            'm|makeblastdb_exec'    => \$makeblastdb_exec,
-            'n|blastn_exec'         => \$blastn_exec,
-            'h|help'                => \$help,
+GetOptions ('s|species=s'              => \$species,
+            'o|output_directory=s'     => \$output_directory,
+            'c|output_fasta_files'     => \$output_fasta_files,
+            'a|available_databases'    => \$available_databases,
+            'b|mlst_base_directory=s'  => \$base_directory,
+            'm|makeblastdb_exec=s'     => \$makeblastdb_exec,
+            'n|blastn_exec=s'          => \$blastn_exec,
+            'p|spreadsheet_basename=s' => \$spreadsheet_basename,
+            'h|help'                   => \$help,
 );
 
-(  (defined($species)) && (@ARGV > 0) && ! $help)or die <<USAGE;
+(  ((defined($species) && (@ARGV > 0)) || (defined($available_databases))) && ! $help)or die <<USAGE;
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
@@ -68,38 +69,30 @@ $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 $makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/makeblastdb';
 $blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
 
+$spreadsheet_basename ||= 'mlst_results';
 $output_directory ||= getcwd;
-$fasta_files ||= 0;
+$output_fasta_files ||= 0;
 
-# check all fasta files exist first
-for my $fastafile (@ARGV)
+if(defined($available_databases))
 {
-  if(!(-e $fastafile ))
-  {
-    die "Input file doesnt exist: $fastafile\n";
-  }
-}
-
-my @spreadsheet_rows;
-for my $fastafile (@ARGV)
-{
-  my $fasta_sequence_type_results = MLST::ProcessFasta->new(
-    'species'            => $species,
-    'base_directory'     => $base_directory,
-    'fasta_file'         => $fastafile,
-    'makeblastdb_exec'   => $makeblastdb_exec,
-    'blastn_exec'        => $blastn_exec,
-    'output_directory'   => $output_directory,
-    'output_fasta_files' => $fasta_files
+  my $mlst_dbs = MLST::Databases->new(
+    base_directory => $base_directory,
   );
-  push(@spreadsheet_rows, $fasta_sequence_type_results->_spreadsheet_row_obj);
+  $mlst_dbs->print_db_list;
 }
-
-my $spreadsheet = MLST::Spreadsheet::File->new(
-  spreadsheet_rows => \@spreadsheet_rows,
-  output_directory => $output_directory,
-  spreadsheet_basename => 'mlst_results'
-);
-$spreadsheet->create();
+else
+{
+  my $multiple_fastas = MLST::MultipleFastas->new(
+    'species'               => $species,
+    'base_directory'        => $base_directory,
+    'raw_input_fasta_files' => \@ARGV,
+    'makeblastdb_exec'      => $makeblastdb_exec,
+    'blastn_exec'           => $blastn_exec,
+    'output_directory'      => $output_directory,
+    'output_fasta_files'    => $output_fasta_files,
+    'spreadsheet_basename'  => $spreadsheet_basename
+  );
+  $multiple_fastas->create_result_files;
+}
 
 # list all available MLST databases
