@@ -48,7 +48,7 @@ sub _build__spreadsheet_rows
     my $fasta_sequence_type_results = MLST::ProcessFasta->new(
       species            => $self->species,
       base_directory     => $self->base_directory,
-      fasta_file         => $self->fastafile,
+      fasta_file         => $fastafile,
       makeblastdb_exec   => $self->makeblastdb_exec,
       blastn_exec        => $self->blastn_exec,
       output_directory   => $self->output_directory,
