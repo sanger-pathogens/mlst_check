@@ -19,13 +19,14 @@ package MLST::Blast::Database;
 use Moose;
 use File::Temp;
 use MLST::Types;
+use Cwd;
 
 # input variables
 has 'fasta_file'         => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'exec'               => ( is => 'ro', isa => 'MLST::Executable', default  => 'makeblastdb' ); 
 
 # Generated
-has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(CLEANUP => 1); });
+has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(DIR => getcwd, CLEANUP => 1); });
 has 'location'           => ( is => 'ro', isa => 'Str', lazy => 1,  builder => '_build_location' ); 
 
 sub _build_location
