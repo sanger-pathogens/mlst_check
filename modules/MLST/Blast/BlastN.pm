@@ -19,7 +19,6 @@ $blast_database->top_hit();
 
 package MLST::Blast::BlastN;
 use Moose;
-use File::Temp;
 use MLST::Types;
 
 # input variables
