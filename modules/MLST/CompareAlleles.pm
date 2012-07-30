@@ -21,8 +21,9 @@ use File::Basename;
 use Bio::SeqIO;
 use MLST::Blast::Database;
 use MLST::Blast::BlastN;
+use MLST::Types;
 
-has 'sequence_filename'      => ( is => 'ro', isa => 'Str',      required => 1 );
+has 'sequence_filename'      => ( is => 'ro', isa => 'MLST::File',      required => 1 );
 has 'allele_filenames'       => ( is => 'ro', isa => 'ArrayRef', required => 1 );
 has 'makeblastdb_exec'       => ( is => 'ro', isa => 'Str',      default  => 'makeblastdb' );
 has 'blastn_exec'            => ( is => 'ro', isa => 'Str',      default  => 'blastn' );
