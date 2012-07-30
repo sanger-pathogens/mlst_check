@@ -17,8 +17,9 @@ $st->sequence_type();
 
 package MLST::SequenceType;
 use Moose;
+use MLST::Types;
 
-has 'profiles_filename'     => ( is => 'ro', isa => 'Str',        required => 1 ); 
+has 'profiles_filename'     => ( is => 'ro', isa => 'MLST::File',        required => 1 ); 
 has 'sequence_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 ); 
 
 has 'allele_to_number'     => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 

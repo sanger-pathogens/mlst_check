@@ -22,6 +22,7 @@ path-help@sanger.ac.uk
 package SequenceType::Main;
 
 BEGIN { unshift(@INC, './modules') }
+use lib "/software/pathogen/internal/prod/lib";
 use Moose;
 use Getopt::Long;
 use Cwd;
@@ -102,5 +103,3 @@ else
   );
   $multiple_fastas->create_result_files;
 }
-
-# list all available MLST databases

@@ -24,10 +24,11 @@ use MLST::CompareAlleles;
 use MLST::SequenceType;
 use MLST::OutputFasta;
 use MLST::Spreadsheet::Row;
+use MLST::Types;
 
 has 'species'             => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'base_directory'      => ( is => 'ro', isa => 'Str',      required => 1 ); 
-has 'fasta_file'          => ( is => 'ro', isa => 'Str',      required => 1 ); 
+has 'fasta_file'          => ( is => 'ro', isa => 'MLST::File',      required => 1 ); 
 has 'makeblastdb_exec'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'blastn_exec'         => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'output_directory'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
