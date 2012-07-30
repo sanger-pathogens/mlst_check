@@ -58,7 +58,7 @@ ok(($multiple_fastas = MLST::MultipleFastas->new(
   output_directory      => $tmpdirectory,
   output_fasta_files    => 1,
   spreadsheet_basename  => 'mlst_results',
-  parallel_processes    => 1
+  parallel_processes    => 3
 )),'Initialise 3 files where 1 has near matches');
 ok(($multiple_fastas->create_result_files),'create all the results files for three fastas');
 compare_files('t/data/expected_three_mlst_results.genomic.csv', $tmpdirectory.'/mlst_results.genomic.csv');
@@ -79,5 +79,9 @@ sub compare_files
   open(ACTUAL, $actual_file);
   my $expected_line = <EXPECTED>;
   my $actual_line = <ACTUAL>;
-  is($expected_line,$actual_line, 'Content matches expected');
+  
+  # parallel processes mean the order isnt guaranteed.
+  my $sorted_expected = sort(split(/\n/,$expected_line));
+  my $sorted_actual  = sort(split(/\n/,$actual_line));
+  is_deeply($sorted_expected,$sorted_actual, 'Content matches expected');
 }

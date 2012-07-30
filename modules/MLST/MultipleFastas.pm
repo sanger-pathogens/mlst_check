@@ -24,6 +24,7 @@ use MLST::ProcessFasta;
 use MLST::Spreadsheet::File;
 use MLST::NormaliseFasta;
 use File::Temp;
+use Cwd;
 
 has 'species'               => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'base_directory'        => ( is => 'ro', isa => 'Str',      required => 1 ); 
@@ -43,7 +44,7 @@ has '_input_fasta_files'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, build
 
 has '_concat_names'      => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
 has '_concat_sequences' => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
-has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(CLEANUP => 1); });
+has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(DIR => getcwd, CLEANUP => 1); });
 
 sub _generate_spreadsheet_rows
 {
@@ -71,10 +72,16 @@ sub _generate_spreadsheet_rows
   for my $fastafile (@{$self->_input_fasta_files})
   {
     $pm->start and next; # do the fork
+    
+    my $output_fasta_obj = MLST::NormaliseFasta->new(
+      fasta_filename     => $fastafile,
+      working_directory  => $self->_working_directory->dirname()
+    );
+    
     my $fasta_sequence_type_results = MLST::ProcessFasta->new(
       species            => $self->species,
       base_directory     => $self->base_directory,
-      fasta_file         => $fastafile,
+      fasta_file         => $output_fasta_obj->processed_fasta_filename(),
       makeblastdb_exec   => $self->makeblastdb_exec,
       blastn_exec        => $self->blastn_exec,
       output_directory   => $self->output_directory,
@@ -96,18 +103,7 @@ sub _generate_spreadsheet_rows
 sub _build__input_fasta_files
 {
   my($self) = @_;
-  my @normalised_fasta_files;
-  
-  for my $fastafile (@{$self->raw_input_fasta_files})
-  {
-    my $output_fasta_obj = MLST::NormaliseFasta->new(
-      fasta_filename     => $fastafile,
-      working_directory  => $self->_working_directory->dirname()
-    );
-    push(@normalised_fasta_files,$output_fasta_obj->processed_fasta_filename());
-  }
-  
-  return \@normalised_fasta_files;
+  return $self->raw_input_fasta_files;
 }
 
 sub create_result_files

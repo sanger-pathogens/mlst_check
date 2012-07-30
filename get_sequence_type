@@ -54,7 +54,7 @@ get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanoth
 # or
 get_sequence_type -s "Clostridium difficile" *.fa
 
-# Split into 8 parallel processes (much faster), default is 1
+# Split into 8 parallel processes (much faster), default is 2
 get_sequence_type -s "Clostridium difficile" -d 8 *.fa
 
 # output a fasta file with the concatenated alleles and unknown sequences
@@ -79,7 +79,7 @@ $blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
 $spreadsheet_basename ||= 'mlst_results';
 $output_directory ||= getcwd;
 $output_fasta_files ||= 0;
-$parallel_processes ||= 1;
+$parallel_processes ||= 2;
 
 if(defined($available_databases))
 {
