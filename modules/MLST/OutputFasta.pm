@@ -22,11 +22,12 @@ use File::Basename;
 use File::Path qw(make_path);
 use Bio::PrimarySeq;
 use Bio::SeqIO;
+use MLST::Types;
 
 has 'matching_sequences'      => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
 has 'non_matching_sequences'  => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
 has 'output_directory'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
-has 'input_fasta_file'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
+has 'input_fasta_file'        => ( is => 'ro', isa => 'MLST::File',          required => 1 ); 
 
 has '_fasta_filename'         => ( is => 'ro', isa => 'Str',          lazy => 1, builder => '_build__fasta_filename' ); 
 has 'concat_sequence'         => ( is => 'rw', isa => 'Maybe[Str]' );

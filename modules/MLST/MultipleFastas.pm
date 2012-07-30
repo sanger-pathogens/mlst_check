@@ -22,6 +22,8 @@ use Moose;
 use Parallel::ForkManager;
 use MLST::ProcessFasta;
 use MLST::Spreadsheet::File;
+use MLST::NormaliseFasta;
+use File::Temp;
 
 has 'species'               => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'base_directory'        => ( is => 'ro', isa => 'Str',      required => 1 ); 
@@ -41,6 +43,7 @@ has '_input_fasta_files'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, build
 
 has '_concat_names'      => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
 has '_concat_sequences' => ( is => 'rw', isa => 'ArrayRef', default => sub {[]} ); 
+has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(CLEANUP => 1); });
 
 sub _generate_spreadsheet_rows
 {
@@ -93,18 +96,18 @@ sub _generate_spreadsheet_rows
 sub _build__input_fasta_files
 {
   my($self) = @_;
-  # TODO: Validate and Reformat the fasta files if theres a pipe character
-
-  # Validate
+  my @normalised_fasta_files;
+  
   for my $fastafile (@{$self->raw_input_fasta_files})
   {
-    if(!(-e $fastafile ))
-    {
-      die "Input file doesnt exist: $fastafile\n";
-    }
+    my $output_fasta_obj = MLST::NormaliseFasta->new(
+      fasta_filename     => $fastafile,
+      working_directory  => $self->_working_directory->dirname()
+    );
+    push(@normalised_fasta_files,$output_fasta_obj->processed_fasta_filename());
   }
   
-  return $self->raw_input_fasta_files;
+  return \@normalised_fasta_files;
 }
 
 sub create_result_files

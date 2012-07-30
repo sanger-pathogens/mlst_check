@@ -26,7 +26,7 @@ sub species_name_regex
     species_name => $regex,
     base_directory => 't/data'
   )),"initialise searching for files with $regex");
-  is_deeply(['t/data/Escherichia_coli_1/alleles/aaa.tfa', 't/data/Escherichia_coli_1/alleles/bbb.tfa'],$search_results->allele_filenames(),"allele filenames for $regex");
+  is_deeply(['t/data/Escherichia_coli_1/alleles/adk.tfa', 't/data/Escherichia_coli_1/alleles/purA.tfa','t/data/Escherichia_coli_1/alleles/recA.tfa'],$search_results->allele_filenames(),"allele filenames for $regex");
   is('t/data/Escherichia_coli_1/profiles/escherichia_coli.txt', $search_results->profiles_filename(),"profiles filename for $regex");
   
 }
