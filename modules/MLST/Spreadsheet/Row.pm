@@ -33,7 +33,7 @@ sub _build__common_cells
   my @common_cells = (
     $self->compare_alleles->sequence_filename_root,
     $self->sequence_type_obj->sequence_type_or_nearest,
-    ($self->compare_alleles->new_st ? "New ST" : ''),
+    ($self->compare_alleles->new_st || defined($self->sequence_type_obj->nearest_sequence_type) ? "New ST" : ''),
     ($self->compare_alleles->contamination ? "Contamination" : ''),
   );
   return \@common_cells;
