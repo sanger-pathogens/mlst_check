@@ -19,6 +19,7 @@ package MLST::CompareAlleles;
 use Moose;
 use File::Basename;
 use Bio::SeqIO;
+use Bio::Perl;
 use MLST::Blast::Database;
 use MLST::Blast::BlastN;
 use MLST::Types;
@@ -117,11 +118,11 @@ sub _build_matching_sequences
     
     if($top_blast_hit{percentage_identity} == 100 )
     {
-      $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size);
+      $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});
     }
     else
     {
-      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size);
+      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});
       $self->new_st(1);
     }
   }
@@ -132,13 +133,18 @@ sub _build_matching_sequences
 
 sub _get_blast_hit_sequence
 {
-   my ($self, $contig_name, $start, $end, $word_size) = @_;
+   my ($self, $contig_name, $start, $end, $word_size, $reverse_complement) = @_;
    seek($self->_sequence_handle->_fh, 0,0);
    while( my $input_sequence_obj = $self->_sequence_handle->next_seq() ) 
    {
-
      next if( $input_sequence_obj->id ne $contig_name);
      my $sequence = $input_sequence_obj->subseq($start, $end);
+     if($reverse_complement)
+     {
+       my $reverse_sequence = revcom( $sequence );
+       $sequence = $reverse_sequence->{seq};
+     }
+     
      $sequence = $self->_pad_out_sequence($sequence, $word_size);
      return $sequence;
    }
