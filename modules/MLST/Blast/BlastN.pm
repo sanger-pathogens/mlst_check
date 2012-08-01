@@ -60,6 +60,7 @@ sub _build_top_hit
       $top_hit{allele_name} = $blast_raw_results[0];
       $top_hit{percentage_identity} = int($blast_raw_results[2]);
       $top_hit{source_name} = $blast_raw_results[1];
+      $top_hit{reverse} = 0;
       
       my $start  = $blast_raw_results[8];
       my $end  = $blast_raw_results[9];
@@ -68,6 +69,7 @@ sub _build_top_hit
         my $tmp = $start;
         $start = $end;
         $end = $tmp;
+        $top_hit{reverse} = 1;
       }
       
       $top_hit{source_start} = $start;
