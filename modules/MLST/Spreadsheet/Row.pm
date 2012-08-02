@@ -30,10 +30,24 @@ has '_allele_order'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder 
 sub _build__common_cells
 {
   my($self) = @_;
+  
+  #cause the variable to be built.
+  $self->sequence_type_obj->sequence_type;
+  my $new_st_cell = '';
+  if($self->compare_alleles->new_st )
+  {
+     $new_st_cell = "Unknown";
+  }
+  elsif($self->sequence_type_obj->nearest_sequence_type)
+  {
+     $new_st_cell = "Novel ST";
+  }
+
+  
   my @common_cells = (
     $self->compare_alleles->sequence_filename_root,
     $self->sequence_type_obj->sequence_type_or_nearest,
-    ($self->compare_alleles->new_st || defined($self->sequence_type_obj->nearest_sequence_type) ? "New ST" : ''),
+    $new_st_cell,
     ($self->compare_alleles->contamination ? "Contamination" : ''),
   );
   return \@common_cells;
