@@ -2,14 +2,14 @@
 use strict;
 use warnings;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
-    my @all_modules;
-    my $cmd = "grep -R package ./modules | awk '{print \$2};' | ";
+    my @all_lib;
+    my $cmd = "grep -R package ./lib | awk '{print \$2};' | ";
 
-    open(my $modules, $cmd) or die "Couldnt open modules directory";
-    while(<$modules>)
+    open(my $lib, $cmd) or die "Couldnt open lib directory";
+    while(<$lib>)
     {
       chomp;
       my $line = $_;

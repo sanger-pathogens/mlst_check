@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
     use Bio::MLST::CompareAlleles;

@@ -21,10 +21,9 @@ path-help@sanger.ac.uk
 =cut
 package Download::Main;
 
-BEGIN { unshift(@INC, './modules') }
+use lib "/software/pathogen/internal/prod/lib";
 use Moose;
 use Getopt::Long;
-
 use Bio::MLST::DatabaseSettings;
 use Bio::MLST::Download::Databases;
 
@@ -45,14 +44,16 @@ download_mlst_databases
 # XML file containing details of the MLST databases (from pubmlst)
 download_mlst_databases -c my_config_file.json
 
-# destination base directory defaults to /lustre/scratch108/pathogen/pathpipe/prokaryotes/mlst
+# destination base directory defaults to the environment variable \$MLST_DATABASES
 download_mlst_databases -b /path/to/destination
 
 USAGE
 ;
 
-$config_file    ||= 'http://pubmlst.org/data/dbases.xml';
+$base_directory ||= $ENV{MLST_DATABASES};
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+
+$config_file    ||= 'http://pubmlst.org/data/dbases.xml';
 
 my $database_settings = Bio::MLST::DatabaseSettings->new(filename => $config_file)->settings;
 my $databases = Bio::MLST::Download::Databases->new(

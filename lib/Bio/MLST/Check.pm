@@ -1,11 +1,12 @@
+# ABSTRACT: Multilocus sequence typing checking
 =head1 NAME
 
-MultipleFastas - Take in a list of fasta files, lookup the MLST database and create relevant files.
+Multilocus sequence typing checking
 
 =head1 SYNOPSIS
 
-use Bio::MLST::MultipleFastas;
-Bio::MLST::MultipleFastas->new(
+use Bio::MLST::Check;
+Bio::MLST::Check->new(
   'species'           => 'E.coli',
   'base_directory'    => '/path/to/dir',
   'raw_input_fasta_files'  => ['myfasta.fa'],
@@ -17,7 +18,7 @@ Bio::MLST::MultipleFastas->new(
 
 =cut
 
-package Bio::MLST::MultipleFastas;
+package Bio::MLST::Check;
 use Moose;
 use Parallel::ForkManager;
 use Bio::MLST::ProcessFasta;

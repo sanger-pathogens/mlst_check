@@ -4,7 +4,7 @@ use warnings;
 use File::Temp;
 use Bio::SeqIO;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
     use_ok('Bio::MLST::NormaliseFasta');
