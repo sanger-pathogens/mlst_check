@@ -6,10 +6,10 @@ use File::Temp;
 BEGIN { unshift(@INC, './modules') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::Databases');
+    use_ok('Bio::MLST::Databases');
 }
 
-ok((my $mlst_dbs = MLST::Databases->new(
+ok((my $mlst_dbs = Bio::MLST::Databases->new(
   base_directory => 't/data',
 )),'initialise available databases');
 

@@ -1,12 +1,12 @@
 =head1 NAME
 
-BlastN - Take in a fasta file and create a temporary blast database
+BlastN - Run blast and find the top hit
 
 =head1 SYNOPSIS
 
-use MLST::Blast::BlastN;
+use Bio::MLST::Blast::BlastN;
 
-my $blast_database= MLST::Blast::BlastN->new(
+my $blast_database= Bio::MLST::Blast::BlastN->new(
   blast_database => 'output_contigs',
   query_file     => 'alleles/adk.tfa',
   word_size      => 500,
@@ -17,15 +17,15 @@ $blast_database->top_hit();
 
 =cut
 
-package MLST::Blast::BlastN;
+package Bio::MLST::Blast::BlastN;
 use Moose;
-use MLST::Types;
+use Bio::MLST::Types;
 
 # input variables
 has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'query_file'         => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'word_size'          => ( is => 'ro', isa => 'Int', required => 1 ); 
-has 'exec'               => ( is => 'ro', isa => 'MLST::Executable', default  => 'blastn' ); 
+has 'exec'               => ( is => 'ro', isa => 'Bio::MLST::Executable', default  => 'blastn' ); 
 has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 95 );
 
 # Generated

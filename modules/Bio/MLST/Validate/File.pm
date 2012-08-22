@@ -6,7 +6,7 @@ File - Does a file exist?
 
 =cut
 
-package MLST::Validate::File;
+package Bio::MLST::Validate::File;
 use Moose;
 
 sub does_file_exist

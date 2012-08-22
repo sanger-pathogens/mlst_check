@@ -4,9 +4,9 @@ OutputFasta - Take in two hashes, both containing sequence names and sequences a
 
 =head1 SYNOPSIS
 
-use MLST::OutputFasta;
+use Bio::MLST::OutputFasta;
 
-my $output_fasta = MLST::OutputFasta->new(
+my $output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => \%matching_sequences,
   non_matching_sequences => \%non_matching_sequences,
   output_directory => '/path/to/output',
@@ -16,18 +16,18 @@ $output_fasta->create_files();
 
 =cut
 
-package MLST::OutputFasta;
+package Bio::MLST::OutputFasta;
 use Moose;
 use File::Basename;
 use File::Path qw(make_path);
 use Bio::PrimarySeq;
 use Bio::SeqIO;
-use MLST::Types;
+use Bio::MLST::Types;
 
 has 'matching_sequences'      => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
 has 'non_matching_sequences'  => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
 has 'output_directory'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
-has 'input_fasta_file'        => ( is => 'ro', isa => 'MLST::File',          required => 1 ); 
+has 'input_fasta_file'        => ( is => 'ro', isa => 'Bio::MLST::File',          required => 1 ); 
 
 has '_fasta_filename'         => ( is => 'ro', isa => 'Str',          lazy => 1, builder => '_build__fasta_filename' ); 
 has 'concat_sequence'         => ( is => 'rw', isa => 'Maybe[Str]' );

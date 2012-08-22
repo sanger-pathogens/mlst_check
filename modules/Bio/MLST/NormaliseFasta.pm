@@ -4,9 +4,9 @@ NormaliseFasta - Take in a Fasta file, check for invalid characters and build a 
 
 =head1 SYNOPSIS
 
-use MLST::NormaliseFasta;
+use Bio::MLST::NormaliseFasta;
 
-my $output_fasta = MLST::NormaliseFasta->new(
+my $output_fasta = Bio::MLST::NormaliseFasta->new(
   fasta_filename     => 'Filename.fasta'
 
 );
@@ -14,13 +14,13 @@ $output_fasta->processed_fasta_filename();
 
 =cut
 
-package MLST::NormaliseFasta;
+package Bio::MLST::NormaliseFasta;
 use Moose;
 use Bio::SeqIO;
 use File::Basename;
-use MLST::Types;
+use Bio::MLST::Types;
 
-has 'fasta_filename'      => ( is => 'ro', isa => 'MLST::File',  required => 1 ); 
+has 'fasta_filename'      => ( is => 'ro', isa => 'Bio::MLST::File',  required => 1 ); 
 has 'working_directory'   => ( is => 'ro', isa => 'Str',         required => 1 ); 
 
 has '_normalised_fasta_filename' => ( is => 'ro', isa => 'Str',  lazy => 1, builder => '_build__normalised_fasta_filename' ); 

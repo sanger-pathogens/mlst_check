@@ -4,8 +4,8 @@ Spreadsheet::Row - Create a row representation of the ST results for a single fa
 
 =head1 SYNOPSIS
 
-use MLST::Spreadsheet::Row;
-my $spreadsheet_row_obj = MLST::Spreadsheet::Row->new(
+use Bio::MLST::Spreadsheet::Row;
+my $spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(
   sequence_type_obj => $sequence_type_obj, 
   compare_alleles   => $compare_alleles
 );
@@ -15,11 +15,11 @@ $spreadsheet_row_obj->genomic_row;
 
 =cut
 
-package MLST::Spreadsheet::Row;
+package Bio::MLST::Spreadsheet::Row;
 use Moose;
 
-has 'sequence_type_obj'  => ( is => 'ro', isa => 'MLST::SequenceType',     required => 1 ); 
-has 'compare_alleles'    => ( is => 'ro', isa => 'MLST::CompareAlleles',   required => 1 ); 
+has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
+has 'compare_alleles'    => ( is => 'ro', isa => 'Bio::MLST::CompareAlleles',   required => 1 ); 
                         
 has 'allele_numbers_row' => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_numbers_row'); 
 has 'genomic_row'        => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_genomic_row'); 

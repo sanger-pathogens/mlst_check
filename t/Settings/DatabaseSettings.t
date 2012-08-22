@@ -6,10 +6,10 @@ use File::Temp;
 BEGIN { unshift(@INC, './modules') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::DatabaseSettings');
+    use_ok('Bio::MLST::DatabaseSettings');
 }
 
-ok((my $database_settings = MLST::DatabaseSettings->new(filename     => 't/data/overall_databases.xml')), 'initialise database settings');
+ok((my $database_settings = Bio::MLST::DatabaseSettings->new(filename     => 't/data/overall_databases.xml')), 'initialise database settings');
 ok((my $settings  = $database_settings->settings), 'get settings datastructure');
 
 is($settings->{"Bordetella spp."}->{profiles}, "t/data/bordetella.txt", 'get profile url');

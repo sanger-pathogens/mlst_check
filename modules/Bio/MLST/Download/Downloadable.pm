@@ -4,11 +4,11 @@ Role to download everything data
 
 =head1 SYNOPSIS
 
-with 'MLST::Download::Downloadable';
+with 'Bio::MLST::Download::Downloadable';
 
 =cut
 
-package MLST::Download::Downloadable;
+package Bio::MLST::Download::Downloadable;
 use Moose::Role;
 use File::Copy;
 use File::Basename;

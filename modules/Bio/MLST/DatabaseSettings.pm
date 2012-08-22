@@ -4,14 +4,14 @@ DatabaseSettings - read in an XML file of settings and return a hash with the va
 
 =head1 SYNOPSIS
 
-use MLST::DatabaseSettings;
-my $database_settings = MLST::DatabaseSettings->new(
+use Bio::MLST::DatabaseSettings;
+my $database_settings = Bio::MLST::DatabaseSettings->new(
   filename     => 'filename'
 );
 $database_settings->settings;
 =cut
 
-package MLST::DatabaseSettings;
+package Bio::MLST::DatabaseSettings;
 use Moose;
 use XML::LibXML;
 

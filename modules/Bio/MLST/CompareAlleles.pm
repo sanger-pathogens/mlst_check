@@ -4,9 +4,9 @@ CompareAlleles - Take in an assembly file in Fasta format, and a list of allele 
 
 =head1 SYNOPSIS
 
-use MLST::CompareAlleles;
+use Bio::MLST::CompareAlleles;
 
-my $compare_alleles = MLST::CompareAlleles->new(
+my $compare_alleles = Bio::MLST::CompareAlleles->new(
 
   sequence_filename => 'contigs.fa',
   allele_filenames => ['abc.tfa','efg.tfa']
@@ -15,22 +15,22 @@ $compare_alleles->found_sequence_names;
 $compare_alleles->matching_sequences;
 =cut
 
-package MLST::CompareAlleles;
+package Bio::MLST::CompareAlleles;
 use Moose;
 use File::Basename;
 use Bio::SeqIO;
 use Bio::Perl;
-use MLST::Blast::Database;
-use MLST::Blast::BlastN;
-use MLST::Types;
+use Bio::MLST::Blast::Database;
+use Bio::MLST::Blast::BlastN;
+use Bio::MLST::Types;
 
-has 'sequence_filename'      => ( is => 'ro', isa => 'MLST::File',      required => 1 );
+has 'sequence_filename'      => ( is => 'ro', isa => 'Bio::MLST::File',      required => 1 );
 has 'allele_filenames'       => ( is => 'ro', isa => 'ArrayRef', required => 1 );
 has 'makeblastdb_exec'       => ( is => 'ro', isa => 'Str',      default  => 'makeblastdb' );
 has 'blastn_exec'            => ( is => 'ro', isa => 'Str',      default  => 'blastn' );
 
 has '_sequence_handle'       => ( is => 'ro', isa => 'Bio::SeqIO::fasta',     lazy => 1,  builder => '_build__sequence_handle');
-has '_blast_db_location_obj' => ( is => 'ro', isa => 'MLST::Blast::Database', lazy => 1,  builder => '_build__blast_db_location_obj');
+has '_blast_db_location_obj' => ( is => 'ro', isa => 'Bio::MLST::Blast::Database', lazy => 1,  builder => '_build__blast_db_location_obj');
 has '_blast_db_location'     => ( is => 'ro', isa => 'Str',                   lazy => 1,  builder => '_build__blast_db_location');
 
 has 'matching_sequences'     => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build_matching_sequences' );
@@ -47,7 +47,7 @@ sub _build__blast_db_location
 sub _build__blast_db_location_obj
 {
   my ($self) = @_;
-  return MLST::Blast::Database->new(fasta_file => $self->sequence_filename, exec => $self->makeblastdb_exec);
+  return Bio::MLST::Blast::Database->new(fasta_file => $self->sequence_filename, exec => $self->makeblastdb_exec);
 }
 
 
@@ -94,7 +94,7 @@ sub _build_matching_sequences
   for my $allele_filename (@{$self->allele_filenames})
   {
     my $word_size = $self->_word_size_for_given_allele_file($allele_filename);
-    my $blast_results = MLST::Blast::BlastN->new(
+    my $blast_results = Bio::MLST::Blast::BlastN->new(
       blast_database => $self->_blast_db_location,
       query_file     => $allele_filename,
       word_size      => $word_size,
