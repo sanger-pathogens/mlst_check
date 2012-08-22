@@ -4,9 +4,9 @@ Database - Take in a fasta file and create a tempory blast database
 
 =head1 SYNOPSIS
 
-use MLST::Blast::Database;
+use Bio::MLST::Blast::Database;
 
-my $blast_database= MLST::Blast::Database->new(
+my $blast_database= Bio::MLST::Blast::Database->new(
   fasta_file => 'contigs.fa',
   exec => 'makeblastdb'
 );
@@ -15,15 +15,15 @@ $blast_database->location();
 
 =cut
 
-package MLST::Blast::Database;
+package Bio::MLST::Blast::Database;
 use Moose;
 use File::Temp;
-use MLST::Types;
+use Bio::MLST::Types;
 use Cwd;
 
 # input variables
 has 'fasta_file'         => ( is => 'ro', isa => 'Str', required => 1 ); 
-has 'exec'               => ( is => 'ro', isa => 'MLST::Executable', default  => 'makeblastdb' ); 
+has 'exec'               => ( is => 'ro', isa => 'Bio::MLST::Executable', default  => 'makeblastdb' ); 
 
 # Generated
 has '_working_directory' => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(DIR => getcwd, CLEANUP => 1); });

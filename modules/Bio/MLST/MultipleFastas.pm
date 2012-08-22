@@ -4,8 +4,8 @@ MultipleFastas - Take in a list of fasta files, lookup the MLST database and cre
 
 =head1 SYNOPSIS
 
-use MLST::MultipleFastas;
-MLST::MultipleFastas->new(
+use Bio::MLST::MultipleFastas;
+Bio::MLST::MultipleFastas->new(
   'species'           => 'E.coli',
   'base_directory'    => '/path/to/dir',
   'raw_input_fasta_files'  => ['myfasta.fa'],
@@ -17,12 +17,12 @@ MLST::MultipleFastas->new(
 
 =cut
 
-package MLST::MultipleFastas;
+package Bio::MLST::MultipleFastas;
 use Moose;
 use Parallel::ForkManager;
-use MLST::ProcessFasta;
-use MLST::Spreadsheet::File;
-use MLST::NormaliseFasta;
+use Bio::MLST::ProcessFasta;
+use Bio::MLST::Spreadsheet::File;
+use Bio::MLST::NormaliseFasta;
 use File::Temp;
 use Cwd;
 
@@ -73,12 +73,12 @@ sub _generate_spreadsheet_rows
   {
     $pm->start and next; # do the fork
     
-    my $output_fasta_obj = MLST::NormaliseFasta->new(
+    my $output_fasta_obj = Bio::MLST::NormaliseFasta->new(
       fasta_filename     => $fastafile,
       working_directory  => $self->_working_directory->dirname()
     );
     
-    my $fasta_sequence_type_results = MLST::ProcessFasta->new(
+    my $fasta_sequence_type_results = Bio::MLST::ProcessFasta->new(
       species            => $self->species,
       base_directory     => $self->base_directory,
       fasta_file         => $output_fasta_obj->processed_fasta_filename(),
@@ -111,7 +111,7 @@ sub create_result_files
   my($self) = @_;
   $self->_generate_spreadsheet_rows;
   
-  my $spreadsheet = MLST::Spreadsheet::File->new(
+  my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
     header                          => pop(@{$self->_spreadsheet_header}),
     spreadsheet_allele_numbers_rows => $self->_spreadsheet_allele_numbers_rows,
     spreadsheet_genomic_rows        => $self->_spreadsheet_genomic_rows,

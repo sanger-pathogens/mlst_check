@@ -4,8 +4,8 @@ Database - represents a single genus-species database on a single species
 
 =head1 SYNOPSIS
 
-use MLST::Download::Database;
-my $database = MLST::Download::Database->new(
+use Bio::MLST::Download::Database;
+my $database = Bio::MLST::Download::Database->new(
 
   database_attributes => \%database_attributes,
   base_directory => '/path/to/abc'
@@ -13,11 +13,11 @@ my $database = MLST::Download::Database->new(
 $database->update;
 =cut
 
-package MLST::Download::Database;
+package Bio::MLST::Download::Database;
 use File::Path qw(make_path);
 use Moose;
 
-with 'MLST::Download::Downloadable';
+with 'Bio::MLST::Download::Downloadable';
 
 has 'database_attributes'  => ( is => 'ro', isa => 'HashRef', required => 1 );
 has 'base_directory'       => ( is => 'ro', isa => 'Str',     required => 1 );

@@ -6,7 +6,7 @@ Executable - Validates the executable is available in the path before running it
 
 =cut
 
-package MLST::Validate::Executable;
+package Bio::MLST::Validate::Executable;
 use Moose;
 use File::Which;
 

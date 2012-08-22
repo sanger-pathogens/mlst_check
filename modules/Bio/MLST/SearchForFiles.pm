@@ -4,9 +4,9 @@ SearchForFiles - Take in a species name and get the allele and profile files
 
 =head1 SYNOPSIS
 
-use MLST::SearchForFiles;
+use Bio::MLST::SearchForFiles;
 
-my $search_results = MLST::SearchForFiles->new(
+my $search_results = Bio::MLST::SearchForFiles->new(
   species_name => 'coli',
   base_directory => '/path/to/mlst/data'
 );
@@ -15,14 +15,14 @@ $search_results->profiles_filename();
 
 =cut
 
-package MLST::SearchForFiles;
+package Bio::MLST::SearchForFiles;
 use Moose;
-use MLST::Types;
+use Bio::MLST::Types;
 
 has 'species_name'      => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'base_directory'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
 
-has 'profiles_filename'     => ( is => 'ro', isa => 'MLST::File',      lazy => 1, builder => '_build_profiles_filename');
+has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',      lazy => 1, builder => '_build_profiles_filename');
 has 'allele_filenames'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_filenames');
 has 'search_base_directory' => ( is => 'ro', isa => 'Str',      lazy => 1, builder => '_build__search_base_directory');
 

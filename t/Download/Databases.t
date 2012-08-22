@@ -6,16 +6,16 @@ use File::Temp;
 BEGIN { unshift(@INC, './modules') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::DatabaseSettings');
-    use_ok('MLST::Download::Databases');
+    use_ok('Bio::MLST::DatabaseSettings');
+    use_ok('Bio::MLST::Download::Databases');
 }
 
 my $destination_directory_obj = File::Temp->newdir(CLEANUP =>1);
 my $destination_directory = $destination_directory_obj->dirname();
 
-ok((my $database_settings = MLST::DatabaseSettings->new(filename => 't/data/overall_databases.xml')->settings),"get overall list of databases");
+ok((my $database_settings = Bio::MLST::DatabaseSettings->new(filename => 't/data/overall_databases.xml')->settings),"get overall list of databases");
 
-ok((my $databases = MLST::Download::Databases->new(
+ok((my $databases = Bio::MLST::Download::Databases->new(
   databases_attributes => $database_settings,
   base_directory  => $destination_directory
 )), 'download databases initialisation');

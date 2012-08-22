@@ -4,8 +4,8 @@ Spreadsheet::File - Create a row representation of the ST results for a single f
 
 =head1 SYNOPSIS
 
-use MLST::Spreadsheet::File;
-my $spreadsheet = MLST::Spreadsheet::File->new(
+use Bio::MLST::Spreadsheet::File;
+my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
   spreadsheet_rows => [],
   output_directory => '/path/to/outputdir',
   spreadsheet_basename => 'abc'
@@ -15,10 +15,10 @@ $spreadsheet->create();
 
 =cut
 
-package MLST::Spreadsheet::File;
+package Bio::MLST::Spreadsheet::File;
 use Moose;
 use Text::CSV;
-use MLST::Spreadsheet::Row;
+use Bio::MLST::Spreadsheet::Row;
 
 has 'spreadsheet_allele_numbers_rows'      => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
 has 'spreadsheet_genomic_rows'             => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 

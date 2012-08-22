@@ -4,9 +4,9 @@ SequenceType - Take in a list of matched alleles and look up the sequence type f
 
 =head1 SYNOPSIS
 
-use MLST::SequenceType;
+use Bio::MLST::SequenceType;
 
-my $st = MLST::SequenceType->new(
+my $st = Bio::MLST::SequenceType->new(
   profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
   sequence_names => ['adk-2','purA-3','recA-1']
 );
@@ -15,11 +15,11 @@ $st->sequence_type();
 
 =cut
 
-package MLST::SequenceType;
+package Bio::MLST::SequenceType;
 use Moose;
-use MLST::Types;
+use Bio::MLST::Types;
 
-has 'profiles_filename'     => ( is => 'ro', isa => 'MLST::File',        required => 1 ); 
+has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',        required => 1 ); 
 has 'sequence_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 ); 
 
 has 'allele_to_number'     => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 

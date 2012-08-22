@@ -4,17 +4,17 @@ Databases - represents multiple databases of species
 
 =head1 SYNOPSIS
 
-use MLST::Download::Databases;
-my $databases = MLST::Download::Databases->new(
+use Bio::MLST::Download::Databases;
+my $databases = Bio::MLST::Download::Databases->new(
   databases_attributes     => \@databases_attributes
   base_directory => '/path/to/dir'
 );
 $databases->update;
 =cut
 
-package MLST::Download::Databases;
+package Bio::MLST::Download::Databases;
 use Moose;
-use MLST::Download::Database;
+use Bio::MLST::Download::Database;
 use Parallel::ForkManager;
 
 has 'databases_attributes' => ( is => 'ro', isa => 'HashRef', required => 1 );
@@ -29,7 +29,7 @@ sub update
   for my $species (keys %{$self->databases_attributes})
   {
     $pm->start and next; # do the fork
-    my $database = MLST::Download::Database->new(
+    my $database = Bio::MLST::Download::Database->new(
       species => $species,
       database_attributes => $self->databases_attributes->{$species},
       base_directory      => join('/',($self->base_directory))

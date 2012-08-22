@@ -6,7 +6,7 @@ use File::Temp;
 BEGIN { unshift(@INC, './modules') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::SearchForFiles');
+    use_ok('Bio::MLST::SearchForFiles');
 }
 
 my $search_results;
@@ -22,7 +22,7 @@ done_testing();
 sub species_name_regex
 {
  my $regex = shift;
-  ok(($search_results = MLST::SearchForFiles->new(
+  ok(($search_results = Bio::MLST::SearchForFiles->new(
     species_name => $regex,
     base_directory => 't/data'
   )),"initialise searching for files with $regex");

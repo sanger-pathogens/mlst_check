@@ -7,20 +7,20 @@ use Bio::SeqIO;
 BEGIN { unshift(@INC, './modules') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::NormaliseFasta');
+    use_ok('Bio::MLST::NormaliseFasta');
 }
 
 my $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
-ok((my $output_fasta = MLST::NormaliseFasta->new(
+ok((my $output_fasta = Bio::MLST::NormaliseFasta->new(
   fasta_filename    => 't/data/contigs.fa',
   working_directory => $tmpdirectory
 )),'Initalise file wihtout pipe characters in sequence names');
 is($output_fasta->processed_fasta_filename(),'t/data/contigs.fa', 'file without pipe characters shouldnt change at all');
 
 
-ok(($output_fasta = MLST::NormaliseFasta->new(
+ok(($output_fasta = Bio::MLST::NormaliseFasta->new(
   fasta_filename    => 't/data/contigs_pipe_character_in_seq_name.fa',
   working_directory => $tmpdirectory
 )),'Initalise file with pipe characters in filename');

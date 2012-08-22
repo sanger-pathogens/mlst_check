@@ -4,15 +4,15 @@ Databases - List available MLST databases
 
 =head1 SYNOPSIS
 
-use MLST::Databases;
+use Bio::MLST::Databases;
 
-my $mlst_dbs = MLST::Databases->new(
+my $mlst_dbs = Bio::MLST::Databases->new(
   base_directory => '/path/to/databases',
 );
 $mlst_dbs->print_db_list;
 =cut
 
-package MLST::Databases;
+package Bio::MLST::Databases;
 use Moose;
 
 has 'base_directory'    => ( is => 'ro', isa => 'Str',      required => 1 );
