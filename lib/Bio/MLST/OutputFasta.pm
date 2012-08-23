@@ -1,6 +1,9 @@
 =head1 NAME
+
 Bio::MLST::OutputFasta
+
 =head1 SYNOPSIS
+
 Take in two hashes, both containing sequence names and sequences and output fasta files.
 
 =head1 DESCRIPTION
@@ -14,8 +17,11 @@ my $output_fasta = Bio::MLST::OutputFasta->new(
   input_fasta_file => '/path/to/fasta'
 );
 $output_fasta->create_files();
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::OutputFasta;

@@ -3,9 +3,11 @@
 Bio::MLST::Check
 
 =head1 SYNOPSIS
+
 High throughput multilocus sequence typing (MLST) checking
 
 =head1 DESCRIPTION
+
 This application is for taking Multilocus sequence typing (MLST) sources from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
 Then you can provide FASTA files and get out sequence types for a given MLST database.
 Two spreadsheets are outputted, one contains the allele number for each locus, and the ST (or nearest ST), the other contains the genomic sequence for each allele.  
@@ -41,6 +43,7 @@ Bio::MLST::Check->new(
 );
 
 =head1 CONTACT
+
 path-help@sanger.ac.uk
 
 =cut

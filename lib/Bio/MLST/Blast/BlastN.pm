@@ -18,8 +18,11 @@ my $blast_database= Bio::MLST::Blast::BlastN->new(
 );
 
 $blast_database->top_hit();
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::Blast::BlastN;

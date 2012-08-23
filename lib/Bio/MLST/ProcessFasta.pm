@@ -1,6 +1,9 @@
 =head1 NAME
+
 Bio::MLST::ProcessFasta
+
 =head1 SYNOPSIS
+
 Take in a fasta file, lookup the MLST database and create relevant files.
 
 =head1 DESCRIPTION
@@ -15,8 +18,11 @@ Bio::MLST::ProcessFasta->new(
   'output_directory'  => '/path/to/output',
   'output_fasta_files'=> 1,
 );
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::ProcessFasta;

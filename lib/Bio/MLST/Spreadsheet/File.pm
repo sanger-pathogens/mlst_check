@@ -1,6 +1,9 @@
 =head1 NAME
+
 Bio::MLST::Spreadsheet::File
+
 =head1 SYNOPSIS
+
 Create a row representation of the ST results for a single fasta file.
 
 =head1 DESCRIPTION
@@ -13,8 +16,11 @@ my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
 );
 
 $spreadsheet->create();
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::Spreadsheet::File;
