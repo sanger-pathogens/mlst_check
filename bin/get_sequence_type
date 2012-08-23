@@ -49,11 +49,12 @@ use Bio::MLST::Check;
 use Bio::MLST::Databases;
 use Bio::MLST::Validate::Executable;
 
-my ($species, $output_fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
 
 GetOptions ('s|species=s'              => \$species,
             'o|output_directory=s'     => \$output_directory,
             'c|output_fasta_files'     => \$output_fasta_files,
+            'y|output_phylip_files'    => \$output_phylip_files,
             'a|available_databases'    => \$available_databases,
             'b|mlst_base_directory=s'  => \$base_directory,
             'm|makeblastdb_exec=s'     => \$makeblastdb_exec,
@@ -80,6 +81,9 @@ get_sequence_type -s "Clostridium difficile" -d 8 *.fa
 # output a fasta file with the concatenated alleles and unknown sequences
 get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
 
+# output a phylip file with the concatenated alleles and unknown sequences
+get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
+
 # Specify an output directory 
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
 
@@ -102,9 +106,10 @@ $makeblastdb_exec = 'makeblastdb' unless(Bio::MLST::Validate::Executable->new()-
 $blastn_exec = 'blastn_exec' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
 
 $spreadsheet_basename ||= 'mlst_results';
-$output_directory ||= getcwd;
-$output_fasta_files ||= 0;
-$parallel_processes ||= 2;
+$output_directory    ||= getcwd;
+$output_fasta_files  ||= 0;
+$output_phylip_files ||= 0;
+$parallel_processes  ||= 2;
 
 if(defined($available_databases))
 {
@@ -124,7 +129,8 @@ else
     output_directory      => $output_directory,
     output_fasta_files    => $output_fasta_files,
     spreadsheet_basename  => $spreadsheet_basename,
-    parallel_processes    => $parallel_processes
+    parallel_processes    => $parallel_processes,
+    output_phylip_files   => $output_phylip_files
   );
   $multiple_fastas->create_result_files;
 }

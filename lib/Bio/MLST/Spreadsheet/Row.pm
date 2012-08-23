@@ -122,7 +122,15 @@ sub _build_genomic_row
 sub _build_header_row
 {
   my($self) = @_;
-  my @header_cells = (('Isolate', 'ST','New ST', 'Contamination'), @{$self->_allele_order});
+  
+  my @allele_headers;
+  for my $sequence_name (@{$self->_allele_order})
+  {
+    my @sequence_name_details = split('-',$sequence_name);
+    push(@allele_headers,$sequence_name_details[0]);
+  }
+  
+  my @header_cells = (('Isolate', 'ST','New ST', 'Contamination'), @allele_headers);
   return \@header_cells;
 }
 
