@@ -1,11 +1,13 @@
 =head1 NAME
-
-Role to download everything data
-
+Bio::MLST::Download::Downloadable
 =head1 SYNOPSIS
+Moose Role to download everything data
+
+=head1 DESCRIPTION
 
 with 'Bio::MLST::Download::Downloadable';
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Download::Downloadable;

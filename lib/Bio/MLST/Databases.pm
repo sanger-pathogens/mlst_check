@@ -1,8 +1,11 @@
 =head1 NAME
 
-Databases - List available MLST databases
+Bio::MLST::Databases
 
 =head1 SYNOPSIS
+List available MLST databases
+
+=head1 DESCRIPTION
 
 use Bio::MLST::Databases;
 
@@ -10,6 +13,8 @@ my $mlst_dbs = Bio::MLST::Databases->new(
   base_directory => '/path/to/databases',
 );
 $mlst_dbs->print_db_list;
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Databases;

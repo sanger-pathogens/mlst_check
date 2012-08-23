@@ -1,8 +1,10 @@
 =head1 NAME
-
-CompareAlleles - Take in an assembly file in Fasta format, and a list of allele files (in multifasta format) and return a list of the alleles and IDs.
+Bio::MLST::CompareAlleles
 
 =head1 SYNOPSIS
+Take in an assembly file in Fasta format, and a list of allele files (in multifasta format) and return a list of the alleles and IDs.
+
+=head1 DESCRIPTION
 
 use Bio::MLST::CompareAlleles;
 
@@ -13,6 +15,13 @@ my $compare_alleles = Bio::MLST::CompareAlleles->new(
 );
 $compare_alleles->found_sequence_names;
 $compare_alleles->matching_sequences;
+
+=head1 CONTACT
+
+path-help@sanger.ac.uk
+
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::CompareAlleles;

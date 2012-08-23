@@ -1,9 +1,12 @@
 =head1 NAME
-
-File - Does a file exist?
-
+Bio::MLST::Validate::File
 =head1 SYNOPSIS
+Does a file exist
 
+=head1 DESCRIPTION
+Check to see if a file exists. For validation when classes have input files.
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Validate::File;

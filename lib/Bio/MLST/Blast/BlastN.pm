@@ -1,8 +1,12 @@
 =head1 NAME
 
-BlastN - Run blast and find the top hit
+Bio::MLST::Blast::BlastN
 
 =head1 SYNOPSIS
+
+Run NCBI blast and find the top hit.
+
+=head1 DESCRIPTION
 
 use Bio::MLST::Blast::BlastN;
 
@@ -14,7 +18,8 @@ my $blast_database= Bio::MLST::Blast::BlastN->new(
 );
 
 $blast_database->top_hit();
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Blast::BlastN;

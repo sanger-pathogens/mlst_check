@@ -1,8 +1,9 @@
 =head1 NAME
-
-SequenceType - Take in a list of matched alleles and look up the sequence type from the profile
-
+Bio::MLST::SequenceType
 =head1 SYNOPSIS
+Take in a list of matched alleles and look up the sequence type from the profile
+
+=head1 DESCRIPTION
 
 use Bio::MLST::SequenceType;
 
@@ -12,7 +13,8 @@ my $st = Bio::MLST::SequenceType->new(
 );
 $st->sequence_type();
 
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::SequenceType;

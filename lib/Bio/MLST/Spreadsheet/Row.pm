@@ -1,8 +1,9 @@
 =head1 NAME
-
-Spreadsheet::Row - Create a row representation of the ST results for a single fasta file.
-
+Bio::MLST::Spreadsheet::Row
 =head1 SYNOPSIS
+Create a row representation of the ST results for a single fasta file.
+
+=head1 DESCRIPTION
 
 use Bio::MLST::Spreadsheet::Row;
 my $spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(
@@ -12,7 +13,8 @@ my $spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(
 
 $spreadsheet_row_obj->allele_numbers_row;
 $spreadsheet_row_obj->genomic_row;
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Spreadsheet::Row;

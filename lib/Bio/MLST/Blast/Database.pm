@@ -1,8 +1,11 @@
 =head1 NAME
 
-Database - Take in a fasta file and create a tempory blast database
+Bio::MLST::Blast::Database
 
 =head1 SYNOPSIS
+Take in a fasta file and create a tempory blast database
+
+=head1 DESCRIPTION
 
 use Bio::MLST::Blast::Database;
 
@@ -12,7 +15,8 @@ my $blast_database= Bio::MLST::Blast::Database->new(
 );
 
 $blast_database->location();
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Blast::Database;

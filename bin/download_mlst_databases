@@ -6,11 +6,19 @@ download_mlst_databases
 
 =head1 SYNOPSIS
 
-download_mlst_databases
+This script downloads all the MLST databases locally
 
 =head1 DESCRIPTION
+Downloads all the MLST databases to disk. It requires access to the Internet.
 
-This script downloads all the MLST databases
+# download everything with defaults
+download_mlst_databases
+
+# XML file containing details of the MLST databases (from pubmlst)
+download_mlst_databases -c my_config_file.json
+
+# destination base directory defaults to the environment variable \$MLST_DATABASES
+download_mlst_databases -b /path/to/destination
 
 =head1 CONTACT
 

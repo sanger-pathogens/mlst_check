@@ -1,8 +1,9 @@
 =head1 NAME
-
-Databases - represents multiple databases of species
-
+Bio::MLST::Download::Databases
 =head1 SYNOPSIS
+Represents multiple databases of species
+
+=head1 DESCRIPTION
 
 use Bio::MLST::Download::Databases;
 my $databases = Bio::MLST::Download::Databases->new(
@@ -10,6 +11,8 @@ my $databases = Bio::MLST::Download::Databases->new(
   base_directory => '/path/to/dir'
 );
 $databases->update;
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Download::Databases;

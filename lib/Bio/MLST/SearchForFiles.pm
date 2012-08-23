@@ -1,8 +1,9 @@
 =head1 NAME
-
-SearchForFiles - Take in a species name and get the allele and profile files
-
+Bio::MLST::SearchForFiles
 =head1 SYNOPSIS
+Take in a species name and get the allele and profile files
+
+=head1 DESCRIPTION
 
 use Bio::MLST::SearchForFiles;
 
@@ -12,7 +13,8 @@ my $search_results = Bio::MLST::SearchForFiles->new(
 );
 $search_results->allele_filenames();
 $search_results->profiles_filename();
-
+=head1 CONTACT
+path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::SearchForFiles;
