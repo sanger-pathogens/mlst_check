@@ -16,7 +16,7 @@ path-help@sanger.ac.uk
 =cut
 
 package Bio::MLST::Download::Database;
-use File::Path qw(make_path);
+use File::Path 2.06 qw(make_path);
 use Moose;
 
 with 'Bio::MLST::Download::Downloadable';
