@@ -1,9 +1,15 @@
 =head1 NAME
+
 Bio::MLST::Types
+
 =head1 SYNOPSIS
+
 Moose types to use for validation
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::Types;

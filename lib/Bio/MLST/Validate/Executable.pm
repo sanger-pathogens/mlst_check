@@ -1,12 +1,19 @@
 =head1 NAME
+
 Bio::MLST::Validate::Executable
+
 =head1 SYNOPSIS
+
 Validates the executable is available in the path before running it
 
 =head1 DESCRIPTION
+
 Check to see if an executable is available in the current users PATH.
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::Validate::Executable;
