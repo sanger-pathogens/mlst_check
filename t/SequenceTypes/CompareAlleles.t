@@ -3,13 +3,13 @@ use strict;
 use warnings;
 use File::Temp;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::CompareAlleles');
+    use_ok('Bio::MLST::CompareAlleles');
 }
 
-ok((my $compare_alleles = MLST::CompareAlleles->new(
+ok((my $compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames => ['t/data/adk.tfa','t/data/purA.tfa','t/data/recA.tfa']
 )), 'initialise comparison');
@@ -18,7 +18,7 @@ is_deeply( $compare_alleles->non_matching_sequences, {}, 'no non matching sequen
 is($compare_alleles->new_st, 0, 'existing ST found');
 is($compare_alleles->contamination, 0, 'no contamination found');
 
-ok(($compare_alleles = MLST::CompareAlleles->new(
+ok(($compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames => ['t/data/adk_top_hit_low_hit.tfa']
 )), 'initialise comparison where there are multiple close matches');
@@ -27,7 +27,7 @@ is_deeply( $compare_alleles->non_matching_sequences, {}, 'no non matching sequen
 is($compare_alleles->new_st, 0, 'existing ST found');
 is($compare_alleles->contamination, 0, 'contamination found');
 
-ok(($compare_alleles = MLST::CompareAlleles->new(
+ok(($compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames => ['t/data/adk_contamination.tfa']
 )), 'initialise comparison where there is contamination');
@@ -35,7 +35,7 @@ is_deeply( $compare_alleles->found_sequence_names,sort(['adk-3']), 'last top hit
 is($compare_alleles->new_st, 0, 'existing ST found');
 is($compare_alleles->contamination, 1, 'contamination found');
 
-ok(($compare_alleles = MLST::CompareAlleles->new(
+ok(($compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames => ['t/data/adk_less_than_95_percent.tfa']
 )), 'initialise comparison where no hits are returned');

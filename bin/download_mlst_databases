@@ -1,0 +1,71 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+download_mlst_databases
+
+=head1 SYNOPSIS
+
+This script downloads all the MLST databases locally
+
+=head1 DESCRIPTION
+Downloads all the MLST databases to disk. It requires access to the Internet.
+
+# download everything with defaults
+download_mlst_databases
+
+# XML file containing details of the MLST databases (from pubmlst)
+download_mlst_databases -c my_config_file.json
+
+# destination base directory defaults to the environment variable \$MLST_DATABASES
+download_mlst_databases -b /path/to/destination
+
+=head1 CONTACT
+
+path-help@sanger.ac.uk
+
+=head1 METHODS
+
+=cut
+package Download::Main;
+
+use lib "/software/pathogen/internal/prod/lib";
+use Moose;
+use Getopt::Long;
+use Bio::MLST::DatabaseSettings;
+use Bio::MLST::Download::Databases;
+
+my ($config_file, $base_directory, $help);
+
+GetOptions ('c|config=s'         => \$config_file,
+            'b|base_directory=s' => \$base_directory,
+            'h|help'             => \$help,
+);
+
+(! $help)or die <<USAGE;
+Usage: $0 [options]
+Downloads all the MLST databases to disk
+
+# download everything with defaults
+download_mlst_databases
+
+# XML file containing details of the MLST databases (from pubmlst)
+download_mlst_databases -c my_config_file.json
+
+# destination base directory defaults to the environment variable \$MLST_DATABASES
+download_mlst_databases -b /path/to/destination
+
+USAGE
+;
+
+$base_directory ||= $ENV{MLST_DATABASES};
+$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+
+$config_file    ||= 'http://pubmlst.org/data/dbases.xml';
+
+my $database_settings = Bio::MLST::DatabaseSettings->new(filename => $config_file)->settings;
+my $databases = Bio::MLST::Download::Databases->new(
+  databases_attributes => $database_settings,
+  base_directory  => $base_directory
+);
+$databases->update();
