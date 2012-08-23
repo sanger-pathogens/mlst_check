@@ -1,7 +1,11 @@
 =head1 NAME
+
 Bio::MLST::Download::Database
+
 =head1 SYNOPSIS
+
 Represents a single genus-species database on a single species
+
 =head1 DESCRIPTION
 
 use Bio::MLST::Download::Database;
@@ -11,8 +15,11 @@ my $database = Bio::MLST::Download::Database->new(
   base_directory => '/path/to/abc'
 );
 $database->update;
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::Download::Database;

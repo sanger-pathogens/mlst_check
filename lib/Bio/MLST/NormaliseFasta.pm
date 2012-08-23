@@ -1,6 +1,9 @@
 =head1 NAME
+
 Bio::MLST::NormaliseFasta
+
 =head1 SYNOPSIS
+
 Take in a Fasta file, check for invalid characters and build a corrected file if needed. 
 This is needed for NCBI makeblastdb which doesnt like the pipe character in the sequence name.
 
@@ -13,8 +16,11 @@ my $output_fasta = Bio::MLST::NormaliseFasta->new(
 
 );
 $output_fasta->processed_fasta_filename();
+
 =head1 CONTACT
+
 path-help@sanger.ac.uk
+
 =cut
 
 package Bio::MLST::NormaliseFasta;
