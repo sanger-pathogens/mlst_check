@@ -3,16 +3,16 @@ use strict;
 use warnings;
 use File::Temp;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::MultipleFastas');
+    use_ok('Bio::MLST::Check');
 }
 
 my $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
-ok((my $multiple_fastas = MLST::MultipleFastas->new(
+ok((my $multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
   base_directory        => 't/data',
   raw_input_fasta_files => ['t/data/contigs.fa'],
@@ -30,7 +30,7 @@ compare_files('t/data/expected_concatenated_alleles.fa', $tmpdirectory.'/concate
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($multiple_fastas = MLST::MultipleFastas->new(
+ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
   base_directory        => 't/data',
   raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa'],
@@ -49,7 +49,7 @@ compare_files('t/data/expected_two_concatenated_alleles.fa', $tmpdirectory.'/con
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($multiple_fastas = MLST::MultipleFastas->new(
+ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
   base_directory        => 't/data',
   raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa','t/data/contigs_one_unknown.tfa'],

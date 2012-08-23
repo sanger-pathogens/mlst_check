@@ -3,16 +3,16 @@ use strict;
 use warnings;
 use File::Temp;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::Download::Database');
+    use_ok('Bio::MLST::Download::Database');
 }
 
 my $destination_directory_obj = File::Temp->newdir(CLEANUP =>1);
 my $destination_directory = $destination_directory_obj->dirname();
 
-ok(my $database = MLST::Download::Database->new(
+ok(my $database = Bio::MLST::Download::Database->new(
   database_attributes => { 
       alleles => ['t/data/abc.fas','t/data/efg.fas'], 
       profiles => 't/data/bordetella.txt'

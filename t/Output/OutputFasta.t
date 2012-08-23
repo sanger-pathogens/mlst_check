@@ -3,16 +3,16 @@ use strict;
 use warnings;
 use File::Temp;
 
-BEGIN { unshift(@INC, './modules') }
+BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
-    use_ok('MLST::OutputFasta');
+    use_ok('Bio::MLST::OutputFasta');
 }
 
 my $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
-ok((my $output_fasta = MLST::OutputFasta->new(
+ok((my $output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => {'adk-2' => "AAAA", 'purA-3' => "CCCC"},
   non_matching_sequences => {},
   output_directory => $tmpdirectory,
@@ -22,7 +22,7 @@ ok(($output_fasta->create_files()),'created output files');
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($output_fasta = MLST::OutputFasta->new(
+ok(($output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => {},
   non_matching_sequences => {},
   output_directory => $tmpdirectory,
@@ -33,7 +33,7 @@ ok(!(-e $tmpdirectory."/contigs.mlst_loci.fa"), 'No output files created');
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($output_fasta = MLST::OutputFasta->new(
+ok(($output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => { 'purA-3' => "CCCC", 'adk-2' => "AAAA"},
   non_matching_sequences => {'EEE' => "GGGG",'FFF' => "TTTT"},
   output_directory => $tmpdirectory,
@@ -49,7 +49,7 @@ TTTT
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($output_fasta = MLST::OutputFasta->new(
+ok(($output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => { 'purA-3' => "CCCC", 'adk-2' => "AAAA"},
   non_matching_sequences => {'EEE' => "NNNN",'FFF' => "TTTT"},
   output_directory => $tmpdirectory,
@@ -63,7 +63,7 @@ TTTT
 
 $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($output_fasta = MLST::OutputFasta->new(
+ok(($output_fasta = Bio::MLST::OutputFasta->new(
   matching_sequences     => { 'purA-3' => "CCCC", 'adk-2' => "AAAA"},
   non_matching_sequences => {'EEE' => "GGNN",'FFF' => "TTTT"},
   output_directory => $tmpdirectory,

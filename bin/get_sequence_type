@@ -1,0 +1,130 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+get_sequence_type
+
+=head1 SYNOPSIS
+
+Given Fasta files and a Species regex, lookup the relevant MLST database and output the sequence type to a file.
+
+=head1 DESCRIPTION
+Given Fasta files and a Species regex, lookup the relevant MLST database and output the sequence type to a file. 
+It requires NBCI Blast+ to be available in your PATH.
+
+# Basic usage, sequence type result written to my_assembly.fa.st
+get_sequence_type -s "Clostridium difficile" my_assembly.fa
+
+# Multiple fasta files 
+get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
+# or
+get_sequence_type -s "Clostridium difficile" *.fa
+
+# Split into 8 parallel processes (much faster), default is 2
+get_sequence_type -s "Clostridium difficile" -d 8 *.fa
+
+# output a fasta file with the concatenated alleles and unknown sequences
+get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
+
+# Specify an output directory 
+get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
+
+# list all available MLST databases
+get_sequence_type -a
+
+# This help message
+get_sequence_type -h
+
+=head1 CONTACT
+path-help@sanger.ac.uk
+
+=cut
+package SequenceType::Main;
+
+use lib "/software/pathogen/internal/prod/lib";
+use Moose;
+use Getopt::Long;
+use Cwd;
+use Bio::MLST::Check;
+use Bio::MLST::Databases;
+use Bio::MLST::Validate::Executable;
+
+my ($species, $output_fasta_files, $output_directory, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+
+GetOptions ('s|species=s'              => \$species,
+            'o|output_directory=s'     => \$output_directory,
+            'c|output_fasta_files'     => \$output_fasta_files,
+            'a|available_databases'    => \$available_databases,
+            'b|mlst_base_directory=s'  => \$base_directory,
+            'm|makeblastdb_exec=s'     => \$makeblastdb_exec,
+            'n|blastn_exec=s'          => \$blastn_exec,
+            'p|spreadsheet_basename=s' => \$spreadsheet_basename,
+            'd|parallel_processes=i'   => \$parallel_processes,
+            'h|help'                   => \$help,
+);
+
+(  ((defined($species) && (@ARGV > 0)) || (defined($available_databases))) && ! $help)or die <<USAGE;
+Usage: $0 [options]
+
+# Basic usage, sequence type result written to my_assembly.fa.st
+get_sequence_type -s "Clostridium difficile" my_assembly.fa
+
+# Multiple fasta files 
+get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
+# or
+get_sequence_type -s "Clostridium difficile" *.fa
+
+# Split into 8 parallel processes (much faster), default is 2
+get_sequence_type -s "Clostridium difficile" -d 8 *.fa
+
+# output a fasta file with the concatenated alleles and unknown sequences
+get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
+
+# Specify an output directory 
+get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
+
+# list all available MLST databases
+get_sequence_type -a
+
+# This help message
+get_sequence_type -h
+
+USAGE
+;
+
+$base_directory ||= $ENV{MLST_DATABASES};
+$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+
+# Multiple versions of blast lying around, so use a particular one if possible
+$makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/makeblastdb';
+$blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
+$makeblastdb_exec = 'makeblastdb' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($makeblastdb_exec));
+$blastn_exec = 'blastn_exec' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
+
+$spreadsheet_basename ||= 'mlst_results';
+$output_directory ||= getcwd;
+$output_fasta_files ||= 0;
+$parallel_processes ||= 2;
+
+if(defined($available_databases))
+{
+  my $mlst_dbs = Bio::MLST::Databases->new(
+    base_directory => $base_directory,
+  );
+  $mlst_dbs->print_db_list;
+}
+else
+{
+  my $multiple_fastas = Bio::MLST::Check->new(
+    species               => $species,
+    base_directory        => $base_directory,
+    raw_input_fasta_files => \@ARGV,
+    makeblastdb_exec      => $makeblastdb_exec,
+    blastn_exec           => $blastn_exec,
+    output_directory      => $output_directory,
+    output_fasta_files    => $output_fasta_files,
+    spreadsheet_basename  => $spreadsheet_basename,
+    parallel_processes    => $parallel_processes
+  );
+  $multiple_fastas->create_result_files;
+}
