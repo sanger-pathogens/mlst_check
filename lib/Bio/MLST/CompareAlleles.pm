@@ -125,6 +125,8 @@ sub _build_matching_sequences
       $self->contamination(1);
     }
     
+    $top_blast_hit{allele_name} =~ s![-_]+!-!g;
+    
     if($top_blast_hit{percentage_identity} == 100 )
     {
       $matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});

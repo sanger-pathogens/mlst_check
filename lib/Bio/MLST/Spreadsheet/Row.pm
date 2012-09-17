@@ -132,7 +132,9 @@ sub _build_header_row
   my @allele_headers;
   for my $sequence_name (@{$self->_allele_order})
   {
-    my @sequence_name_details = split(/[-_]/,$sequence_name);
+    $sequence_name =~ s!_!-!g;
+    $sequence_name =~ s!-+!-!g;
+    my @sequence_name_details = split(/[-_]+/,$sequence_name);
     push(@allele_headers,$sequence_name_details[0]);
   }
   
