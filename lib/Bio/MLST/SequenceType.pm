@@ -66,7 +66,9 @@ sub _build_allele_to_number
   
   for my $sequence_name (@{$self->sequence_names})
   {
-    my @sequence_name_details = split(/[-_]/,$sequence_name);
+    $sequence_name =~ s!_!-!g;
+    $sequence_name =~ s!-+!-!g;
+    my @sequence_name_details = split(/[-_]+/,$sequence_name);
     $allele_to_number{$sequence_name_details[0]} = $sequence_name_details[1];
   }
   
