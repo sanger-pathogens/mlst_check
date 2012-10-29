@@ -103,7 +103,7 @@ $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 $makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/makeblastdb';
 $blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.25+/bin/blastn';
 $makeblastdb_exec = 'makeblastdb' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($makeblastdb_exec));
-$blastn_exec = 'blastn_exec' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
+$blastn_exec = 'blastn' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
 
 $spreadsheet_basename ||= 'mlst_results';
 $output_directory    ||= getcwd;
