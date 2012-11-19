@@ -33,14 +33,25 @@ has 'base_directory'    => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',      lazy => 1, builder => '_build_profiles_filename');
 has 'allele_filenames'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_filenames');
 has 'search_base_directory' => ( is => 'ro', isa => 'Str',      lazy => 1, builder => '_build__search_base_directory');
+has 'list_species'          => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_list_species');
 
-sub _build__search_base_directory
+sub _build_list_species
 {
   my($self) = @_;
   opendir(my $dh,$self->base_directory);
   my $species_name = $self->species_name;
   $species_name =~ s!\W!.+!gi;
   my @search_results = grep { /$species_name/i } readdir($dh);
+
+  return \@search_results;
+}
+
+sub _build__search_base_directory
+{
+  my($self) = @_;
+
+  my @search_results = @{$self->list_species};
+
   if(@search_results > 1)
   {
     print "More than 1 MLST database has been found, please use a more specific query\n";
