@@ -69,6 +69,42 @@ compare_files('t/data/expected_three_concatenated_alleles.phylip', $tmpdirectory
 compare_files('t/data/expected_three_contigs_one_unknown.unknown_allele.adk-2.fa', $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2.fa');
 compare_files('t/data/expected_three_contigs_one_unknown.unknown_allele.recA-1.fa', $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1.fa');
 
+
+$tmpdirectory_obj = File::Temp->newdir(CLEANUP => 0);
+$tmpdirectory = $tmpdirectory_obj->dirname();
+ok(($multiple_fastas = Bio::MLST::Check->new(
+  species               => "E.coli",
+  base_directory        => 't/data',
+  raw_input_fasta_files => ['t/data/contigs.fa'],
+  makeblastdb_exec      => 'makeblastdb',
+  blastn_exec           => 'blastn',
+  output_directory      => $tmpdirectory,
+  output_fasta_files    => 1,
+  spreadsheet_basename  => 'mlst_results',
+  parallel_processes    => 1
+)),'Initialise on existing fasta file.');
+my $files_exist = $multiple_fastas->_input_fasta_files_exist;
+ok($files_exist,'test fasta file exists - returns true for existing file');
+
+$tmpdirectory_obj = File::Temp->newdir(CLEANUP => 0);
+$tmpdirectory = $tmpdirectory_obj->dirname();
+ok(($multiple_fastas = Bio::MLST::Check->new(
+  species               => "E.coli",
+  base_directory        => 't/data',
+  raw_input_fasta_files => ['t/data/nonexistent_file.fa'],
+  makeblastdb_exec      => 'makeblastdb',
+  blastn_exec           => 'blastn',
+  output_directory      => $tmpdirectory,
+  output_fasta_files    => 1,
+  spreadsheet_basename  => 'mlst_results',
+  parallel_processes    => 1
+)),'Initialise on nonexistent fasta file.');
+open(my $copy_stdout, ">&STDOUT"); open(STDOUT, '>/dev/null'); # Redirect STDOUT
+$files_exist = $multiple_fastas->_input_fasta_files_exist;
+close(STDOUT); open(STDOUT, ">&", $copy_stdout); # Restore STDOUT
+ok(!$files_exist,'test fasta file exists - returns false for nonexistent file');
+
+
 done_testing();
 
 sub compare_files
