@@ -29,6 +29,12 @@ get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
 # Specify an output directory 
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
 
+# Match against multiple MLST databases
+get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
+
+# Match against all MLST databases
+get_sequence_type my_assembly.fa
+
 # list all available MLST databases
 get_sequence_type -a
 
@@ -48,6 +54,8 @@ use Cwd;
 use Bio::MLST::Check;
 use Bio::MLST::Databases;
 use Bio::MLST::Validate::Executable;
+use Bio::MLST::SearchForFiles;
+use Bio::MLST::CheckMultipleSpecies;
 
 my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
 
@@ -64,7 +72,7 @@ GetOptions ('s|species=s'              => \$species,
             'h|help'                   => \$help,
 );
 
-(  ((defined($species) && (@ARGV > 0)) || (defined($available_databases))) && ! $help)or die <<USAGE;
+( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
 Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
@@ -86,6 +94,12 @@ get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
 
 # Specify an output directory 
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
+
+# Match against multiple MLST databases
+get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
+
+# Match against all MLST databases
+get_sequence_type my_assembly.fa
 
 # list all available MLST databases
 get_sequence_type -a
@@ -111,12 +125,49 @@ $output_fasta_files  ||= 0;
 $output_phylip_files ||= 0;
 $parallel_processes  ||= 2;
 
+# get list of species to check
+my @species_list = ();
+if(defined $species)
+{
+    my %species_found;
+    for my $species_in (split(/,/,$species))
+    {
+        my $species_check = Bio::MLST::SearchForFiles->new(
+            species_name => $species_in,
+            base_directory => $base_directory,
+            );
+        for my $spec (@{$species_check->list_species})
+        {
+            $species_found{$spec} = 1;
+        }
+    }
+    @species_list = sort keys %species_found;
+}
+
 if(defined($available_databases))
 {
   my $mlst_dbs = Bio::MLST::Databases->new(
     base_directory => $base_directory,
   );
   $mlst_dbs->print_db_list;
+}
+elsif(@species_list > 1 || !defined($species))
+{
+    my $multiple_species = Bio::MLST::CheckMultipleSpecies->new(
+        species               => \@species_list,
+        base_directory        => $base_directory,
+        raw_input_fasta_files => \@ARGV,
+        makeblastdb_exec      => $makeblastdb_exec,
+        blastn_exec           => $blastn_exec,
+        output_directory      => $output_directory,
+        spreadsheet_basename  => $spreadsheet_basename,
+        parallel_processes    => $parallel_processes,
+        output_fasta_files    => $output_fasta_files,  # not supported
+        output_phylip_files   => $output_phylip_files, # not supported
+        verbose               => 0, # databases searched and matches found
+        report_all_mlst_db    => 0, # list databases searched in csv file
+        );
+    $multiple_species->create_result_files;
 }
 else
 {

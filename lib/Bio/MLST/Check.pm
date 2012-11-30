@@ -144,7 +144,7 @@ sub _build__input_fasta_files
 sub create_result_files
 {
   my($self) = @_;
-  exit unless $self->_input_fasta_files_exist;
+  exit unless $self->input_fasta_files_exist;
   $self->_generate_spreadsheet_rows;
   
   my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
@@ -188,7 +188,7 @@ sub _create_alignment
   $out->write_aln($aln);
 }
 
-sub _input_fasta_files_exist
+sub input_fasta_files_exist
 {
     my($self) = @_;
     my $file_not_found = 0;
