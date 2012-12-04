@@ -203,7 +203,15 @@ sub _concatenate_result_files
                 }
             
                 push(@isolate_rows,  \@row);
-                push(@positive_rows, \@row) unless $row[2] eq 'Unknown'; 
+                # filter results
+                for(my $i=4; $i<@row; $i++)
+                {
+                    if($row[$i] ne 'U')
+                    {
+                        push(@positive_rows, \@row);
+                        last;
+                    }
+                }
             }   
             close $fh_in;
 
