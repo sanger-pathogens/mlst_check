@@ -46,6 +46,7 @@ has 'matching_sequences'     => ( is => 'ro', isa => 'HashRef', lazy => 1, build
 has 'non_matching_sequences' => ( is => 'rw', isa => 'HashRef', default => sub {{}});
 has 'contamination'          => ( is => 'rw', isa => 'Bool',    default => 0);
 has 'new_st'                 => ( is => 'rw', isa => 'Bool',    default => 0);
+has '_absent_loci'           => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__absent_loci' );
 
 sub _build__blast_db_location
 {
@@ -99,6 +100,7 @@ sub _build_matching_sequences
   my ($self) = @_;
   my %matching_sequence_names;
   my %non_matching_sequence_names;
+  my %missing_locus_names;
   
   for my $allele_filename (@{$self->allele_filenames})
   {
@@ -111,6 +113,14 @@ sub _build_matching_sequences
     );
     my %top_blast_hit = %{$blast_results->top_hit()};
    
+    # possible missing locus
+    if(! %top_blast_hit)
+    {
+      my %absent_loci_type = %{$self->_absent_loci};
+      my $allele = $self->_get_base_filename($allele_filename);
+      $missing_locus_names{$allele} = $absent_loci_type{$allele} if exists $absent_loci_type{$allele};
+    }
+
     # unknown allele
     if(! %top_blast_hit)
     {
@@ -135,6 +145,16 @@ sub _build_matching_sequences
     {
       $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});
       $self->new_st(1);
+    }
+  }
+
+  # deal with missing loci
+  if(%matching_sequence_names && %missing_locus_names)
+  {
+    for my $allele (keys %missing_locus_names)
+    {
+      delete $non_matching_sequence_names{$allele};
+      $matching_sequence_names{$allele.'-'.$missing_locus_names{$allele}} = '';
     }
   }
 
@@ -185,6 +205,27 @@ sub _pad_out_sequence
     $input_sequence .= "N";
   }
   return $input_sequence;
+}
+
+sub _build__absent_loci
+{
+  my( $self ) = @_;
+  my %absent_loci = ();
+    
+  for my $allele_file (@{$self->allele_filenames})
+  {
+    my $seq_io =  Bio::SeqIO->new( -file => $allele_file , -format => 'Fasta');
+    while( my $seq = $seq_io->next_seq() )
+    {
+      if($seq->length == 0)
+      {
+        my($allele,$type) = split(/[-_]+/,$seq->id(),2);
+        $absent_loci{$allele} = $type;
+      }
+    }
+  }
+
+  return \%absent_loci;
 }
 
 no Moose;
