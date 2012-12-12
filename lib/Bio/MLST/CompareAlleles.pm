@@ -125,7 +125,6 @@ sub _build_matching_sequences
     if(! %top_blast_hit)
     {
       $non_matching_sequence_names{$self->_get_base_filename($allele_filename)} = $self->_pad_out_sequence("", $word_size);
-      $self->new_st(1);
       next;
     }
     
@@ -157,6 +156,9 @@ sub _build_matching_sequences
       $matching_sequence_names{$allele.'-'.$missing_locus_names{$allele}} = '';
     }
   }
+
+  # set new ST flag
+  $self->new_st(1) if %non_matching_sequence_names;
 
   $self->non_matching_sequences(\%non_matching_sequence_names);
   return \%matching_sequence_names;
