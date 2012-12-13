@@ -52,7 +52,9 @@ sub _blastn_cmd
 sub _build_top_hit
 {
   my($self) = @_;
+  open(my $copy_stderr_fh, ">&STDERR"); open(STDERR, '>/dev/null'); # Redirect STDERR
   open( my $blast_output_fh, '-|',$self->_blastn_cmd);
+  close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
   my $highest_identity = 0;
   my %top_hit;
   my %contamination_check;
