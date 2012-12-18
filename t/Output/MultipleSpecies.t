@@ -58,7 +58,6 @@ ok(!$input_option_test,'options check');
 ok(('Escherichia_coli_1,Helicobacter_pylori' eq join(',',@{$multi_mlst_B->_species_list})),'species list');
 
 done_testing();
-exit;
 
 sub compare_files
 {
