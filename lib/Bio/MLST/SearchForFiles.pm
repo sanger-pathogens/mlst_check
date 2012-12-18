@@ -1,29 +1,29 @@
-=head1 NAME
-
-Bio::MLST::SearchForFiles
+package Bio::MLST::SearchForFiles;
+# ABSTRACT: Take in a species name and get the allele and profile files.
 
 =head1 SYNOPSIS
 
-Take in a species name and get the allele and profile files
+Take in a species name and get the allele and profile files.
 
-=head1 DESCRIPTION
+   use Bio::MLST::SearchForFiles;
+   
+   my $search_results = Bio::MLST::SearchForFiles->new(
+     species_name => 'coli',
+     base_directory => '/path/to/mlst/data'
+   );
+   $search_results->allele_filenames();
+   $search_results->profiles_filename();
 
-use Bio::MLST::SearchForFiles;
+=method allele_filenames
 
-my $search_results = Bio::MLST::SearchForFiles->new(
-  species_name => 'coli',
-  base_directory => '/path/to/mlst/data'
-);
-$search_results->allele_filenames();
-$search_results->profiles_filename();
+Return the path to the allele files
 
-=head1 CONTACT
+=method profiles_filename
 
-path-help@sanger.ac.uk
+Return the path to the profile file
 
 =cut
 
-package Bio::MLST::SearchForFiles;
 use Moose;
 use Bio::MLST::Types;
 

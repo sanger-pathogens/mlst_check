@@ -1,31 +1,41 @@
-=head1 NAME
-
-Bio::MLST::ProcessFasta
+package Bio::MLST::ProcessFasta;
+# ABSTRACT: Take in a fasta file, lookup the MLST database and create relevant files.
 
 =head1 SYNOPSIS
 
 Take in a fasta file, lookup the MLST database and create relevant files.
 
-=head1 DESCRIPTION
+   use Bio::MLST::ProcessFasta;
+   Bio::MLST::ProcessFasta->new(
+     'species'           => 'E.coli',
+     'base_directory'    => '/path/to/dir',
+     'fasta_file'        => 'myfasta.fa',
+     'makeblastdb_exec'  => 'makeblastdb',
+     'blastn_exec'       => 'blastn',
+     'output_directory'  => '/path/to/output',
+     'output_fasta_files'=> 1,
+   );
 
-use Bio::MLST::ProcessFasta;
-Bio::MLST::ProcessFasta->new(
-  'species'           => 'E.coli',
-  'base_directory'    => '/path/to/dir',
-  'fasta_file'        => 'myfasta.fa',
-  'makeblastdb_exec'  => 'makeblastdb',
-  'blastn_exec'       => 'blastn',
-  'output_directory'  => '/path/to/output',
-  'output_fasta_files'=> 1,
-);
+=method concat_name
 
-=head1 CONTACT
+Output the name of the concatinated multifasta file
 
-path-help@sanger.ac.uk
+=method concat_sequence
+
+Output the sequences of the concatinated multifasta file
+
+=method _spreadsheet_row_obj
+
+A row in the output spreadsheet
+
+=head1 SEE ALSO
+
+=for :list
+* L<Bio::MLST::Check>
 
 =cut
 
-package Bio::MLST::ProcessFasta;
+
 use Moose;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CompareAlleles;

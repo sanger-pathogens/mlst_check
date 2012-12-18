@@ -1,18 +1,12 @@
-=head1 NAME
-
-Bio::MLST::Types
+package Bio::MLST::Types;
+# ABSTRACT: Moose types to use for validation.
 
 =head1 SYNOPSIS
 
-Moose types to use for validation
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+Moose types to use for validation.
 
 =cut
 
-package Bio::MLST::Types;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Bio::MLST::Validate::Executable;

@@ -1,27 +1,30 @@
-=head1 NAME
-
-Bio::MLST::Blast::Database
+package Bio::MLST::Blast::Database;
+# ABSTRACT: Wrapper around NCBIs makeblastdb command
 
 =head1 SYNOPSIS
 
-Take in a fasta file and create a tempory blast database
+Take in a fasta file and create a temporary blast database.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Blast::Database;
+   
+   my $blast_database= Bio::MLST::Blast::Database->new(
+     fasta_file => 'contigs.fa',
+     exec => 'makeblastdb'
+   );
+   
+   $blast_database->location();
 
-use Bio::MLST::Blast::Database;
+=method location
 
-my $blast_database= Bio::MLST::Blast::Database->new(
-  fasta_file => 'contigs.fa',
-  exec => 'makeblastdb'
-);
+Returns the path to the temporary blast database files
 
-$blast_database->location();
+=head1 SEE ALSO
 
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Blast::BlastN>
 
 =cut
+
 
 package Bio::MLST::Blast::Database;
 use Moose;

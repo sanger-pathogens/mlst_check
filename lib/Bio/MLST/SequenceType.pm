@@ -1,35 +1,39 @@
-=head1 NAME
-
-Bio::MLST::SequenceType
+package Bio::MLST::SequenceType;
+# ABSTRACT: Take in a list of matched alleles and look up the sequence type from the profile.
 
 =head1 SYNOPSIS
 
-Take in a list of matched alleles and look up the sequence type from the profile
+Take in a list of matched alleles and look up the sequence type from the profile.
 
-=head1 DESCRIPTION
+  use Bio::MLST::SequenceType;
+  my $st = Bio::MLST::SequenceType->new(
+    profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+    sequence_names => ['adk-2','purA-3','recA-1']
+  );
+  $st->sequence_type();
 
-use Bio::MLST::SequenceType;
+=method allele_to_number
 
-my $st = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names => ['adk-2','purA-3','recA-1']
-);
-$st->sequence_type();
+Maps the allele name to the corresponding locus sequence number.
 
-=head1 CONTACT
+=method sequence_type
 
-path-help@sanger.ac.uk
+Returns the sequence type (an integer).
+
+=method nearest_sequence_type
+
+Returns the nearest matching sequence type if there is no exact match, randomly chosen if there is more than 1 with equal identity.
 
 =cut
 
-package Bio::MLST::SequenceType;
+
 use Moose;
 use Bio::MLST::Types;
 
 has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',        required => 1 ); 
 has 'sequence_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 ); 
 
-has 'allele_to_number'     => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 
+has 'allele_to_number'      => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 
 has '_profiles'             => ( is => 'ro', isa => 'ArrayRef',   lazy => 1, builder => '_build__profiles' );
 has 'sequence_type'         => ( is => 'ro', isa => 'Maybe[Int]', lazy => 1, builder => '_build_sequence_type' );
 

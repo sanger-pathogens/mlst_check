@@ -1,29 +1,25 @@
-=head1 NAME
-
-Bio::MLST::NormaliseFasta
+package Bio::MLST::NormaliseFasta;
+# ABSTRACT: Take in a Fasta file, check for invalid characters and build a corrected file if needed. 
 
 =head1 SYNOPSIS
 
 Take in a Fasta file, check for invalid characters and build a corrected file if needed. 
 This is needed for NCBI makeblastdb which doesnt like the pipe character in the sequence name.
 
-=head1 DESCRIPTION
+   use Bio::MLST::NormaliseFasta;
+   
+   my $output_fasta = Bio::MLST::NormaliseFasta->new(
+     fasta_filename     => 'Filename.fasta'
+   
+   );
+   $output_fasta->processed_fasta_filename();
 
-use Bio::MLST::NormaliseFasta;
+=method processed_fasta_filename
 
-my $output_fasta = Bio::MLST::NormaliseFasta->new(
-  fasta_filename     => 'Filename.fasta'
-
-);
-$output_fasta->processed_fasta_filename();
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+Output a temporary fasta file thats been cleaned up.
 
 =cut
 
-package Bio::MLST::NormaliseFasta;
 use Moose;
 use Bio::SeqIO;
 use File::Basename;

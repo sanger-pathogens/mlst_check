@@ -16,7 +16,7 @@ The old way (not recommended)
 ----------
 Download the tar.gz file from CPAN.
 Unzip
-cd Bio_MLST_check-xxxxx
+cd Bio-MLST-check-xxxxx
 perl Makefile.PL
 make
 make test

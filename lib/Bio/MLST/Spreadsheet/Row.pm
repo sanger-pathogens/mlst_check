@@ -1,29 +1,35 @@
-=head1 NAME
-
-Bio::MLST::Spreadsheet::Row
+package Bio::MLST::Spreadsheet::Row;
+# ABSTRACT: Create a row representation of the ST results for a single fasta file.
 
 =head1 SYNOPSIS
 
 Create a row representation of the ST results for a single fasta file.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Spreadsheet::Row;
+   my $spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(
+     sequence_type_obj => $sequence_type_obj, 
+     compare_alleles   => $compare_alleles
+   );
+   
+   $spreadsheet_row_obj->allele_numbers_row;
+   $spreadsheet_row_obj->genomic_row;
 
-use Bio::MLST::Spreadsheet::Row;
-my $spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(
-  sequence_type_obj => $sequence_type_obj, 
-  compare_alleles   => $compare_alleles
-);
+=method allele_numbers_row
 
-$spreadsheet_row_obj->allele_numbers_row;
-$spreadsheet_row_obj->genomic_row;
+Returns the spreadsheet row of results containing the allele numbers of the matching sequences.
 
-=head1 CONTACT
+=method genomic_row
 
-path-help@sanger.ac.uk
+Returns the spreadsheet row of results containing the genomic sequences of the matches.
+
+=head1 SEE ALSO
+
+=for :list
+* L<Bio::MLST::Spreadsheet::File>
 
 =cut
 
-package Bio::MLST::Spreadsheet::Row;
+
 use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
