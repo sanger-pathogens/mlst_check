@@ -1,26 +1,24 @@
-=head1 NAME
-
-Bio::MLST::DatabaseSettings
+package Bio::MLST::DatabaseSettings;
+# ABSTRACT: Read in an XML file of settings and return a hash with the values.
 
 =head1 SYNOPSIS
 
-Read in an XML file of settings and return a hash with the values
+Read in an XML file of settings and return a hash with the values.
 
-=head1 DESCRIPTION
+   use Bio::MLST::DatabaseSettings;
+   my $database_settings = Bio::MLST::DatabaseSettings->new(
+     filename     => 'filename'
+   );
+   $database_settings->settings;
 
-use Bio::MLST::DatabaseSettings;
-my $database_settings = Bio::MLST::DatabaseSettings->new(
-  filename     => 'filename'
-);
-$database_settings->settings;
+=method settings
 
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+Returns a hash containing the settings for the database, separated by species name, and giving alleles and the profile location.
 
 =cut
 
-package Bio::MLST::DatabaseSettings;
+
+
 use Moose;
 use XML::LibXML;
 

@@ -1,47 +1,44 @@
-=head1 NAME
+package Bio::MLST::CheckMultipleSpecies;
 
-Bio::MLST::CheckMultipleSpecies
+# ABSTRACT: High throughput multilocus sequence typing (MLST) checking against several MLST databases.
 
 =head1 SYNOPSIS
 
-High throughput multilocus sequence typing (MLST) checking against several MLST databases.
-
-=head1 DESCRIPTION
-
 This is a wrapper for the Bio::MLST::Check module allowing MLST checking against several databases.
-For further information on Bio::MLST::Check, please see the description for Bio::MLST::Check.
 
-Note:
 The Bio::MLST::Check options to output a concatenated fasta file of allele matches or to output a 
 phylip alignment file are not supported as the loci for sequence typing will vary between species.
 Including these options will give an error message requesting that the user refine their search.
 
-Example
+   use Bio::MLST::CheckMultipleSpecies;
+   
+   my @fasta_files  = ('isolate_one.fa', 'isolate_two.fa');
+   my @species_list = ('Clostridium diff', 'Streptococcus');
+   
+   my $mlst = Bio::MLST::CheckMultipleSpecies->new( species               => \@species_list,
+                                                    raw_input_fasta_files => \@fasta_files,
+                                                    spreadsheet_basename  => $spreadsheet_basename,
+                                                    output_directory      => $output_directory,
+                                                    base_directory        => $base_directory,
+                                                    makeblastdb_exec      => $makeblastdb_exec,
+                                                    blastn_exec           => $blastn_exec,
+                                                    parallel_processes    => $parallel_processes,
+                                                    verbose               => 0,);
+   $multiple_species->create_result_files;
+   
 
-use Bio::MLST::CheckMultipleSpecies;
+=method create_result_files
 
-my @fasta_files  = ('isolate_one.fa', 'isolate_two.fa');
-my @species_list = ('Clostridium diff', 'Streptococcus');
+Creates a spreadsheet of results.
 
-my $mlst = Bio::MLST::CheckMultipleSpecies->new( species               => \@species_list,
-                                                 raw_input_fasta_files => \@fasta_files,
-                                                 spreadsheet_basename  => $spreadsheet_basename,
-                                                 output_directory      => $output_directory,
-                                                 base_directory        => $base_directory,
-                                                 makeblastdb_exec      => $makeblastdb_exec,
-                                                 blastn_exec           => $blastn_exec,
-                                                 parallel_processes    => $parallel_processes,
-                                                 verbose               => 0,);
-$multiple_species->create_result_files;
+=head1 SEE ALSO
 
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Check>
 
 =cut
 
-package Bio::MLST::CheckMultipleSpecies;
+
 use Moose;
 use Bio::MLST::Check;
 use Bio::MLST::Databases;

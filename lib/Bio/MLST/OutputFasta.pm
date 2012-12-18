@@ -1,30 +1,27 @@
-=head1 NAME
-
-Bio::MLST::OutputFasta
+package Bio::MLST::OutputFasta;
+# ABSTRACT: Take in two hashes, both containing sequence names and sequences and output fasta files.
 
 =head1 SYNOPSIS
 
 Take in two hashes, both containing sequence names and sequences and output fasta files.
 
-=head1 DESCRIPTION
+   use Bio::MLST::OutputFasta;
+   
+   my $output_fasta = Bio::MLST::OutputFasta->new(
+     matching_sequences     => \%matching_sequences,
+     non_matching_sequences => \%non_matching_sequences,
+     output_directory => '/path/to/output',
+     input_fasta_file => '/path/to/fasta'
+   );
+   $output_fasta->create_files();
 
-use Bio::MLST::OutputFasta;
+=method create_files
 
-my $output_fasta = Bio::MLST::OutputFasta->new(
-  matching_sequences     => \%matching_sequences,
-  non_matching_sequences => \%non_matching_sequences,
-  output_directory => '/path/to/output',
-  input_fasta_file => '/path/to/fasta'
-);
-$output_fasta->create_files();
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+Create output fasta files.
 
 =cut
 
-package Bio::MLST::OutputFasta;
+
 use Moose;
 use File::Basename;
 use File::Path qw(make_path);

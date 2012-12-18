@@ -1,22 +1,22 @@
-=head1 NAME
+package Bio::MLST::Validate::Executable;
 
-Bio::MLST::Validate::Executable
+# ABSTRACT: Validates the executable is available in the path before running it.
 
 =head1 SYNOPSIS
 
-Validates the executable is available in the path before running it
+Validates the executable is available in the path before running it.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Validate::Executable;
+   Bio::MLST::Validate::Executable
+      ->new()
+      ->does_executable_exist('abc');
+
+=method does_executable_exist
 
 Check to see if an executable is available in the current users PATH.
 
-=head1 CONTACT
-
-path-help@sanger.ac.uk
-
 =cut
 
-package Bio::MLST::Validate::Executable;
 use Moose;
 use File::Which;
 

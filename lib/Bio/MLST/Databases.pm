@@ -1,31 +1,26 @@
-=head1 NAME
-
-Bio::MLST::Databases
+package Bio::MLST::Databases;
+# ABSTRACT: List available MLST databases
 
 =head1 SYNOPSIS
 
 List available MLST databases
 
-=head1 DESCRIPTION
+   use Bio::MLST::Databases;
+   
+   my $mlst_dbs = Bio::MLST::Databases->new(
+     base_directory => '/path/to/databases',
+   );
+   $mlst_dbs->print_db_list;
 
-use Bio::MLST::Databases;
+=method print_db_list
 
-my $mlst_dbs = Bio::MLST::Databases->new(
-  base_directory => '/path/to/databases',
-);
-$mlst_dbs->print_db_list;
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+List available MLST databases
 
 =cut
 
-package Bio::MLST::Databases;
 use Moose;
 
 has 'base_directory'    => ( is => 'ro', isa => 'Str',      required => 1 );
-
 has 'database_names'    => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_builder_database_names' );
 
 sub _builder_database_names

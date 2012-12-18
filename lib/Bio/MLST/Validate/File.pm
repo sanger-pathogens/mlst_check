@@ -1,22 +1,16 @@
-=head1 NAME
-
-Bio::MLST::Validate::File
+package Bio::MLST::Validate::File;
+# ABSTRACT: Check to see if a file exists. For validation when classes have input files.
 
 =head1 SYNOPSIS
 
-Does a file exist
+Check to see if a file exists. For validation when classes have input files.
 
-=head1 DESCRIPTION
+=method does_file_exist
 
 Check to see if a file exists. For validation when classes have input files.
 
-=head1 CONTACT
-
-path-help@sanger.ac.uk
-
 =cut
 
-package Bio::MLST::Validate::File;
 use Moose;
 
 sub does_file_exist

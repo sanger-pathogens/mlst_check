@@ -1,31 +1,40 @@
-=head1 NAME
-
-Bio::MLST::Blast::BlastN
+package Bio::MLST::Blast::BlastN;
+# ABSTRACT: Wrapper around NCBI BlastN
 
 =head1 SYNOPSIS
 
-Run NCBI blast and find the top hit.
+Wrapper around NCBI BlastN. Run NCBI blast and find the top hit.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Blast::BlastN;
+   
+   my $blast_database= Bio::MLST::Blast::BlastN->new(
+     blast_database => 'output_contigs',
+     query_file     => 'alleles/adk.tfa',
+     word_size      => 500,
+     exec           => 'blastn'
+   );
+   $blast_database->top_hit();
 
-use Bio::MLST::Blast::BlastN;
+=method top_hit
 
-my $blast_database= Bio::MLST::Blast::BlastN->new(
-  blast_database => 'output_contigs',
-  query_file     => 'alleles/adk.tfa',
-  word_size      => 500,
-  exec           => 'blastn'
-);
+Returns a hash containing details about the top blast result.
 
-$blast_database->top_hit();
+The attributes returned in the hash are:
+  allele_name
+  percentage_identity
+  source_name
+  source_start
+  source_end
+  reverse
+  contamination
 
-=head1 CONTACT
+=head1 SEE ALSO
 
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Blast::Database>
 
 =cut
 
-package Bio::MLST::Blast::BlastN;
 use Moose;
 use Bio::MLST::Types;
 
