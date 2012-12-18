@@ -1,10 +1,9 @@
-=head1 NAME
-
-Bio::MLST::Check
+package Bio::MLST::Check;
+# ABSTRACT: Multilocus sequence type checking using blast
 
 =head1 SYNOPSIS
 
-High throughput multilocus sequence typing (MLST) checking
+High throughput multilocus sequence typing (MLST) checking.
 
 =head1 DESCRIPTION
 
@@ -17,39 +16,33 @@ New, unseen alleles are saved in FASTA format, with 1 per file, for submission t
 
 It requires NCBI Blast+ to be installed and for blastn and makeblastdb to be in your PATH.
 
-Example usage
--------------
 
-# Add this environment variable to your ~/.bashrc file - do this once
-export MLST_DATABASES=/path/to/where_you_want_to_store_the_databases
+   # Add this environment variable to your ~/.bashrc file - do this once
+   export MLST_DATABASES=/path/to/where_you_want_to_store_the_databases
+   
+   # Download the latest copy of the databases (run it once per month)
+   download_mlst_databases
+   
+   # Find the sequence types for all fasta files in your current directory
+   get_sequence_type -s "Clostridium difficile" *.fa
 
-# Download the latest copy of the databases (run it once per month)
-download_mlst_databases
+   use Bio::MLST::Check;
+   Bio::MLST::Check->new(
+     'species'           => 'E.coli',
+     'base_directory'    => '/path/to/dir',
+     'raw_input_fasta_files'  => ['myfasta.fa'],
+     'makeblastdb_exec'  => 'makeblastdb',
+     'blastn_exec'       => 'blastn',
+     'output_directory'  => '/path/to/output',
+     'output_fasta_files'=> 1,
+   );
+   
+=method create_result_files
 
-# Find the sequence types for all fasta files in your current directory
-get_sequence_type -s "Clostridium difficile" *.fa
-
-
-
-use Bio::MLST::Check;
-Bio::MLST::Check->new(
-  'species'           => 'E.coli',
-  'base_directory'    => '/path/to/dir',
-  'raw_input_fasta_files'  => ['myfasta.fa'],
-  'makeblastdb_exec'  => 'makeblastdb',
-  'blastn_exec'       => 'blastn',
-  'output_directory'  => '/path/to/output',
-  'output_fasta_files'=> 1,
-);
-
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+Creates a spreadsheet of results, FASTA files with novel sequences and optionally a concatentated sequence (FASTA) for tree building.
 
 =cut
-# ABSTRACT: Multilocus sequence typing checking
 
-package Bio::MLST::Check;
 use Moose;
 use Parallel::ForkManager;
 use Bio::MLST::ProcessFasta;

@@ -1,29 +1,30 @@
-=head1 NAME
-
-Bio::MLST::Spreadsheet::File
+package Bio::MLST::Spreadsheet::File;
+# ABSTRACT: Create a file representation of the ST results for multiple fasta files.
 
 =head1 SYNOPSIS
 
-Create a row representation of the ST results for a single fasta file.
+Create a file representation of the ST results for multiple fasta files.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Spreadsheet::File;
+   my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
+     spreadsheet_rows => [],
+     output_directory => '/path/to/outputdir',
+     spreadsheet_basename => 'abc'
+   );
+   
+   $spreadsheet->create();
 
-use Bio::MLST::Spreadsheet::File;
-my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
-  spreadsheet_rows => [],
-  output_directory => '/path/to/outputdir',
-  spreadsheet_basename => 'abc'
-);
+=method create
 
-$spreadsheet->create();
+Create a spreadsheet file of results.
 
-=head1 CONTACT
+=head1 SEE ALSO
 
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Spreadsheet::Row>
 
 =cut
 
-package Bio::MLST::Spreadsheet::File;
 use Moose;
 use Text::CSV;
 use Bio::MLST::Spreadsheet::Row;

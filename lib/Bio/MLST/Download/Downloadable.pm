@@ -1,22 +1,21 @@
-=head1 NAME
-
-Bio::MLST::Download::Downloadable
+package Bio::MLST::Download::Downloadable;
+# ABSTRACT: Moose Role to download everything data
 
 =head1 SYNOPSIS
 
 Moose Role to download everything data
 
-=head1 DESCRIPTION
+   with 'Bio::MLST::Download::Downloadable';
 
-with 'Bio::MLST::Download::Downloadable';
+=head1 SEE ALSO
 
-=head1 CONTACT
-
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Download::Database>
+* L<Bio::MLST::Download::Databases>
 
 =cut
 
-package Bio::MLST::Download::Downloadable;
+
 use Moose::Role;
 use File::Copy;
 use File::Basename;

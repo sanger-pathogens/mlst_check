@@ -1,30 +1,55 @@
-=head1 NAME
+package Bio::MLST::CompareAlleles;
 
-Bio::MLST::CompareAlleles
+# ABSTRACT: Get a list of matching alleles between the sequence and database
 
 =head1 SYNOPSIS
 
 Take in an assembly file in Fasta format, and a list of allele files (in multifasta format) and return a list of the alleles and IDs.
 
-=head1 DESCRIPTION
+   use Bio::MLST::CompareAlleles;
+   
+   my $compare_alleles = Bio::MLST::CompareAlleles->new(
+   
+     sequence_filename => 'contigs.fa',
+     allele_filenames => ['abc.tfa','efg.tfa']
+   );
+   $compare_alleles->found_sequence_names;
+   $compare_alleles->found_non_matching_sequence_names
+   $compare_alleles->matching_sequences;
+   $compare_alleles->non_matching_sequences
 
-use Bio::MLST::CompareAlleles;
+=method found_sequence_names
 
-my $compare_alleles = Bio::MLST::CompareAlleles->new(
+Return a list of the sequence names which match.
 
-  sequence_filename => 'contigs.fa',
-  allele_filenames => ['abc.tfa','efg.tfa']
-);
-$compare_alleles->found_sequence_names;
-$compare_alleles->matching_sequences;
+=method found_non_matching_sequence_names
 
-=head1 CONTACT
+Return a list of the sequence names which dont match.
 
-path-help@sanger.ac.uk
+=method matching_sequences
+
+Return a Hash containing the sequnces that match.
+
+=method non_matching_sequences
+
+Return a Hash containing the sequnces that dont match.
+
+=method contamination
+
+Flag which is set if more than one 100% match is found for a single locus.
+
+=method new_st
+
+Flag which is set if the results contain a novel combination of sequences or a new sequence.
+
+=head1 SEE ALSO
+
+=for :list
+* L<Bio::MLST::Check>
 
 =cut
 
-package Bio::MLST::CompareAlleles;
+
 use Moose;
 use File::Basename;
 use Bio::SeqIO;

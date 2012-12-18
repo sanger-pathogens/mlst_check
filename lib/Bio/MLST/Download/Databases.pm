@@ -1,27 +1,28 @@
-=head1 NAME
-
-Bio::MLST::Download::Databases
+package Bio::MLST::Download::Databases;
+# ABSTRACT: Represents multiple databases of species
 
 =head1 SYNOPSIS
 
 Represents multiple databases of species
 
-=head1 DESCRIPTION
+   use Bio::MLST::Download::Databases;
+   my $databases = Bio::MLST::Download::Databases->new(
+     databases_attributes     => \@databases_attributes
+     base_directory => '/path/to/dir'
+   );
+   $databases->update;
 
-use Bio::MLST::Download::Databases;
-my $databases = Bio::MLST::Download::Databases->new(
-  databases_attributes     => \@databases_attributes
-  base_directory => '/path/to/dir'
-);
-$databases->update;
+=method update
 
-=head1 CONTACT
+Download the database files.
 
-path-help@sanger.ac.uk
+=head1 SEE ALSO
+
+=for :list
+* L<Bio::MLST::Download::Downloadable>
 
 =cut
 
-package Bio::MLST::Download::Databases;
 use Moose;
 use Bio::MLST::Download::Database;
 use Parallel::ForkManager;

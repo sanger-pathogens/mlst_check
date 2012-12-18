@@ -1,28 +1,29 @@
-=head1 NAME
-
-Bio::MLST::Download::Database
+package Bio::MLST::Download::Database;
+# ABSTRACT: Represents a single genus-species database on a single species
 
 =head1 SYNOPSIS
 
-Represents a single genus-species database on a single species
+Represents a single genus-species database on a single species.
 
-=head1 DESCRIPTION
+   use Bio::MLST::Download::Database;
+   my $database = Bio::MLST::Download::Database->new(
+   
+     database_attributes => \%database_attributes,
+     base_directory => '/path/to/abc'
+   );
+   $database->update;
 
-use Bio::MLST::Download::Database;
-my $database = Bio::MLST::Download::Database->new(
+=method update
 
-  database_attributes => \%database_attributes,
-  base_directory => '/path/to/abc'
-);
-$database->update;
+Download the database files.
 
-=head1 CONTACT
+=head1 SEE ALSO
 
-path-help@sanger.ac.uk
+=for :list
+* L<Bio::MLST::Download::Downloadable>
 
 =cut
 
-package Bio::MLST::Download::Database;
 use File::Path 2.06 qw(make_path);
 use Moose;
 
