@@ -88,6 +88,7 @@ sub _build_sequence_type
   for(my $i=0; $i< @header_row; $i++)
   {
     next if($header_row[$i] eq "clonal_complex");
+    next if($header_row[$i] eq "mlst_clade");
     $header_row[$i] =~ s!_!!g;
     $header_row[$i] =~ s!-!!g;
   }
@@ -100,7 +101,7 @@ sub _build_sequence_type
     my @current_row = @{$self->_profiles->[$row]};
     for(my $col = 0; $col< @current_row; $col++)
     {
-      next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex");
+      next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex" || $header_row[$col] eq "mlst_clade");
       $num_loci++ if($row == 1);
 
       next if(!defined($self->allele_to_number->{$header_row[$col]}) );
