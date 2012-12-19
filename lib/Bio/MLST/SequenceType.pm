@@ -84,6 +84,14 @@ sub _build_sequence_type
   my($self) = @_;
   
   my @header_row = @{$self->_profiles->[0]};
+  
+  for(my $i=0; $i< @header_row; $i++)
+  {
+    next if($header_row[$i] eq "clonal_complex");
+    $header_row[$i] =~ s!_!!g;
+    $header_row[$i] =~ s!-!!g;
+  }
+  
   my $num_loci = 0;
   my %sequence_type_freq;
   
@@ -94,10 +102,9 @@ sub _build_sequence_type
     {
       next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex");
       $num_loci++ if($row == 1);
-       
+
       next if(!defined($self->allele_to_number->{$header_row[$col]}) );
       next if($self->allele_to_number->{$header_row[$col]} != $current_row[$col]);
-      
       $sequence_type_freq{$current_row[0]}++;
     }
   }
