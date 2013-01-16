@@ -55,7 +55,7 @@ ok(!$input_file_test,'input file check');
 ok(!$input_option_test,'options check');
 
 # list all species
-ok(('Escherichia_coli_1,Helicobacter_pylori' eq join(',',@{$multi_mlst_B->_species_list})),'species list');
+ok(('Escherichia_coli_1,Helicobacter_pylori,Streptococcus_pyogenes,Streptococcus_pyogenes_emmST' eq join(',',@{$multi_mlst_B->_species_list})),'species list');
 
 done_testing();
 

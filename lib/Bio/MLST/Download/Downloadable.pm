@@ -20,6 +20,7 @@ use Moose::Role;
 use File::Copy;
 use File::Basename;
 use LWP::Simple;
+use File::Path 2.06 qw(make_path);
 
 sub _download_file
 {
@@ -46,6 +47,25 @@ sub _get_filename_from_url
   }
   
   return int(rand(10000)).".tfa";
+}
+
+sub _build_destination_directory
+{
+  my ($self) = @_;
+  my $destination_directory = join('/',($self->base_directory,$self->_sub_directory));
+  make_path($destination_directory);
+  make_path(join('/',($destination_directory,'alleles')));
+  make_path(join('/',($destination_directory,'profiles')));
+  return $destination_directory;
+}
+
+sub _sub_directory
+{
+  my ($self) = @_;
+  my $combined_name = join('_',($self->species));
+  $combined_name =~ s!\.$!!gi;
+  $combined_name =~ s!\W!_!gi;
+  return $combined_name;
 }
 
 no Moose;
