@@ -51,10 +51,14 @@ compare_files('t/data/expected_Streptococcus_pyogenes_emmST.allele.csv', $tmpdir
 compare_files('t/data/expected_Streptococcus_pyogenes_emmST_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
 
 
-#wrapper script to download from cdc
-#cron job
-#new script or parameter flag to limit to emmST
-#filter out emm from main st search
+ok((my $convert_fasta_ftp = Bio::MLST::CDC::Convert->new(
+  species        => 'Streptococcus pyogenes emmST',
+  input_file     => 'ftp://example.com/file.fa',
+  gene_name      => 'emmST',
+  base_directory => $destination_directory
+  )),'initialise the converter with remote url');
+ok(($convert_fasta_ftp->input_file), 'remote url was accepted');
+
 
 done_testing();
 
