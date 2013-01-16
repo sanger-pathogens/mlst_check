@@ -20,6 +20,10 @@ subtype 'Bio::MLST::File',
   as 'Str',
   where { Bio::MLST::Validate::File->new()->does_file_exist($_) };
 
+subtype 'Bio::MLST::Resource',
+  as 'Str',
+  where { Bio::MLST::Validate::Resource->new()->does_resource_exist($_) };
+
 no Moose;
 no Moose::Util::TypeConstraints;
 __PACKAGE__->meta->make_immutable;

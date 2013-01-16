@@ -33,7 +33,7 @@ use Text::CSV;
 with 'Bio::MLST::Download::Downloadable';
 
 has 'species'          => ( is => 'ro', isa => 'Str',      required => 1 ); 
-has 'input_file'       => ( is => 'ro', isa => 'Bio::MLST::File',      required => 1 ); 
+has 'input_file'       => ( is => 'ro', isa => 'Bio::MLST::Resource',      required => 1 ); 
 has 'gene_name'        => ( is => 'ro', isa => 'Str',          required => 1 ); 
 has 'base_directory'   => ( is => 'ro', isa => 'Str',          required => 1 ); 
 
