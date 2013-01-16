@@ -53,6 +53,26 @@ sub _build__output_profile_filename
   join('/',($self->destination_directory, 'profiles',$self->_sub_directory.'.txt'));
 }
 
+sub _build_destination_directory
+{
+  my ($self) = @_;
+  my $destination_directory = join('/',($self->base_directory,$self->_sub_directory));
+  make_path($destination_directory);
+  make_path(join('/',($destination_directory,'alleles')));
+  make_path(join('/',($destination_directory,'profiles')));
+  return $destination_directory;
+}
+
+sub _sub_directory
+{
+  my ($self) = @_;
+  my $combined_name = join('_',($self->species));
+  $combined_name =~ s!\.$!!gi;
+  $combined_name =~ s!\W!_!gi;
+  return $combined_name;
+}
+
+
 sub create_mlst_files
 {
   my ($self) = @_;
