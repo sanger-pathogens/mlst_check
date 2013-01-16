@@ -18,7 +18,8 @@ sub does_resource_exist
 {
   my($self, $resource) = @_;
   
-  return 1 if($RE{URI}->matches($resource));
+  return 1 if($RE{URI}{FTP}->matches($resource));
+  return 1 if($RE{URI}{HTTP}->matches($resource));
   
   return 1 if(-e $resource);
   

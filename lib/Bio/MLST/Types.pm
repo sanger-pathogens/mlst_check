@@ -11,6 +11,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Bio::MLST::Validate::Executable;
 use Bio::MLST::Validate::File;
+use Bio::MLST::Validate::Resource;
 
 subtype 'Bio::MLST::Executable',
   as 'Str',
