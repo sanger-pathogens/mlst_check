@@ -1,0 +1,125 @@
+#!/usr/bin/env perl
+package Bio::MLST::Bin::GetEmmSequenceType;
+
+# ABSTRACT: Given an assembly find the MLST sequence type of the emm gene from the CDC.
+# PODNAME: get_emm_sequence_type
+=head1 SYNOPSIS
+
+Given Fasta files and a Species regex, lookup the relevant MLST database and output the sequence type to a file.
+It requires NBCI Blast+ to be available in your PATH.
+
+   # Basic usage, sequence type result written to my_assembly.fa.st
+   get_emm_sequence_type -s "Streptococcus pyogenes" my_assembly.fa
+   
+   # Multiple fasta files 
+   get_emm_sequence_type -s "Streptococcus pyogenes" myfasta.fa anotherfasta.fa yetanother.fa
+   # or
+   get_emm_sequence_type -s "Streptococcus pyogenes" *.fa
+   
+   # Split into 8 parallel processes (much faster), default is 2
+   get_emm_sequence_type -s "Streptococcus pyogenes" -d 8 *.fa
+   
+   # output a fasta file with the concatenated alleles and unknown sequences
+   get_emm_sequence_type -s "Streptococcus pyogenes" -c  my_assembly.fa 
+   
+   # Specify an output directory 
+   get_emm_sequence_type  -s "Streptococcus pyogenes" -o /path/to/results my_assembly.fa
+   
+   # Match against multiple MLST databases
+   get_emm_sequence_type -s "Clostridium botulinum, Streptococcus pyogenes" my_assembly.fa
+   
+   # Match against all MLST databases
+   get_emm_sequence_type my_assembly.fa
+   
+   # list all available MLST databases
+   get_emm_sequence_type -a
+   
+   # This help message
+   get_emm_sequence_type -h
+   
+=cut
+
+
+BEGIN { unshift( @INC, '../lib' ) }
+use lib "/software/pathogen/internal/prod/lib";
+use Moose;
+use Getopt::Long;
+use Cwd;
+use Bio::MLST::Check;
+use Bio::MLST::Databases;
+use Bio::MLST::Validate::Executable;
+use Bio::MLST::SearchForFiles;
+use Bio::MLST::CheckMultipleSpecies;
+
+my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+
+GetOptions ('s|species=s'              => \$species,
+            'o|output_directory=s'     => \$output_directory,
+            'c|output_fasta_files'     => \$output_fasta_files,
+            'y|output_phylip_files'    => \$output_phylip_files,
+            'a|available_databases'    => \$available_databases,
+            'b|mlst_base_directory=s'  => \$base_directory,
+            'm|makeblastdb_exec=s'     => \$makeblastdb_exec,
+            'n|blastn_exec=s'          => \$blastn_exec,
+            'p|spreadsheet_basename=s' => \$spreadsheet_basename,
+            'd|parallel_processes=i'   => \$parallel_processes,
+            'h|help'                   => \$help,
+);
+
+( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
+Usage: $0 [options]
+
+# Basic usage, sequence type result written to my_assembly.fa.st
+get_emm_sequence_type my_assembly.fa
+
+# Multiple fasta files 
+get_emm_sequence_type myfasta.fa anotherfasta.fa yetanother.fa
+
+# Split into 8 parallel processes (much faster), default is 2
+get_emm_sequence_type -d 8 *.fa
+
+# output a fasta file with the concatenated alleles and unknown sequences
+get_emm_sequence_type -c  my_assembly.fa 
+
+# output a phylip file with the concatenated alleles and unknown sequences
+get_emm_sequence_type -y  my_assembly.fa
+
+# Specify an output directory 
+get_emm_sequence_type  -o /path/to/results my_assembly.fa
+
+# This help message
+get_emm_sequence_type -h
+
+USAGE
+;
+
+$base_directory ||= $ENV{MLST_DATABASES};
+$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+
+# Multiple versions of blast lying around, so use a particular one if possible
+$makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.27+/bin/makeblastdb';
+$blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.27+/bin/blastn';
+$makeblastdb_exec = 'makeblastdb' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($makeblastdb_exec));
+$blastn_exec = 'blastn' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
+
+$spreadsheet_basename ||= 'emm_results';
+$output_directory    ||= getcwd;
+$output_fasta_files  ||= 0;
+$output_phylip_files ||= 0;
+$parallel_processes  ||= 2;
+$species ||= 'Streptococcus pyogenes emm';
+
+my $multiple_fastas = Bio::MLST::Check->new(
+  species               => $species,
+  base_directory        => $base_directory,
+  raw_input_fasta_files => \@ARGV,
+  makeblastdb_exec      => $makeblastdb_exec,
+  blastn_exec           => $blastn_exec,
+  output_directory      => $output_directory,
+  output_fasta_files    => $output_fasta_files,
+  spreadsheet_basename  => $spreadsheet_basename,
+  parallel_processes    => $parallel_processes,
+  output_phylip_files   => $output_phylip_files
+);
+$multiple_fastas->create_result_files;
+
