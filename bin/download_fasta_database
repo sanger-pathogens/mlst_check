@@ -51,13 +51,13 @@ USAGE
 
 $base_directory ||= $ENV{MLST_DATABASES};
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
-$emm_st_url  ||= 'ftp://ftp.cdc.gov/pub/infectious_diseases/biotech/tsemm/tofasta.tfa';
+$url  ||= 'ftp://ftp.cdc.gov/pub/infectious_diseases/biotech/tsemm/tofasta.tfa';
 $species     ||= 'Streptococcus pyogenes emm';
 $gene_name   ||= 'emm';
 
 my $convert_fasta = Bio::MLST::CDC::Convert->new(
   species        => $species,
-  input_file     => $emm_st_url,
+  input_file     => $url,
   gene_name      => $gene_name,
   base_directory => $base_directory
   );
