@@ -40,8 +40,18 @@ sub _build_list_species
   my($self) = @_;
   opendir(my $dh,$self->base_directory);
   my $species_name = $self->species_name;
+  my $species_name_with_underscores = $self->species_name;
   $species_name =~ s!\W!.+!gi;
-  my @search_results = grep { /$species_name/i } readdir($dh);
+  $species_name_with_underscores =~ s!\W!_!gi;
+  
+  # If there is an exact match return it
+  my @search_results = grep { /^$species_name$/i } readdir($dh);
+  if(@search_results == 1 && $search_results[0] eq $species_name_with_underscores)
+  {
+    return \@search_results;
+  }
+  rewinddir($dh);
+  @search_results = grep { /$species_name/i } readdir($dh);
 
   return \@search_results;
 }

@@ -35,7 +35,7 @@ has 'sequence_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 
 
 has 'allele_to_number'      => ( is => 'ro', isa => 'HashRef',    lazy => 1, builder => '_build_allele_to_number' ); 
 has '_profiles'             => ( is => 'ro', isa => 'ArrayRef',   lazy => 1, builder => '_build__profiles' );
-has 'sequence_type'         => ( is => 'ro', isa => 'Maybe[Int]', lazy => 1, builder => '_build_sequence_type' );
+has 'sequence_type'         => ( is => 'ro', isa => 'Maybe[Str]', lazy => 1, builder => '_build_sequence_type' );
 
 has 'nearest_sequence_type' => ( is => 'rw', isa => 'Maybe[Int]');
 
