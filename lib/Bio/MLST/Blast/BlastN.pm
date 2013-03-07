@@ -103,7 +103,7 @@ sub _build_top_hit
   
   if((keys %contamination_check) >= 2)
   {
-    my @found_alleles = values(%contamination_check);
+    my @found_alleles = keys(%contamination_check);
     $top_hit{contamination} = \@found_alleles;
   }
   
