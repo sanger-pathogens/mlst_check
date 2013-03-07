@@ -60,6 +60,7 @@ has 'output_directory'      => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'spreadsheet_basename'  => ( is => 'ro', isa => 'Str',      default  => 'mlst_results' ); 
 has 'output_fasta_files'    => ( is => 'ro', isa => 'Bool',     default  => 0 ); # output of fasta not supported
 has 'output_phylip_files'   => ( is => 'ro', isa => 'Bool',     default  => 0 ); # output of phylip not supported
+has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',   default => 1 ); 
 
 has '_species_list'         => ( is => 'ro', isa => 'ArrayRef', lazy_build => 1 );
 has '_working_directory'    => ( is => 'ro', isa => 'File::Temp::Dir', default => sub { File::Temp->newdir(DIR => getcwd, CLEANUP => 1); });
@@ -142,6 +143,7 @@ sub _run_mlst_for_species_list
             parallel_processes    => $parallel_process_fa_file,
             output_fasta_files    => $self->output_fasta_files,
             output_phylip_files   => $self->output_phylip_files,
+            show_contamination_instead_of_alt_matches => $self->show_contamination_instead_of_alt_matches
             );
         $multiple_fastas->create_result_files;
 

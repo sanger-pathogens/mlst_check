@@ -34,6 +34,8 @@ ok(($compare_alleles = Bio::MLST::CompareAlleles->new(
 is_deeply( $compare_alleles->found_sequence_names,sort(['adk-3']), 'last top hit returned if more than 1 is 100%');
 is($compare_alleles->new_st, 0, 'existing ST found');
 is($compare_alleles->contamination, 1, 'contamination found');
+is_deeply($compare_alleles->contamination_sequence_names, ['adk-3','adk-2'], 'Names of other contamination sequences');
+
 
 ok(($compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',

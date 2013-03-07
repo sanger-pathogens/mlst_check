@@ -62,6 +62,7 @@ has 'output_directory'      => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'output_fasta_files'    => ( is => 'ro', isa => 'Bool',     default  => 0 ); 
 has 'spreadsheet_basename'  => ( is => 'ro', isa => 'Str',      default  => 'mlst_results' ); 
 has 'output_phylip_files'   => ( is => 'ro', isa => 'Bool',     default  => 0 ); 
+has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',   default => 1 ); 
 
 has 'parallel_processes'    => ( is => 'ro', isa => 'Int',      default  => 1 ); 
 
@@ -113,7 +114,8 @@ sub _generate_spreadsheet_rows
       makeblastdb_exec   => $self->makeblastdb_exec,
       blastn_exec        => $self->blastn_exec,
       output_directory   => $self->output_directory,
-      output_fasta_files => $self->output_fasta_files
+      output_fasta_files => $self->output_fasta_files,
+      show_contamination_instead_of_alt_matches => $self->show_contamination_instead_of_alt_matches
     );
     my @result_rows;
     push(@result_rows, ($fasta_sequence_type_results->_spreadsheet_row_obj->header_row,

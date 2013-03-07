@@ -51,7 +51,7 @@ use Bio::MLST::Validate::Executable;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CheckMultipleSpecies;
 
-my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+my ($species, $output_fasta_files, $output_directory, $show_alternatives, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
 
 GetOptions ('s|species=s'              => \$species,
             'o|output_directory=s'     => \$output_directory,
@@ -63,6 +63,7 @@ GetOptions ('s|species=s'              => \$species,
             'n|blastn_exec=s'          => \$blastn_exec,
             'p|spreadsheet_basename=s' => \$spreadsheet_basename,
             'd|parallel_processes=i'   => \$parallel_processes,
+            'show_alternatives'        => \$show_alternatives,
             'h|help'                   => \$help,
 );
 
@@ -88,6 +89,9 @@ get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
 
 # Specify an output directory 
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
+
+# Instead of flagging multiple 100% matches as contamination, output the name of the alternative sequence
+get_sequence_type --show_alternatives -s "Clostridium difficile" my_assembly.fa
 
 # Match against multiple MLST databases
 get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
@@ -118,6 +122,8 @@ $output_directory    ||= getcwd;
 $output_fasta_files  ||= 0;
 $output_phylip_files ||= 0;
 $parallel_processes  ||= 2;
+my $contamination_flag = (defined($show_alternatives)) ? 0 : 1;
+
 
 # get list of species to check
 my @species_list = ();
@@ -160,6 +166,7 @@ elsif(@species_list > 1 || !defined($species))
         output_phylip_files   => $output_phylip_files, # not supported
         verbose               => 0, # databases searched and matches found
         report_all_mlst_db    => 0, # list databases searched in csv file
+        show_contamination_instead_of_alt_matches => $contamination_flag
         );
     $multiple_species->create_result_files;
 }
@@ -175,7 +182,8 @@ else
     output_fasta_files    => $output_fasta_files,
     spreadsheet_basename  => $spreadsheet_basename,
     parallel_processes    => $parallel_processes,
-    output_phylip_files   => $output_phylip_files
+    output_phylip_files   => $output_phylip_files,
+    show_contamination_instead_of_alt_matches => $contamination_flag
   );
   $multiple_fastas->create_result_files;
 }

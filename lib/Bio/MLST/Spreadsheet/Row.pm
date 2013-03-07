@@ -34,6 +34,7 @@ use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
 has 'compare_alleles'    => ( is => 'ro', isa => 'Bio::MLST::CompareAlleles',   required => 1 ); 
+has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',   default => 1 ); 
                         
 has 'allele_numbers_row' => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_numbers_row'); 
 has 'genomic_row'        => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_genomic_row'); 
@@ -57,12 +58,22 @@ sub _build__common_cells
      $new_st_cell = "Novel ST";
   }
 
+  my $contamination_cell;
+  if($self->show_contamination_instead_of_alt_matches == 1)
+  {
+    $contamination_cell = ($self->compare_alleles->contamination ? "Contamination" : '');
+  }
+  else
+  {
+    $contamination_cell = (defined($self->compare_alleles->contamination_sequence_names)) ? join(',',@{$self->compare_alleles->contamination_sequence_names}) : '';
+  }
+  
   
   my @common_cells = (
     $self->compare_alleles->sequence_filename_root,
     $self->sequence_type_obj->sequence_type_or_nearest,
     $new_st_cell,
-    ($self->compare_alleles->contamination ? "Contamination" : ''),
+    $contamination_cell,
   );
   return \@common_cells;
 }
@@ -144,7 +155,17 @@ sub _build_header_row
     push(@allele_headers,$sequence_name_details[0]);
   }
   
-  my @header_cells = (('Isolate', 'ST','New ST', 'Contamination'), @allele_headers);
+  my $contamination_cell ;
+  if($self->show_contamination_instead_of_alt_matches == 1)
+  {
+    $contamination_cell =   'Contamination';
+  }
+  else
+  {
+    $contamination_cell = 'Alternatives';
+  }
+  
+  my @header_cells = (('Isolate', 'ST','New ST', $contamination_cell ), @allele_headers);
   return \@header_cells;
 }
 

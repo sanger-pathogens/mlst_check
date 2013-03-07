@@ -119,7 +119,8 @@ my $multiple_fastas = Bio::MLST::Check->new(
   output_fasta_files    => $output_fasta_files,
   spreadsheet_basename  => $spreadsheet_basename,
   parallel_processes    => $parallel_processes,
-  output_phylip_files   => $output_phylip_files
+  output_phylip_files   => $output_phylip_files,
+  show_contamination_instead_of_alt_matches => 0
 );
 $multiple_fastas->create_result_files;
 
