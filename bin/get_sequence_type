@@ -63,7 +63,7 @@ GetOptions ('s|species=s'              => \$species,
             'n|blastn_exec=s'          => \$blastn_exec,
             'p|spreadsheet_basename=s' => \$spreadsheet_basename,
             'd|parallel_processes=i'   => \$parallel_processes,
-            'show_alternatives'        => \$show_alternatives
+            'show_alternatives'        => \$show_alternatives,
             'h|help'                   => \$help,
 );
 
