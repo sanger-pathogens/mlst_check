@@ -159,8 +159,8 @@ sub _build_matching_sequences
     # more than 1 allele has 100% match
     if(defined($top_blast_hit{contamination}))
     {
-      $self->contamination(1);      
-      $self->contamination_sequence_names($top_blast_hit{contamination});
+      $self->contamination(1);
+      $self->_translate_contamination_names_into_sequence_types($top_blast_hit{contamination},$top_blast_hit{allele_name});
     }
     
     $top_blast_hit{allele_name} =~ s![-_]+!-!g;
@@ -195,7 +195,7 @@ sub _build_matching_sequences
 
 sub _translate_contamination_names_into_sequence_types
 {
-  my ($self, $contamination_names) = @_;
+  my ($self, $contamination_names, $main_allele_name) = @_;
   my @contamination_sequence_types;
   
   for my $allele_number (@{ $contamination_names})
@@ -205,7 +205,7 @@ sub _translate_contamination_names_into_sequence_types
       sequence_names => [$allele_number]
     );
     
-    if(defined($st->sequence_type()))
+    if(defined($st->sequence_type()) && $main_allele_name ne $st->sequence_type())
     {
       push(@contamination_sequence_types, $st->sequence_type());
     }
