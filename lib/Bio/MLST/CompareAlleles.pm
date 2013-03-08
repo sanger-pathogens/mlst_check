@@ -57,6 +57,7 @@ use Bio::Perl;
 use Bio::MLST::Blast::Database;
 use Bio::MLST::Blast::BlastN;
 use Bio::MLST::Types;
+use Bio::MLST::SequenceType;
 
 has 'sequence_filename'      => ( is => 'ro', isa => 'Bio::MLST::File',      required => 1 );
 has 'allele_filenames'       => ( is => 'ro', isa => 'ArrayRef', required => 1 );
@@ -73,6 +74,7 @@ has 'contamination'          => ( is => 'rw', isa => 'Bool',    default => 0);
 has 'contamination_sequence_names' => ( is => 'rw', isa => 'Maybe[ArrayRef]' );
 has 'new_st'                 => ( is => 'rw', isa => 'Bool',    default => 0);
 has '_absent_loci'           => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__absent_loci' );
+has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',        required => 1 ); 
 
 sub _build__blast_db_location
 {
@@ -157,7 +159,7 @@ sub _build_matching_sequences
     # more than 1 allele has 100% match
     if(defined($top_blast_hit{contamination}))
     {
-      $self->contamination(1);
+      $self->contamination(1);      
       $self->contamination_sequence_names($top_blast_hit{contamination});
     }
     
@@ -190,6 +192,28 @@ sub _build_matching_sequences
   $self->non_matching_sequences(\%non_matching_sequence_names);
   return \%matching_sequence_names;
 }
+
+sub _translate_contamination_names_into_sequence_types
+{
+  my ($self, $contamination_names) = @_;
+  my @contamination_sequence_types;
+  
+  for my $allele_number (@{ $contamination_names})
+  {
+    my $st = Bio::MLST::SequenceType->new(
+      profiles_filename => $self->profiles_filename,
+      sequence_names => [$allele_number]
+    );
+    
+    if(defined($st->sequence_type()))
+    {
+      push(@contamination_sequence_types, $st->sequence_type());
+    }
+  }
+  
+  $self->contamination_sequence_names(\@contamination_sequence_types);
+}
+
 
 sub _get_blast_hit_sequence
 {

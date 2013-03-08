@@ -90,9 +90,6 @@ get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
 # Specify an output directory 
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
 
-# Instead of flagging multiple 100% matches as contamination, output the name of the alternative sequence
-get_sequence_type --show_alternatives -s "Clostridium difficile" my_assembly.fa
-
 # Match against multiple MLST databases
 get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
 
