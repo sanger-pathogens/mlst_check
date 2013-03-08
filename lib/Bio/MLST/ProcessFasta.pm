@@ -77,7 +77,8 @@ sub _build__compare_alleles
     sequence_filename => $self->fasta_file,
     allele_filenames  => $self->_search_results->allele_filenames(),
     makeblastdb_exec  => $self->makeblastdb_exec,
-    blastn_exec       => $self->blastn_exec
+    blastn_exec       => $self->blastn_exec,
+    profiles_filename => $self->_search_results->profiles_filename()
   );
   
   my $output_fasta = Bio::MLST::OutputFasta->new(
