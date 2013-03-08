@@ -200,12 +200,13 @@ sub _translate_contamination_names_into_sequence_types
   
   for my $allele_number (@{ $contamination_names})
   {
+    next if($main_allele_name eq $allele_number);
     my $st = Bio::MLST::SequenceType->new(
       profiles_filename => $self->profiles_filename,
       sequence_names => [$allele_number]
     );
     
-    if(defined($st->sequence_type()) && $main_allele_name ne $st->sequence_type())
+    if(defined($st->sequence_type()) )
     {
       push(@contamination_sequence_types, $st->sequence_type());
     }
