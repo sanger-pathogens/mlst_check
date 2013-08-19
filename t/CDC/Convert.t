@@ -52,6 +52,27 @@ compare_files('t/data/expected_Streptococcus_pyogenes_emmST.allele.csv', $tmpdir
 compare_files('t/data/expected_Streptococcus_pyogenes_emmST_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
 
 
+# unknown allele (single base change) should be picked up in concat output
+$tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
+$tmpdirectory = $tmpdirectory_obj->dirname();
+ok(($check_converted_files_obj = Bio::MLST::Check->new(
+  species               => "Streptococcus pyogenes emmST",
+  base_directory        => $destination_directory,
+  raw_input_fasta_files => ['t/data/Streptococcus_pyogenes_emmST_contigs.fa','t/data/Streptococcus_pyogenes_emmST_unknown.fa'],
+  makeblastdb_exec      => 'makeblastdb',
+  blastn_exec           => 'blastn',
+  output_directory      => $tmpdirectory,
+  output_fasta_files    => 1,
+  spreadsheet_basename  => 'mlst_results',
+  parallel_processes    => 1,
+  show_contamination_instead_of_alt_matches => 0,
+)),'Pass in the converted files and perform a lookup');
+ok(($check_converted_files_obj->create_result_files),'create all the results files for the fasta');
+
+compare_files('t/data/expected_Streptococcus_pyogenes_emmST_alleles_with_unknown.fa', $tmpdirectory.'/concatenated_alleles.fa');
+
+
+
 ok((my $convert_fasta_ftp = Bio::MLST::CDC::Convert->new(
   species        => 'Streptococcus pyogenes emmST',
   input_file     => 'ftp://example.com/file.fa',
