@@ -2,6 +2,8 @@
 use strict;
 use warnings;
 use File::Temp;
+use File::Slurp;
+use Data::Dumper;
 
 BEGIN { unshift(@INC, './lib') }
 BEGIN {
@@ -112,11 +114,9 @@ sub compare_files
   my($expected_file, $actual_file) = @_;
   ok((-e $actual_file),' results file exist');
   ok((-e $expected_file)," $expected_file expected file exist");
-  local $/ = undef;
-  open(EXPECTED, $expected_file);
-  open(ACTUAL, $actual_file);
-  my $expected_line = <EXPECTED>;
-  my $actual_line = <ACTUAL>;
+  
+  my $expected_line =  read_file($expected_file);
+  my $actual_line = read_file($actual_file);
   
   # parallel processes mean the order isnt guaranteed.
   my @split_expected  = split(/\n/,$expected_line);
