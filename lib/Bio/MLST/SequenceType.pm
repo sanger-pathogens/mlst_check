@@ -118,17 +118,18 @@ sub _get_sequence_type_or_set_nearest_match
   my($self,$sequence_type_f, $num_loci) = @_;
   my %sequence_type_freq = %{$sequence_type_f};
   
-  for my $sequence_type (sort { $sequence_type_freq{$b} <=> $sequence_type_freq{$a} } keys %sequence_type_freq) 
-  {
-    if($sequence_type_freq{$sequence_type} == $num_loci)
+  # if $num_loci is in $sequence_type_freq vals, return that, otherwise return lowest numbered sequence type
+  if( $num_loci ~~ values %sequence_type_freq ){
+    for my $sequence_type (sort { $sequence_type_freq{$b} <=> $sequence_type_freq{$a} } keys %sequence_type_freq) 
     {
-      return $sequence_type;
-    }
-    else
-    {
-      $self->nearest_sequence_type($sequence_type);
-      return undef;	
-    }
+      if($sequence_type_freq{$sequence_type} == $num_loci){
+        return $sequence_type;
+      }
+  }
+  else {
+	my @sorted_sts = sort { $a <=> $b } keys %sequence_type;
+    $self->nearest_sequence_type($sorted_sts[0]);
+    return undef;	
   }
   return undef;
 }
