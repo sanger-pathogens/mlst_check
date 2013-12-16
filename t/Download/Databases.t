@@ -31,5 +31,19 @@ ok((-e $destination_directory.'/Homo_sapiens_1/alleles/ddd.fas'));
 ok((-e $destination_directory.'/Homo_sapiens_1/alleles/eee.fas'));
 ok((-e $destination_directory.'/Homo_sapiens_1/profiles/homo_sapiens.txt'));
 
+
+my $destination_directory_obj2 = File::Temp->newdir(CLEANUP =>1);
+my $destination_directory2 = $destination_directory_obj2->dirname();
+
+ok((my $database_settings2 = Bio::MLST::DatabaseSettings->new(filename => 't/data/Pediococcus_pentosaceus_filtering.xml')->settings),"get overall list of databases to be filtered");
+
+ok((my $databases2 = Bio::MLST::Download::Databases->new(
+  databases_attributes => $database_settings2,
+  base_directory  => $destination_directory2
+)), 'initalise setting up databases');
+ok($databases2->update(),'download databases (nothing should happen)');
+
+ok((! (-e $destination_directory.'/Pediococcus_pentosaceus/alleles/gyrB.tfa')),'nothing should be downloaded' );
+
 done_testing();
 

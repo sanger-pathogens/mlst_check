@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<data>
+<species>
+Pediococcus pentosaceus
+<mlst>
+<database>
+<url>http://pubmlst.org/ppentosaceus/</url>
+<retrieved>2013-12-16</retrieved>
+<profiles>
+<count>17</count>
+<url>t/data/ppentosaceus.txt</url>
+</profiles>
+<loci>
+<locus>
+gyrB
+<url>
+t/data/gyrB.tfa
+</url>
+</locus>
+</loci>
+</database>
+</mlst>
+</species>
+
+</data>
