@@ -32,6 +32,8 @@ has 'base_directory'       => ( is => 'ro', isa => 'Str',     required => 1 );
 
 has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 4 );
 
+has '_species_to_exclude'  => ( is => 'ro', isa => 'Str',     default => 'Pediococcus' );
+
 sub update
 {
   my($self) = @_;
@@ -39,6 +41,8 @@ sub update
   for my $species (keys %{$self->databases_attributes})
   {
     $pm->start and next; # do the fork
+    my $species_to_exclude = $self->_species_to_exclude;
+    next if($species =~ /$species_to_exclude/i);
     my $database = Bio::MLST::Download::Database->new(
       species => $species,
       database_attributes => $self->databases_attributes->{$species},
