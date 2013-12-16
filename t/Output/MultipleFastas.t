@@ -117,6 +117,8 @@ sub compare_files
   
   my $expected_line =  read_file($expected_file);
   my $actual_line = read_file($actual_file);
+  $expected_line =~ s/ \n//gi;
+  $actual_line   =~ s/ \n//gi;
   
   # parallel processes mean the order isnt guaranteed.
   my @split_expected  = split(/\n/,$expected_line);
