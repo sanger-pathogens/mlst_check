@@ -94,8 +94,7 @@ sub _generate_spreadsheet_rows
 
       } else {  # problems occuring during storage or retrieval will throw a warning
         print qq|No message received from child process $pid!\n|;
-        return 0;
-      }
+    }
     }
   );
   
@@ -125,7 +124,8 @@ sub _generate_spreadsheet_rows
                         $fasta_sequence_type_results->concat_name,
                         $fasta_sequence_type_results->concat_sequence));
      
-    $pm->finish(0,\@result_rows); # do the exit in the child process
+    my $check = $pm->finish(0,\@result_rows); # do the exit in the child process
+    die "Something's happened...take 2...\n" unless( defined $check );
   }
   $pm->wait_all_children;
   1;
@@ -142,7 +142,7 @@ sub create_result_files
   my($self) = @_;
   exit unless $self->input_fasta_files_exist;
   $self->_generate_spreadsheet_rows;
-  
+
   my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
     header                          => pop(@{$self->_spreadsheet_header}),
     spreadsheet_allele_numbers_rows => $self->_spreadsheet_allele_numbers_rows,

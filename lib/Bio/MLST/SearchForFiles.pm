@@ -82,9 +82,9 @@ sub _build_profiles_filename
   opendir(my $dh, $profiles_base);
   my @profiles;
   @profiles = grep { /txt$/ } readdir($dh) if (defined $dh);
-  if(@profiles > 1 || @profiles ==0 || !defined @profiles)
+  if(@profiles > 1 || @profiles ==0 || ! @profiles)
   {
-    die "Couldnt find a single MLST profile\n";
+    die "Couldn't find a single MLST profile\n";
   }
   return join('/',($profiles_base, $profiles[0]));
 }
