@@ -94,6 +94,7 @@ sub _generate_spreadsheet_rows
 
       } else {  # problems occuring during storage or retrieval will throw a warning
         print qq|No message received from child process $pid!\n|;
+        return 0;
       }
     }
   );

@@ -80,8 +80,9 @@ sub _build_profiles_filename
   my $profiles_base = join('/',($self->search_base_directory,'profiles'));
   
   opendir(my $dh, $profiles_base);
-  my @profiles = grep { /txt$/ } readdir($dh);
-  if(@profiles > 1 || @profiles ==0)
+  my @profiles;
+  @profiles = grep { /txt$/ } readdir($dh) if (defined $dh);
+  if(@profiles > 1 || @profiles ==0 || !defined @profiles)
   {
     die "Couldnt find a single MLST profile\n";
   }
