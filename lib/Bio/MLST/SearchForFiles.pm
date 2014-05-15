@@ -83,7 +83,7 @@ sub _build_profiles_filename
   my @profiles = grep { /txt$/ } readdir($dh);
   if(@profiles > 1 || @profiles ==0)
   {
-    die "Couldnt find a single MLST profile\n";
+    die "Couldn't find a single MLST profile\n";
   }
   return join('/',($profiles_base, $profiles[0]));
 }

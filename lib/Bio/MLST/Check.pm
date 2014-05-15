@@ -94,7 +94,7 @@ sub _generate_spreadsheet_rows
 
       } else {  # problems occuring during storage or retrieval will throw a warning
         print qq|No message received from child process $pid!\n|;
-      }
+    }
     }
   );
   
@@ -141,7 +141,7 @@ sub create_result_files
   my($self) = @_;
   exit unless $self->input_fasta_files_exist;
   $self->_generate_spreadsheet_rows;
-  
+
   my $spreadsheet = Bio::MLST::Spreadsheet::File->new(
     header                          => pop(@{$self->_spreadsheet_header}),
     spreadsheet_allele_numbers_rows => $self->_spreadsheet_allele_numbers_rows,
