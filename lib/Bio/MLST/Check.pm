@@ -124,8 +124,7 @@ sub _generate_spreadsheet_rows
                         $fasta_sequence_type_results->concat_name,
                         $fasta_sequence_type_results->concat_sequence));
      
-    my $check = $pm->finish(0,\@result_rows); # do the exit in the child process
-    die "Something's happened...take 2...\n" unless( defined $check );
+    $pm->finish(0,\@result_rows); # do the exit in the child process
   }
   $pm->wait_all_children;
   1;
