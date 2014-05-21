@@ -40,10 +40,10 @@ ok(($output_fasta = Bio::MLST::OutputFasta->new(
   input_fasta_file => 't/data/contigs.fa'
 )), "Initialise matching and non matching");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/contigs.unknown_allele.EEE.fa", '>EEE
+compare_file_content($tmpdirectory."/contigs.unknown_allele.EEE.fa", '>EEE:4b11a187dc597c6de5bb39dc96a5dbbf
 GGGG
 ');
-compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF
+compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF:2f803268a6367d0943978eb5f84cc62e
 TTTT
 ');
 
@@ -57,7 +57,7 @@ ok(($output_fasta = Bio::MLST::OutputFasta->new(
 )), "Initialise non matching with an unknown sequence");
 ok(($output_fasta->create_files()),'created output files');
 ok(!(-e $tmpdirectory."/contigs.unknown_allele.EEE.fa"), 'No output files created for unknown loci');
-compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF
+compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF:2f803268a6367d0943978eb5f84cc62e
 TTTT
 ');
 
@@ -70,10 +70,10 @@ ok(($output_fasta = Bio::MLST::OutputFasta->new(
   input_fasta_file => 't/data/contigs.fa'
 )), "Initialise non matching has a short sequence");
 ok(($output_fasta->create_files()),'created output files');
-compare_file_content($tmpdirectory."/contigs.unknown_allele.EEE.fa", '>EEE
+compare_file_content($tmpdirectory."/contigs.unknown_allele.EEE.fa", '>EEE:a7158285bc040ae9b10452d2d30f6b8e
 GGNN
 ');
-compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF
+compare_file_content($tmpdirectory."/contigs.unknown_allele.FFF.fa", '>FFF:2f803268a6367d0943978eb5f84cc62e
 TTTT
 ');
 

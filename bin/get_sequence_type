@@ -41,7 +41,7 @@ It requires NBCI Blast+ to be available in your PATH.
 
 
 BEGIN { unshift( @INC, '../lib' ) }
-use lib "/software/pathogen/internal/prod/lib";
+#use lib "/software/pathogen/internal/prod/lib";
 use Moose;
 use Getopt::Long;
 use Cwd;
@@ -51,9 +51,10 @@ use Bio::MLST::Validate::Executable;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CheckMultipleSpecies;
 
-my ($species, $output_fasta_files, $output_directory, $show_alternatives, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+my ($md5_opt, $species, $output_fasta_files, $output_directory, $show_alternatives, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
 
 GetOptions ('s|species=s'              => \$species,
+            'md5'                      => \$md5_opt,
             'o|output_directory=s'     => \$output_directory,
             'c|output_fasta_files'     => \$output_fasta_files,
             'y|output_phylip_files'    => \$output_phylip_files,
@@ -152,6 +153,7 @@ elsif(@species_list > 1 || !defined($species))
 {
     my $multiple_species = Bio::MLST::CheckMultipleSpecies->new(
         species               => \@species_list,
+        md5_opt               => ($md5_opt)?1:0,
         base_directory        => $base_directory,
         raw_input_fasta_files => \@ARGV,
         makeblastdb_exec      => $makeblastdb_exec,
@@ -171,6 +173,7 @@ else
 {
   my $multiple_fastas = Bio::MLST::Check->new(
     species               => $species,
+    md5_opt               => ($md5_opt)?1:0,
     base_directory        => $base_directory,
     raw_input_fasta_files => \@ARGV,
     makeblastdb_exec      => $makeblastdb_exec,

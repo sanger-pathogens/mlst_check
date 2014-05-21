@@ -54,6 +54,7 @@ use File::Temp;
 use Cwd;
 
 has 'species'               => ( is => 'ro', isa => 'Str',      required => 1 ); 
+has 'md5_opt'               => ( is => 'ro', isa => 'Bool',     required => 1 ); 
 has 'base_directory'        => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'raw_input_fasta_files' => ( is => 'ro', isa => 'ArrayRef', required => 1 ); 
 has 'makeblastdb_exec'      => ( is => 'ro', isa => 'Str',      required => 1 ); 
@@ -109,6 +110,7 @@ sub _generate_spreadsheet_rows
     
     my $fasta_sequence_type_results = Bio::MLST::ProcessFasta->new(
       species            => $self->species,
+      md5_opt            => $self->md5_opt,
       base_directory     => $self->base_directory,
       fasta_file         => $output_fasta_obj->processed_fasta_filename(),
       makeblastdb_exec   => $self->makeblastdb_exec,
