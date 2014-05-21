@@ -45,6 +45,7 @@ use Bio::MLST::Spreadsheet::Row;
 use Bio::MLST::Types;
 
 has 'species'             => ( is => 'ro', isa => 'Str',      required => 1 ); 
+has 'md5_opt'             => ( is => 'ro', isa => 'Bool',     required => 1 ); 
 has 'base_directory'      => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'fasta_file'          => ( is => 'ro', isa => 'Bio::MLST::File',      required => 1 ); 
 has 'makeblastdb_exec'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
@@ -106,6 +107,7 @@ sub _build__spreadsheet_row_obj
 {
   my($self) = @_;
   Bio::MLST::Spreadsheet::Row->new(
+    md5_opt           => $self->md5_opt,
     sequence_type_obj => $self->_sequence_type_obj, 
     compare_alleles   => $self->_compare_alleles,
     show_contamination_instead_of_alt_matches => $self->show_contamination_instead_of_alt_matches

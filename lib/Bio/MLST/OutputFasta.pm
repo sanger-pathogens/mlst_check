@@ -28,6 +28,7 @@ use File::Path qw(make_path);
 use Bio::PrimarySeq;
 use Bio::SeqIO;
 use Bio::MLST::Types;
+use Digest::MD5 qw(md5_hex);
 
 has 'matching_sequences'      => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
 has 'non_matching_sequences'  => ( is => 'ro', isa => 'Maybe[HashRef]',      required => 1 ); 
@@ -81,7 +82,7 @@ sub create_files
       next if($self->_does_sequence_contain_all_unknowns($self->non_matching_sequences->{$sequence_name}));
       my $non_matching_output_filename = join('/',($self->output_directory, $self->_fasta_filename.'.unknown_allele.'.$sequence_name.'.fa'));
       my $out = Bio::SeqIO->new(-file => "+>$non_matching_output_filename" , '-format' => 'Fasta');
-      $out->write_seq(Bio::PrimarySeq->new(-seq => $self->non_matching_sequences->{$sequence_name}, -id  => $sequence_name));
+      $out->write_seq(Bio::PrimarySeq->new(-seq => $self->non_matching_sequences->{$sequence_name}, -id  => "$sequence_name:" . md5_hex($self->non_matching_sequences->{$sequence_name})));
     }
   }
   1;

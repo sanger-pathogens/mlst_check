@@ -31,16 +31,19 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 
 
 use Moose;
+use Digest::MD5 qw(md5_hex);
 
+has 'md5_opt'            => ( is => 'ro', isa => 'Bool',                        required => 1 ); 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
 has 'compare_alleles'    => ( is => 'ro', isa => 'Bio::MLST::CompareAlleles',   required => 1 ); 
-has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',   default => 1 ); 
+has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',  default => 1 ); 
                         
 has 'allele_numbers_row' => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_allele_numbers_row'); 
 has 'genomic_row'        => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_genomic_row'); 
 has 'header_row'         => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_header_row'); 
 has '_common_cells'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__common_cells'); 
-has '_allele_order'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__allele_order'); 
+has '_allele_order'      => ( is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build__allele_order');
+has 'non_matching_sequences_with_modified_allele_names' => ( is => 'rw', isa => 'HashRef', default => sub {{}});
 
 sub _build__common_cells
 {
@@ -90,9 +93,18 @@ sub _build__allele_order
 sub _build_allele_numbers_row
 {
   my($self) = @_;
+  # Building new non matching sequence object with the modified allele names (as in SequenceType.pm -,_ removed)
+  my $seq;
+  foreach my $allele_name (keys %{$self->compare_alleles->non_matching_sequences}) {
+    # Assiging the value to a variable before changing the actual key below
+    $seq = $self->compare_alleles->non_matching_sequences->{$allele_name};
+    $allele_name =~ s/_/-/g;
+    $allele_name =~ s/-+/-/g;
+    $self->non_matching_sequences_with_modified_allele_names->{$allele_name} = $seq;
+  }
+
   my @common_cells = @{$self->_common_cells};
   my @allele_cells;
-  
   for my $allele_name (@{$self->_allele_order})
   {
     if(defined($self->sequence_type_obj->allele_to_number->{$allele_name}))
@@ -101,7 +113,8 @@ sub _build_allele_numbers_row
     }
     else
     {
-       push(@allele_cells,'U');
+      # If selected md5 output view, then call _handle_unknown_allele_row()
+      push(@allele_cells, ($self->md5_opt)?_handle_unknown_allele_row($self->non_matching_sequences_with_modified_allele_names->{$allele_name}) : 'U');
     }
   }
   my @complete_row = (@common_cells,@allele_cells);
@@ -129,19 +142,66 @@ sub _build_genomic_row
        }
        else
        {
-          push(@allele_cells,'U');
+          # If selected md5 output view, then call _handle_unknown_genomic_row()
+          push(@allele_cells, ($self->md5_opt)?_handle_unknown_genomic_row($self->non_matching_sequences_with_modified_allele_names->{$allele_name}) : 'U');
        }
     }
     else
     {
-       push(@allele_cells,'U');
+      # If selected md5 output view, then call _handle_unknown_genomic_row()
+      push(@allele_cells, ($self->md5_opt)?_handle_unknown_genomic_row($self->non_matching_sequences_with_modified_allele_names->{$allele_name}) : 'U');
     }
-    
   }
   my @complete_row = (@common_cells,@allele_cells);
   return \@complete_row;
 }
 
+sub _handle_unknown_allele_row {
+  # Create an md5sum if there are non-mathcing sequences
+  my $seq = shift || '';
+  my $str = $seq;
+  my $digest;
+  if($str ne "") {
+    $str =~ tr///cs;
+    if($str ne "N") {
+      $digest = md5_hex($seq);
+      return $digest;
+    }
+    elsif($str eq "N") {
+      return "N"; # all N's
+    }
+    else {
+      return 'U';
+    }
+  }
+  else {
+    return 'U'; # sequence null
+  }
+}
+
+sub _handle_unknown_genomic_row {
+  # Print the actual sequence for non-matching sequences
+  my $seq = shift || '';
+  my $str = $seq;
+  #my $digest;
+  if($str ne "") {
+    $str =~ tr///cs;
+    if($str ne "N") {
+      #$digest = md5_hex($str);
+      return $seq;
+    }
+    elsif($str eq "N") {
+      return "N"; # all N's
+    }
+    else {
+      return 'U';
+    }
+  }
+  else {
+    return 'U'; # sequence null
+  }
+
+}
 sub _build_header_row
 {
   my($self) = @_;

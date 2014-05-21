@@ -48,6 +48,7 @@ use Cwd;
 use Text::CSV;
 
 has 'species'               => ( is => 'ro', isa => 'ArrayRef', required => 1 ); # empty array searches against all databases
+has 'md5_opt'               => ( is => 'ro', isa => 'Bool',     required => 1 ); 
 has 'base_directory'        => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'parallel_processes'    => ( is => 'ro', isa => 'Int',      default  => 1 ); # max parallel processes
 has 'verbose'               => ( is => 'rw', isa => 'Bool',     default  => 0 ); # output search progress and number of matches
@@ -90,6 +91,7 @@ sub _check_input_files_exist
 
     my $check = Bio::MLST::Check->new( raw_input_fasta_files => $self->raw_input_fasta_files,
                                        species               => '',
+                                       md5_opt               => $self->md5_opt,
                                        base_directory        => '',
                                        makeblastdb_exec      => '',
                                        blastn_exec           => '',
@@ -134,6 +136,7 @@ sub _run_mlst_for_species_list
 
         my $multiple_fastas = Bio::MLST::Check->new(
             species               => $species_name,
+            md5_opt               => $self->md5_opt,
             base_directory        => $self->base_directory,
             raw_input_fasta_files => $self->raw_input_fasta_files,
             makeblastdb_exec      => $self->makeblastdb_exec,
@@ -205,13 +208,13 @@ sub _concatenate_result_files
                 # filter results
                 for(my $i=4; $i<@row; $i++)
                 {
-                    if($row[$i] ne 'U')
+                    if($row[$i] ne 'U' && $row[$i] ne 'N')
                     {
                         push(@positive_rows, \@row);
                         last;
                     }
                 }
-            }   
+            }
             close $fh_in;
 
             # Sort results by file name
