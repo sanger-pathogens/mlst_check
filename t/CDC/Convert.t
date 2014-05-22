@@ -35,6 +35,7 @@ my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 ok((my $check_converted_files_obj = Bio::MLST::Check->new(
   species               => "Streptococcus pyogenes emmST",
+  md5_opt               => 0,
   base_directory        => $destination_directory,
   raw_input_fasta_files => ['t/data/Streptococcus_pyogenes_emmST_contigs.fa'],
   makeblastdb_exec      => 'makeblastdb',
@@ -57,6 +58,7 @@ $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($check_converted_files_obj = Bio::MLST::Check->new(
   species               => "Streptococcus pyogenes emmST",
+  md5_opt               => 0,
   base_directory        => $destination_directory,
   raw_input_fasta_files => ['t/data/Streptococcus_pyogenes_emmST_contigs.fa','t/data/Streptococcus_pyogenes_emmST_unknown.fa'],
   makeblastdb_exec      => 'makeblastdb',
