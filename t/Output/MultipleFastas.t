@@ -55,7 +55,7 @@ $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  md5_opt               => 1,
+  md5_opt               => 0,
   base_directory        => 't/data',
   raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa','t/data/contigs_one_unknown.tfa'],
   makeblastdb_exec      => 'makeblastdb',

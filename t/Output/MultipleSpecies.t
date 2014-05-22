@@ -14,6 +14,7 @@ my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 # valid instance
 ok((my $multi_mlst_A = Bio::MLST::CheckMultipleSpecies->new( species               => ['E.coli','H.pylori'],
+							     md5_opt			   => 0,
 							     base_directory        => 't/data',
 							     raw_input_fasta_files => ['t/data/contigs.fa'],
 							     makeblastdb_exec      => 'makeblastdb',
@@ -31,6 +32,7 @@ compare_files('t/data/expected_multi_mlst_results.genomic.csv',$tmpdirectory.'/m
 
 # invalid instance
 ok((my $multi_mlst_B = Bio::MLST::CheckMultipleSpecies->new( species               => [],
+							     md5_opt			   => 0,
 							     base_directory        => 't/data',
 							     raw_input_fasta_files => ['t/data/contigs.fa','nonexist.fa'],
 							     makeblastdb_exec      => 'makeblastdb',
