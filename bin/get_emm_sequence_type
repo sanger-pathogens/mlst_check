@@ -10,6 +10,10 @@ It requires NBCI Blast+ to be available in your PATH.
 
    # Basic usage, sequence type result written to my_assembly.fa.st
    get_emm_sequence_type -s "Streptococcus pyogenes" my_assembly.fa
+
+    # print the matched sequence (if available) instead of the allele named as 'U' in mlst_result.genomic.csv file
+    # and print the corresponding MD5 checksum of the above matched sequence in the mlst_result.allele.csv file
+    get_emm_sequence_type -s "Clostridium difficile" my_assembly.fa -md5
    
    # Multiple fasta files 
    get_emm_sequence_type -s "Streptococcus pyogenes" myfasta.fa anotherfasta.fa yetanother.fa
@@ -51,9 +55,10 @@ use Bio::MLST::Validate::Executable;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CheckMultipleSpecies;
 
-my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+my ($md5_opt, $species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
 
 GetOptions ('s|species=s'              => \$species,
+            'md5'                      => \$md5_opt,
             'o|output_directory=s'     => \$output_directory,
             'c|output_fasta_files'     => \$output_fasta_files,
             'y|output_phylip_files'    => \$output_phylip_files,
@@ -71,6 +76,10 @@ Usage: $0 [options]
 
 # Basic usage, sequence type result written to my_assembly.fa.st
 get_emm_sequence_type my_assembly.fa
+
+# print the matched sequence (if available) instead of the allele named as 'U' in mlst_result.genomic.csv file
+# and print the corresponding MD5 checksum of the above matched sequence in the mlst_result.allele.csv file
+get_emm_sequence_type -s "Clostridium difficile" my_assembly.fa -md5
 
 # Multiple fasta files 
 get_emm_sequence_type myfasta.fa anotherfasta.fa yetanother.fa
@@ -111,6 +120,7 @@ $species ||= 'Streptococcus pyogenes emm';
 
 my $multiple_fastas = Bio::MLST::Check->new(
   species               => $species,
+  md5_opt               => ($md5_opt)?1:0,
   base_directory        => $base_directory,
   raw_input_fasta_files => \@ARGV,
   makeblastdb_exec      => $makeblastdb_exec,
