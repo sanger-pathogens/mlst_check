@@ -123,7 +123,7 @@ sub _run_mlst_for_species_list
     my $parallel_process_fa_file = int($self->parallel_processes/@{$self->_species_list}) ? int($self->parallel_processes/@{$self->_species_list}) : 1;
 
     # Run for each species - output to csv files named 0001,0002,etc.
-    my $pm = new Parallel::ForkManager();
+    my $pm = new Parallel::ForkManager($self->parallel_processes);
     for(my $i=1; $i <= @{$self->_species_list}; $i++)
     {
         $pm->start and next; # fork here
