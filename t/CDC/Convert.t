@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use Cwd;
 
 BEGIN { unshift(@INC, './lib') }
 BEGIN {
@@ -9,7 +10,7 @@ BEGIN {
     use_ok('Bio::MLST::CDC::Convert');
 }
 
-my $destination_directory_obj = File::Temp->newdir(CLEANUP =>1);
+my $destination_directory_obj = File::Temp->newdir( CLEANUP => 1, DIR => getcwd );
 my $destination_directory = $destination_directory_obj->dirname();
 
 # take in a fasta file, split it into alleles and profile
@@ -30,7 +31,7 @@ compare_files('t/data/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogen
 
 
 # Check the the converted files can be used
-my $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
+my $tmpdirectory_obj = File::Temp->newdir( CLEANUP => 0, DIR => getcwd );
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 ok((my $check_converted_files_obj = Bio::MLST::Check->new(
@@ -53,7 +54,7 @@ compare_files('t/data/expected_Streptococcus_pyogenes_emmST_alleles.fa', $tmpdir
 
 
 # unknown allele (single base change) should be picked up in concat output
-$tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
+$tmpdirectory_obj = File::Temp->newdir( CLEANUP => 1, DIR => getcwd );
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($check_converted_files_obj = Bio::MLST::Check->new(
   species               => "Streptococcus pyogenes emmST",

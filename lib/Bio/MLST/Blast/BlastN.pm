@@ -46,7 +46,6 @@ has 'exec'               => ( is => 'ro', isa => 'Bio::MLST::Executable', defaul
 has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 95 );
 
 # Generated
-
 has 'top_hit'           => ( is => 'ro', isa => 'Maybe[HashRef]', lazy => 1,  builder => '_build_top_hit' ); 
 
 sub _blastn_cmd
@@ -58,6 +57,8 @@ sub _blastn_cmd
   join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt 6', '-word_size', $word_size , '-perc_identity', $self->perc_identity ));
 }
 
+# Why use identity as measure for top hit instead of e-values?
+# Why no check for length? 100% match could only be a partial...
 sub _build_top_hit
 {
   my($self) = @_;

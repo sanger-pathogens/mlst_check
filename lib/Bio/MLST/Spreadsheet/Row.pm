@@ -29,7 +29,7 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 
 =cut
 
-
+use Data::Dumper;
 use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
@@ -61,7 +61,8 @@ sub _build__common_cells
   my $contamination_cell;
   if($self->show_contamination_instead_of_alt_matches == 1)
   {
-    $contamination_cell = ($self->compare_alleles->contamination ? "Contamination" : '');
+    #$contamination_cell = ($self->compare_alleles->contamination ? "Contamination" : '');
+    $contamination_cell = ($self->compare_alleles->contamination ? $self->compare_alleles->contamination_sequence_names : '');
   }
   else
   {
@@ -78,13 +79,21 @@ sub _build__common_cells
   return \@common_cells;
 }
 
-sub _build__allele_order
-{
-  my($self) = @_;
-  my @not_found_sequences  = @{$self->compare_alleles->found_non_matching_sequence_names};
-  my @found_sequences = keys(%{$self->sequence_type_obj->allele_to_number});
-  my @combined_names  = sort((@not_found_sequences , @found_sequences));
-  return \@combined_names;
+sub _build__allele_order {
+  my $self = shift;
+  my $profile_path = $self->compare_alleles->profiles_filename;
+
+  open( my $profile_fh, '<', $profile_path );
+  my $line = <$profile_fh>;
+  chomp $line;
+  #print STDERR "line: $line\n";
+  my @alleles = split(/\s+/, $line);
+  @alleles = grep { $_ ne 'ST' } @alleles;
+  @alleles = grep { $_ ne 'clonal_complex' } @alleles;
+
+  #print Dumper \@alleles;
+
+  return \@alleles;
 }
 
 sub _build_allele_numbers_row

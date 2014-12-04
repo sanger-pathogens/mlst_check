@@ -71,6 +71,7 @@ has '_blast_db_location'     => ( is => 'ro', isa => 'Str',                   la
 has 'matching_sequences'     => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build_matching_sequences' );
 has 'non_matching_sequences' => ( is => 'rw', isa => 'HashRef', default => sub {{}});
 has 'contamination'          => ( is => 'rw', isa => 'Bool',    default => 0);
+has 'contamination_alleles'  => ( is => 'rw', isa => 'Maybe[ArrayRef]' );
 has 'contamination_sequence_names' => ( is => 'rw', isa => 'Maybe[ArrayRef]' );
 has 'new_st'                 => ( is => 'rw', isa => 'Bool',    default => 0);
 has '_absent_loci'           => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__absent_loci' );
@@ -160,6 +161,7 @@ sub _build_matching_sequences
     if(defined($top_blast_hit{contamination}))
     {
       $self->contamination(1);
+      $self->contamination_alleles($top_blast_hit{contamination});
       $self->_translate_contamination_names_into_sequence_types($top_blast_hit{contamination},$top_blast_hit{allele_name});
     }
     
