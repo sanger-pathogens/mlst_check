@@ -41,7 +41,7 @@ use Bio::MLST::Types;
 # input variables
 has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'query_file'         => ( is => 'ro', isa => 'Str', required => 1 ); 
-has 'word_size'          => ( is => 'ro', isa => 'Int', required => 1 ); 
+has 'word_sizes'         => ( is => 'ro', isa => 'HashRef', required => 1 ); 
 has 'exec'               => ( is => 'ro', isa => 'Bio::MLST::Executable', default  => 'blastn' ); 
 has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 95 );
 
@@ -57,8 +57,6 @@ sub _blastn_cmd
   join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt 6', '-word_size', $word_size , '-perc_identity', $self->perc_identity ));
 }
 
-# Why use identity as measure for top hit instead of e-values?
-# Why no check for length? 100% match could only be a partial...
 sub _build_top_hit
 {
   my($self) = @_;
@@ -74,7 +72,7 @@ sub _build_top_hit
     chomp;
     my $line = $_;
     my @blast_raw_results = split(/\t/,$line);
-    next unless($blast_raw_results[3] == $self->word_size);
+    next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
     if(@blast_raw_results  > 8 && $blast_raw_results[2] >= $highest_identity)
     {
       $top_hit{allele_name} = $blast_raw_results[0];

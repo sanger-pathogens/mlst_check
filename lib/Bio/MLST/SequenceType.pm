@@ -38,7 +38,7 @@ has '_profiles'             => ( is => 'ro', isa => 'ArrayRef',   lazy => 1, bui
 has 'sequence_type'         => ( is => 'ro', isa => 'Maybe[Str]', lazy => 1, builder => '_build_sequence_type' );
 
 has 'nearest_sequence_type' => ( is => 'rw', isa => 'Maybe[Int]');
-
+has 'report_lowest_st'  => ( is => 'ro', isa => 'Bool', default => 0 );
 
 sub sequence_type_or_nearest
 {
@@ -128,7 +128,14 @@ sub _get_sequence_type_or_set_nearest_match
     }
   }
   else {
-    my @sorted_sts = sort { $a <=> $b } keys %sequence_type_freq;
+    my @sorted_sts;
+    if ( $self->report_lowest_st ){
+      @sorted_sts = sort { $a <=> $b } keys %sequence_type_freq;
+    }
+    else {
+      @sorted_sts = sort { $sequence_type_freq{$a} <=> $sequence_type_freq{$b} } keys %sequence_type_freq;
+    }
+
     $self->nearest_sequence_type($sorted_sts[0]);
     return undef;	
   }

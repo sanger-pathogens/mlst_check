@@ -19,7 +19,8 @@ is($sequence_type->nearest_sequence_type,undef, 'lookup the nearest sequence typ
 # sequence type that doesnt exist in profile
 ok(($sequence_type = Bio::MLST::SequenceType->new(
   profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names => ['adk-2','purA-3','recA-200']
+  sequence_names => ['adk-2','purA-3','recA-200'],
+  report_lowest_st => 1
 )), 'initialise sequence type that doesnt exist in profile');
 is($sequence_type->sequence_type,undef, 'lookup the sequence type that doesnt exist in profile');
 is($sequence_type->nearest_sequence_type,1, 'lookup the nearest sequence type for allele that doesnt exist in profile');
@@ -27,7 +28,8 @@ is($sequence_type->nearest_sequence_type,1, 'lookup the nearest sequence type fo
 # missing an allele
 ok(($sequence_type = Bio::MLST::SequenceType->new(
   profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names => ['adk-2','purA-3']
+  sequence_names => ['adk-2','purA-3'],
+  report_lowest_st => 1
 )), 'initialise ST missing an allele');
 is( $sequence_type->sequence_type, undef, 'lookup the sequence type missing an allele');
 is($sequence_type->nearest_sequence_type, 1, 'lookup the nearest sequence type for missing an allele');
@@ -39,5 +41,15 @@ ok(($sequence_type = Bio::MLST::SequenceType->new(
 )), 'initialise ST with underscore in allele header');
 is( $sequence_type->sequence_type, 3, 'lookup the sequence type with underscore in allele header');
 is($sequence_type->nearest_sequence_type, undef, 'lookup the nearest sequence type undescore in allele header');
+
+# report closest match, not lowest ST
+ok(($sequence_type = Bio::MLST::SequenceType->new(
+  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  sequence_names => ['adk-2','purA-3'],
+  report_lowest_st => 0
+)), 'initialise ST missing an allele');
+is( $sequence_type->sequence_type, undef, 'lookup the sequence type missing an allele');
+is($sequence_type->nearest_sequence_type, 4, 'lookup the nearest sequence type for missing an allele');
+
 
 done_testing();

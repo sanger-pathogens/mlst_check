@@ -52,6 +52,7 @@ has 'base_directory'        => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'parallel_processes'    => ( is => 'ro', isa => 'Int',      default  => 1 ); # max parallel processes
 has 'verbose'               => ( is => 'rw', isa => 'Bool',     default  => 0 ); # output search progress and number of matches
 has 'report_all_mlst_db'    => ( is => 'rw', isa => 'Bool',     default  => 0 ); # report all mlst databases searched
+has 'report_lowest_st'      => ( is => 'rw', isa => 'Bool',     default  => 0 );
 
 has 'raw_input_fasta_files' => ( is => 'ro', isa => 'ArrayRef', required => 1 );
 has 'makeblastdb_exec'      => ( is => 'ro', isa => 'Str',      required => 1 ); 
@@ -143,7 +144,8 @@ sub _run_mlst_for_species_list
             parallel_processes    => $parallel_process_fa_file,
             output_fasta_files    => $self->output_fasta_files,
             output_phylip_files   => $self->output_phylip_files,
-            show_contamination_instead_of_alt_matches => $self->show_contamination_instead_of_alt_matches
+            show_contamination_instead_of_alt_matches => $self->show_contamination_instead_of_alt_matches,
+            report_lowest_st      => $self->report_lowest_st
             );
         $multiple_fastas->create_result_files;
 

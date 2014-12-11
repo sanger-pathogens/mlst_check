@@ -49,6 +49,7 @@ Flag which is set if the results contain a novel combination of sequences or a n
 
 =cut
 
+use Data::Dumper;
 
 use Moose;
 use File::Basename;
@@ -71,7 +72,7 @@ has '_blast_db_location'     => ( is => 'ro', isa => 'Str',                   la
 has 'matching_sequences'     => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build_matching_sequences' );
 has 'non_matching_sequences' => ( is => 'rw', isa => 'HashRef', default => sub {{}});
 has 'contamination'          => ( is => 'rw', isa => 'Bool',    default => 0);
-has 'contamination_alleles'  => ( is => 'rw', isa => 'Maybe[ArrayRef]' );
+has 'contamination_alleles'  => ( is => 'rw', isa => 'Maybe[Str]' );
 has 'contamination_sequence_names' => ( is => 'rw', isa => 'Maybe[ArrayRef]' );
 has 'new_st'                 => ( is => 'rw', isa => 'Bool',    default => 0);
 has '_absent_loci'           => ( is => 'ro', isa => 'HashRef', lazy => 1, builder => '_build__absent_loci' );
@@ -117,12 +118,40 @@ sub found_non_matching_sequence_names
 }
 
 
-sub _word_size_for_given_allele_file
+sub _word_sizes_for_given_allele_file
 {
   my ($self,$filename) = @_;
-  return Bio::SeqIO->new( -file => $filename , -format => 'Fasta')->next_seq()->length();
+  my %seq_lens;
+  my $seqio = Bio::SeqIO->new( -file => $filename , -format => 'Fasta');
+  while( my $seq = $seqio->next_seq() ){
+    $seq_lens{$seq->primary_id} = $seq->length;
+  }
+  return \%seq_lens;
 }
 
+sub _get_word_size_from_blast_hit {
+  my ( $self, $word_sizes, $blast_hit, $allele_filename ) = @_;
+
+  # return len of top blast hit allele, otherwise return len of first seq in allele file
+  my ($word_size, $first_seq);
+  if( defined $blast_hit->{allele_name} ){
+    $word_size = $word_sizes->{$blast_hit->{allele_name}};
+  }
+  else{
+    my $seqio = Bio::SeqIO->new( -file => $allele_filename, -format => 'Fasta' );
+    $word_size = $seqio->next_seq->length;
+  }
+
+  # unless ( defined $word_size ) {
+  #   print "WORD SIZES: ";
+  #   print Dumper $word_sizes;
+  #   print "BLAST ALLELE: " . $blast_hit->{allele_name} . "\n";
+  #   print "FIRST SEQ: " . $first_seq . "\n";
+  #   print "WORD SIZE: $word_size\n";
+  # }
+
+  return $word_size;
+}
 
 sub _build_matching_sequences
 {
@@ -133,11 +162,11 @@ sub _build_matching_sequences
   
   for my $allele_filename (@{$self->allele_filenames})
   {
-    my $word_size = $self->_word_size_for_given_allele_file($allele_filename);
+    my $word_sizes = $self->_word_sizes_for_given_allele_file($allele_filename);
     my $blast_results = Bio::MLST::Blast::BlastN->new(
       blast_database => $self->_blast_db_location,
       query_file     => $allele_filename,
-      word_size      => $word_size,
+      word_sizes     => $word_sizes,
       exec           => $self->blastn_exec
     );
     my %top_blast_hit = %{$blast_results->top_hit()};
@@ -150,6 +179,8 @@ sub _build_matching_sequences
       $missing_locus_names{$allele} = $absent_loci_type{$allele} if exists $absent_loci_type{$allele};
     }
 
+    my $word_size = $self->_get_word_size_from_blast_hit($word_sizes, \%top_blast_hit, $allele_filename);
+
     # unknown allele
     if(! %top_blast_hit)
     {
@@ -161,7 +192,8 @@ sub _build_matching_sequences
     if(defined($top_blast_hit{contamination}))
     {
       $self->contamination(1);
-      $self->contamination_alleles($top_blast_hit{contamination});
+      my $contamination_alleles = join( ',', sort @{ $top_blast_hit{contamination} } );
+      $self->contamination_alleles( $contamination_alleles );
       $self->_translate_contamination_names_into_sequence_types($top_blast_hit{contamination},$top_blast_hit{allele_name});
     }
     

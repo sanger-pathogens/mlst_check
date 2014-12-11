@@ -52,6 +52,7 @@ has 'blastn_exec'         => ( is => 'ro', isa => 'Str',      required => 1 );
 has 'output_directory'    => ( is => 'ro', isa => 'Str',      required => 1 ); 
 has 'output_fasta_files'  => ( is => 'ro', isa => 'Bool',  default  => 0 ); 
 has 'show_contamination_instead_of_alt_matches' => ( is => 'ro', isa => 'Bool',   default => 1 ); 
+has 'report_lowest_st'  => ( is => 'ro', isa => 'Bool', default => 0 );
 
 has '_search_results'     => ( is => 'ro', isa => 'Bio::MLST::SearchForFiles',  lazy => 1, builder => '_build__search_results' ); 
 has '_compare_alleles'    => ( is => 'ro', isa => 'Bio::MLST::CompareAlleles',  lazy => 1, builder => '_build__compare_alleles' ); 
@@ -98,7 +99,8 @@ sub _build__sequence_type_obj
   my($self) = @_;
   my $sequence_type_obj = Bio::MLST::SequenceType->new(
     profiles_filename => $self->_search_results->profiles_filename(),
-    sequence_names    => $self->_compare_alleles->found_sequence_names
+    sequence_names    => $self->_compare_alleles->found_sequence_names,
+    report_lowest_st  => $self->report_lowest_st
   );
 }
 

@@ -61,8 +61,7 @@ sub _build__common_cells
   my $contamination_cell;
   if($self->show_contamination_instead_of_alt_matches == 1)
   {
-    #$contamination_cell = ($self->compare_alleles->contamination ? "Contamination" : '');
-    $contamination_cell = ($self->compare_alleles->contamination ? $self->compare_alleles->contamination_sequence_names : '');
+    $contamination_cell = ($self->compare_alleles->contamination ? $self->compare_alleles->contamination_alleles : '');
   }
   else
   {
@@ -86,12 +85,9 @@ sub _build__allele_order {
   open( my $profile_fh, '<', $profile_path );
   my $line = <$profile_fh>;
   chomp $line;
-  #print STDERR "line: $line\n";
   my @alleles = split(/\s+/, $line);
   @alleles = grep { $_ ne 'ST' } @alleles;
   @alleles = grep { $_ ne 'clonal_complex' } @alleles;
-
-  #print Dumper \@alleles;
 
   return \@alleles;
 }
