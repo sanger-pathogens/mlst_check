@@ -29,7 +29,6 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 
 =cut
 
-use Data::Dumper;
 use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
@@ -156,8 +155,9 @@ sub _build_header_row
   {
     $sequence_name =~ s!_!-!g;
     $sequence_name =~ s!-+!-!g;
-    my @sequence_name_details = split(/[-_]+/,$sequence_name);
-    push(@allele_headers,$sequence_name_details[0]);
+    #my @sequence_name_details = split(/[-_]+/,$sequence_name);
+    #push(@allele_headers,$sequence_name_details[0]);
+    push( @allele_headers, $sequence_name );
   }
   
   my $contamination_cell ;
