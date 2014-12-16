@@ -49,8 +49,6 @@ Flag which is set if the results contain a novel combination of sequences or a n
 
 =cut
 
-use Data::Dumper;
-
 use Moose;
 use File::Basename;
 use Bio::SeqIO;
@@ -141,14 +139,6 @@ sub _get_word_size_from_blast_hit {
     my $seqio = Bio::SeqIO->new( -file => $allele_filename, -format => 'Fasta' );
     $word_size = $seqio->next_seq->length;
   }
-
-  # unless ( defined $word_size ) {
-  #   print "WORD SIZES: ";
-  #   print Dumper $word_sizes;
-  #   print "BLAST ALLELE: " . $blast_hit->{allele_name} . "\n";
-  #   print "FIRST SEQ: " . $first_seq . "\n";
-  #   print "WORD SIZE: $word_size\n";
-  # }
 
   return $word_size;
 }
