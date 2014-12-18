@@ -50,7 +50,7 @@ compare_files('t/data/expected_two_mlst_results.allele.csv', $tmpdirectory.'/mls
 compare_files('t/data/expected_two_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
 
 
-$tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 0);
+$tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
