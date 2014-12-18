@@ -43,7 +43,7 @@ has 'location'           => ( is => 'ro', isa => 'Str', lazy => 1,  builder => '
 sub _build_location
 {
   my($self) = @_;
-  
+
   my $output_database = join('/',($self->_working_directory->dirname(),'output_contigs'));
   my $makeblastdb_cmd  = join(" ",($self->exec, '-in', $self->fasta_file,  '-dbtype nucl', '-parse_seqids', '-out', $output_database));
   # FIXME: run this command in a more sensible fashion

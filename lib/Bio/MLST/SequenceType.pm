@@ -26,6 +26,7 @@ Returns the nearest matching sequence type if there is no exact match, randomly 
 
 =cut
 
+use Data::Dumper;
 
 use Moose;
 use Bio::MLST::Types;
@@ -67,14 +68,17 @@ sub _build_allele_to_number
 {
   my($self) = @_;
   my %allele_to_number;
-  
+
   for my $sequence_name (@{$self->sequence_names})
   {
-    $sequence_name =~ s!_!-!g;
-    $sequence_name =~ s!-+!-!g;
-    my @sequence_name_details = split(/[-_]+/,$sequence_name);
-    $allele_to_number{$sequence_name_details[0]} = $sequence_name_details[1];
+    my @sequence_name_details = split(/[-_]/,$sequence_name);
+    my $num = pop @sequence_name_details;
+    my $name = join( "-", @sequence_name_details );
+    $allele_to_number{$name} = $num;
   }
+
+  #print "ALLELE TO NUMBER: ";
+  #print Dumper \%allele_to_number;
   
   return \%allele_to_number;
 }

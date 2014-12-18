@@ -29,6 +29,8 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 
 =cut
 
+use Data::Dumper;
+
 use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
@@ -88,7 +90,17 @@ sub _build__allele_order {
   @alleles = grep { $_ ne 'ST' } @alleles;
   @alleles = grep { $_ ne 'clonal_complex' } @alleles;
 
-  return \@alleles;
+  my @fixed_alleles;
+  foreach my $allele ( @alleles ){
+    $allele =~ s/_/-/g;
+    $allele =~ s/-$//;
+    push( @fixed_alleles, $allele );
+  }
+
+  #print "ALLELES FROM PROFILE: ";
+  #print Dumper \@fixed_alleles;
+
+  return \@fixed_alleles;
 }
 
 sub _build_allele_numbers_row
@@ -99,13 +111,16 @@ sub _build_allele_numbers_row
   
   for my $allele_name (@{$self->_allele_order})
   {
+    #print "looking for: $allele_name\t";
     if(defined($self->sequence_type_obj->allele_to_number->{$allele_name}))
     {
+      #print "found " . $self->sequence_type_obj->allele_to_number->{$allele_name} . "\n";
       push(@allele_cells,$self->sequence_type_obj->allele_to_number->{$allele_name});
     }
     else
     {
-       push(@allele_cells,'U');
+      #print "not found!!\n";
+      push(@allele_cells,'U');
     }
   }
   my @complete_row = (@common_cells,@allele_cells);
