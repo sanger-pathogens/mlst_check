@@ -49,7 +49,6 @@ ok(($sequence_type = Bio::MLST::SequenceType->new(
   report_lowest_st => 0
 )), 'initialise ST missing an allele');
 is( $sequence_type->sequence_type, undef, 'lookup the sequence type missing an allele');
-is($sequence_type->nearest_sequence_type, 4, 'lookup the nearest sequence type for missing an allele');
-
+like($sequence_type->nearest_sequence_type, 'm/[14]/', 'lookup the nearest sequence type for missing an allele');
 
 done_testing();
