@@ -5,6 +5,7 @@ use File::Temp;
 use File::Slurp;
 use Cwd;
 use Data::Dumper;
+use String::Util 'trim';
 
 BEGIN { unshift(@INC, './lib') }
 BEGIN {
@@ -49,6 +50,55 @@ compare_files('t/data/expected_two_mlst_results.genomic.csv', $tmpdirectory.'/ml
 compare_files('t/data/expected_two_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
 compare_files('t/data/expected_two_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
 
+sub get_sequences_from_file {
+
+  my($FILE) = @_;
+
+  my @sequences = ();
+  my $line_number = 0;
+  my $number_of_known_sequences = 0;
+
+  while( my $line = <$FILE> ) {
+    my $trimmed_line = trim($line);
+    if ($number_of_known_sequences == 0) {
+      # We don't know how many sequences there are so create a new one
+      push @sequences, [$trimmed_line];
+      # The first time we find a blank 'sequence' we now know the number of sequences
+      if ($trimmed_line eq '') {
+        $number_of_known_sequences = $line_number + 1;
+      }
+    } else {
+      # Now that we know the number of sequences, append this line to it's corresponding sequence
+      my $sequence_number = $line_number % $number_of_known_sequences;
+      push @{$sequences[$sequence_number]}, $trimmed_line;
+    }
+    $line_number++;
+  }
+
+  return @sequences;
+
+}
+
+sub compare_phylip_files {
+  my($calculated_file, $expected_file) = @_;
+
+  open(my $CALC_FILE, $calculated_file);
+  open(my $EXPECTED_FILE, $expected_file);
+
+  my $calculated_file_header = <$CALC_FILE>;
+  my $expected_file_header = <$EXPECTED_FILE>;
+
+  is($calculated_file_header, $expected_file_header, "Header matches expected value in ".$expected_file);
+
+  my @calculated_file_sequences = sort({ $a->[0] cmp $b->[0] } get_sequences_from_file($CALC_FILE));
+  my @expected_file_sequences = sort({ $a->[0] cmp $b->[0] } get_sequences_from_file($EXPECTED_FILE));
+
+  close($CALC_FILE);
+  close($EXPECTED_FILE);
+
+  is_deeply(\@calculated_file_sequences, \@expected_file_sequences, "Sequences match ".$expected_file);
+
+}
 
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
@@ -70,7 +120,7 @@ compare_files( $tmpdirectory.'/mlst_results.genomic.csv',    't/data/expected_th
 compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_three_mlst_results.allele.csv' );
 compare_files( $tmpdirectory.'/concatenated_alleles.fa',     't/data/expected_three_concatenated_alleles.fa');
 ###
-compare_files( $tmpdirectory.'/concatenated_alleles.phylip', 't/data/expected_three_concatenated_alleles.phylip' );
+compare_phylip_files( $tmpdirectory.'/concatenated_alleles.phylip', 't/data/expected_three_concatenated_alleles.phylip' );
 compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2.fa',  't/data/expected_three_contigs_one_unknown.unknown_allele.adk-2.fa' );
 compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1.fa', 't/data/expected_three_contigs_one_unknown.unknown_allele.recA-1.fa');
 
