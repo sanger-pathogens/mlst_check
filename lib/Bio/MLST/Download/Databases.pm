@@ -30,7 +30,7 @@ use Parallel::ForkManager;
 has 'databases_attributes' => ( is => 'ro', isa => 'HashRef', required => 1 );
 has 'base_directory'       => ( is => 'ro', isa => 'Str',     required => 1 );
 
-has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 4 );
+has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 1 );
 
 has '_species_to_exclude'  => ( is => 'ro', isa => 'Str',     default => 'Pediococcus' );
 
