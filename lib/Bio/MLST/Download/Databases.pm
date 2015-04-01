@@ -30,7 +30,7 @@ use Parallel::ForkManager;
 has 'databases_attributes' => ( is => 'ro', isa => 'HashRef', required => 1 );
 has 'base_directory'       => ( is => 'ro', isa => 'Str',     required => 1 );
 
-has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 4 );
+has 'parallel_processes'   => ( is => 'ro', isa => 'Int',     default => 0 );
 
 has '_species_to_exclude'  => ( is => 'ro', isa => 'Str',     default => 'Pediococcus' );
 
@@ -42,7 +42,10 @@ sub update
   {
     $pm->start and next; # do the fork
     my $species_to_exclude = $self->_species_to_exclude;
-    next if($species =~ /$species_to_exclude/i);
+    if($species =~ /$species_to_exclude/i) {
+      $pm->finish;  # do the exit in the child process
+      next;
+    }
     my $database = Bio::MLST::Download::Database->new(
       species => $species,
       database_attributes => $self->databases_attributes->{$species},
