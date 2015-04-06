@@ -43,7 +43,7 @@ ok((my $databases2 = Bio::MLST::Download::Databases->new(
 )), 'initalise setting up databases');
 ok($databases2->update(),'download databases (nothing should happen)');
 
-ok((! (-e $destination_directory.'/Pediococcus_pentosaceus/alleles/gyrB.tfa')),'nothing should be downloaded' );
+ok((! (-e $destination_directory2.'/Pediococcus_pentosaceus/alleles/gyrB.tfa')),'nothing should be downloaded' );
 
 done_testing();
 
