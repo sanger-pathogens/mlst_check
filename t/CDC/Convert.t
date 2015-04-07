@@ -31,7 +31,7 @@ compare_files('t/data/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogen
 
 
 # Check the the converted files can be used
-my $tmpdirectory_obj = File::Temp->newdir( CLEANUP => 0, DIR => getcwd );
+my $tmpdirectory_obj = File::Temp->newdir( CLEANUP => 1, DIR => getcwd );
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 ok((my $check_converted_files_obj = Bio::MLST::Check->new(
