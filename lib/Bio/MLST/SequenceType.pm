@@ -27,6 +27,7 @@ Returns the nearest matching sequence type if there is no exact match, randomly 
 =cut
 
 use Data::Dumper;
+use Text::CSV;
 
 use Moose;
 use Bio::MLST::Types;
@@ -51,17 +52,11 @@ sub sequence_type_or_nearest
 sub _build__profiles
 {
   my($self) = @_;
-  my @profile ;
   open(my $fh, $self->profiles_filename) or die "Couldnt open profile: ".$self->profiles_filename."\n";
-  while(<$fh>)
-  {
-    chomp;
-    my $line = $_;
-    my @profile_row = split("\t",$line);
-    push(@profile, \@profile_row);
-  }
+  my $csv_in = Text::CSV->new({sep_char=>"\t"});
+  my $profile = $csv_in->getline_all($fh);
   
-  return \@profile;
+  return $profile;
 }
 
 sub _build_allele_to_number
