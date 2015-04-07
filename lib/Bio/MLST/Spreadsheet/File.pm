@@ -44,12 +44,8 @@ sub create
   open(my $allele_fh,'+>', $base_spreadsheet_name.".allele.csv");
   open(my $genomic_fh,'+>', $base_spreadsheet_name.".genomic.csv");
   
-  my $allele_csv = Text::CSV->new();
-  my $genomic_csv = Text::CSV->new();
-  $allele_csv->eol ("\r\n");
-  $genomic_csv->eol ("\r\n");
-  $allele_csv->sep_char("\t");
-  $genomic_csv->sep_char("\t");
+  my $allele_csv = Text::CSV->new({sep_char=>"\t", always_quote=>1, eol=>"\r\n"});
+  my $genomic_csv = Text::CSV->new({sep_char=>"\t", always_quote=>1, eol=>"\r\n"});
   
   $allele_csv->print ($allele_fh, $_) for $self->header;
   $genomic_csv->print ($genomic_fh, $_) for $self->header;
