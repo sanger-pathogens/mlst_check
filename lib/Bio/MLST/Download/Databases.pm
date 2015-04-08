@@ -59,7 +59,7 @@ sub update {
    my $production_directory = join('/',($self->base_directory));
    $self->_update_all_from_staging($staging_directory,
                                    $production_directory);
-   #rmtree($staging_directory);
+   rmtree($staging_directory);
    1;
 }
 
