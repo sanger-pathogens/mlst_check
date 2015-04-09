@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<data>
+<species>
+Bordetella spp.
+<mlst>
+<database>
+<url>http://pubmlst.org/bordetella/</url>
+<retrieved>2012-07-23</retrieved>
+<profiles>
+<count>58</count>
+<url>"http://www.definitlynotactuallyawebsiteexample.com/profile"</url>
+</profiles>
+<loci>
+<locus>
+allele_1
+<url>
+http://www.definitlynotactuallyawebsiteexample.com/allele_1
+</url>
+</locus>
+</loci>
+</database>
+</mlst>
+</species>
+</data>
