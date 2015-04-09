@@ -75,28 +75,43 @@ sub _build_top_hit
     next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
     if(@blast_raw_results  > 8 && $blast_raw_results[2] >= $highest_identity)
     {
-      $top_hit{allele_name} = $blast_raw_results[0];
-      $top_hit{percentage_identity} = int($blast_raw_results[2]);
-      $top_hit{source_name} = $blast_raw_results[1];
-      $top_hit{reverse} = 0;
-      
       my $start  = $blast_raw_results[8];
       my $end  = $blast_raw_results[9];
-      if($start > $end)
+      ($start, $end, my $reverse) = $start <= $end ? ($start, $end, 0) : ($end, $start, 1);
+
+      my $percentage_identity = int($blast_raw_results[2]);
+      my $allele_name = $blast_raw_results[0];
+
+      if ($highest_identity == 100)
       {
-        my $tmp = $start;
-        $start = $end;
-        $end = $tmp;
-        $top_hit{reverse} = 1;
+        # We've already found one 100% match, check this isn't a truncation
+        # FIXME: Favors shorter alleles if there are SNPs:
+        # If allele_2 is a truncation of allele_1 and allele_1 has a SNP allele_2 doesn't
+        # only allele_2 is matched.  This is true more generally that contaminations are not
+        # picked up if one of them has a SNP.
+        if ($start >= $top_hit{source_start} && $end <= $top_hit{source_end}) {
+          # This is a truncation of the top_hit
+          # Move onto the next match without updating the top_hit or contamination
+          next;
+        } elsif ($start <= $top_hit{source_start} && $end >= $top_hit{source_end}) {
+          # The top_hit is a truncation of this
+          # Update the top hit
+        } else {
+          # Must be a contamination
+          $contamination_check{$allele_name} = $percentage_identity;
+          # Update the top hit
+          # FIXME: Always picks the last even if it is a shorter match, which it probably is because
+          # blastn prioritises its output (I think).
+        }
       }
       
+      $top_hit{allele_name} = $allele_name;
+      $top_hit{percentage_identity} = $percentage_identity;
+      $top_hit{source_name} = $blast_raw_results[1];
       $top_hit{source_start} = $start;
       $top_hit{source_end} = $end;
-      $highest_identity = $blast_raw_results[2];
-      if($top_hit{percentage_identity} == 100)
-      {
-        $contamination_check{$top_hit{allele_name}} = $top_hit{percentage_identity};
-      }
+      $top_hit{reverse} = $reverse;
+      $highest_identity = $percentage_identity;
     }
   }
   
