@@ -86,7 +86,7 @@ sub _build_top_hit
       {
         # We've already found one 100% match, check this isn't a truncation
         # FIXME: Favors shorter alleles if there are SNPs:
-        # If allele_2 is a truncation of allele_1 and allele_1 has a SNP allele_2 doesn't
+        # If allele_2 is a truncation of allele_1 and allele_1 has a SNP in the truncated region
         # only allele_2 is matched.  This is true more generally that contaminations are not
         # picked up if one of them has a SNP.
         if ($start >= $top_hit{source_start} && $end <= $top_hit{source_end}) {
@@ -95,16 +95,24 @@ sub _build_top_hit
           next;
         } elsif ($start <= $top_hit{source_start} && $end >= $top_hit{source_end}) {
           # The top_hit is a truncation of this
+          # Remove top_hit from hash of contaminants
+          delete $contamination_check{$top_hit{allele_name}};
+          $contamination_check{$allele_name} = $percentage_identity;
           # Update the top hit
         } else {
-          # Must be a contamination
+          # There does appear to be some contamination
+          # Update the list of contaminants
           $contamination_check{$allele_name} = $percentage_identity;
           # Update the top hit
           # FIXME: Always picks the last even if it is a shorter match, which it probably is because
           # blastn prioritises its output (I think).
         }
+      } elsif ($percentage_identity == 100) {
+        # This is the first 100% match
+        # Add this to the list of contaminants
+        $contamination_check{$allele_name} = $percentage_identity;
       }
-      
+
       $top_hit{allele_name} = $allele_name;
       $top_hit{percentage_identity} = $percentage_identity;
       $top_hit{source_name} = $blast_raw_results[1];
