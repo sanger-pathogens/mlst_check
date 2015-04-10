@@ -63,7 +63,6 @@ sub _build_top_hit
   open(my $copy_stderr_fh, ">&STDERR"); open(STDERR, '>/dev/null'); # Redirect STDERR
   open( my $blast_output_fh, '-|',$self->_blastn_cmd);
   close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
-  my $highest_identity = 0;
   my %top_hit;
   my %contamination_check;
 
@@ -73,16 +72,18 @@ sub _build_top_hit
     my $line = $_;
     my @blast_raw_results = split(/\t/,$line);
     next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
-    if(@blast_raw_results  > 8 && $blast_raw_results[2] >= $highest_identity)
+    my $percentage_identity = int($blast_raw_results[2]);
+
+    my $top_hit_percentage_identity = $top_hit{percentage_identity} || 0;
+    if(@blast_raw_results  > 8 && $percentage_identity >= $top_hit_percentage_identity)
     {
       my $start  = $blast_raw_results[8];
       my $end  = $blast_raw_results[9];
       ($start, $end, my $reverse) = $start <= $end ? ($start, $end, 0) : ($end, $start, 1);
 
-      my $percentage_identity = int($blast_raw_results[2]);
       my $allele_name = $blast_raw_results[0];
 
-      if ($highest_identity == 100)
+      if ($top_hit_percentage_identity == 100)
       {
         # We've already found one 100% match, check this isn't a truncation
         # FIXME: Favors shorter alleles if there are SNPs:
@@ -119,7 +120,6 @@ sub _build_top_hit
       $top_hit{source_start} = $start;
       $top_hit{source_end} = $end;
       $top_hit{reverse} = $reverse;
-      $highest_identity = $percentage_identity;
     }
   }
   
