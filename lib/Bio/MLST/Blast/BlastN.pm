@@ -64,6 +64,7 @@ sub _build_top_hit
   open( my $blast_output_fh, '-|',$self->_blastn_cmd);
   close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
   my %top_hit;
+  my $top_hit_percentage_identity = 0;
   my %contamination_check;
 
   while(<$blast_output_fh>)
@@ -72,9 +73,8 @@ sub _build_top_hit
     my $line = $_;
     my @blast_raw_results = split(/\t/,$line);
     next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
-    my $percentage_identity = int($blast_raw_results[2]);
+    my $percentage_identity = $blast_raw_results[2];
 
-    my $top_hit_percentage_identity = $top_hit{percentage_identity} || 0;
     if(@blast_raw_results  > 8 && $percentage_identity >= $top_hit_percentage_identity)
     {
       my $start  = $blast_raw_results[8];
@@ -115,7 +115,8 @@ sub _build_top_hit
       }
 
       $top_hit{allele_name} = $allele_name;
-      $top_hit{percentage_identity} = $percentage_identity;
+      $top_hit{percentage_identity} = int($percentage_identity); # NB rounded down to int
+      $top_hit_percentage_identity = $percentage_identity; # NB not rounded down
       $top_hit{source_name} = $blast_raw_results[1];
       $top_hit{source_start} = $start;
       $top_hit{source_end} = $end;
