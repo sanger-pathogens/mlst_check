@@ -166,7 +166,7 @@ sub _concatenate_result_files
         # open output filehandle and csv 
         my $result_file  = $self->output_directory.'/'.$self->spreadsheet_basename.'.'.$file_type.'.csv';
         open(my $fh_out,  '>'.$result_file)  or die "Can't open file: $result_file $!\n";
-        my $csv_out = Text::CSV->new({binary=>1, sep_char=>"\t", eol=>"\r\n"});
+        my $csv_out = Text::CSV->new({binary=>1, sep_char=>"\t", always_quote=>1, eol=>"\r\n"});
         
         # process temp result files 0001,0002,etc.
         my $previous_positive_result = 0;

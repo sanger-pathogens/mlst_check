@@ -30,6 +30,7 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 =cut
 
 use Data::Dumper;
+use Text::CSV;
 
 use Moose;
 
@@ -69,10 +70,13 @@ sub _build__common_cells
     $contamination_cell = (defined($self->compare_alleles->contamination_sequence_names)) ? join(',',@{$self->compare_alleles->contamination_sequence_names}) : '';
   }
   
-  
+
+  # sequence_type_or_nearest is a Maybe[Int]; if it's undefined csv->print skips it so we need to set it to be an empty string
+  my $sequence_type = $self->sequence_type_obj->sequence_type_or_nearest ? $self->sequence_type_obj->sequence_type_or_nearest : '';
+
   my @common_cells = (
     $self->compare_alleles->sequence_filename_root,
-    $self->sequence_type_obj->sequence_type_or_nearest,
+    $sequence_type,
     $new_st_cell,
     $contamination_cell,
   );
@@ -82,11 +86,11 @@ sub _build__common_cells
 sub _build__allele_order {
   my $self = shift;
   my $profile_path = $self->compare_alleles->profiles_filename;
+  my $csv = Text::CSV->new({sep_char=>"\t"});
 
   open( my $profile_fh, '<', $profile_path );
-  my $line = <$profile_fh>;
-  chomp $line;
-  my @alleles = split(/\s+/, $line);
+
+  my @alleles = @{$csv->getline($profile_fh)};
   @alleles = grep { $_ ne 'ST' } @alleles;
   @alleles = grep { $_ ne 'clonal_complex' } @alleles;
 

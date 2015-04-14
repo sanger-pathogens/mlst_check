@@ -103,7 +103,7 @@ sub _create_profile
   my ($self,$sequence_names) = @_;
   open(my $profile, '+>', $self->_output_profile_filename ) or die 'Couldnt open output profile file';
 
-  my $csv_out = Text::CSV->new({binary=>1, sep_char=>"\t", eol=>"\n"});
+  my $csv_out = Text::CSV->new({binary=>1, always_quote=>1, sep_char=>"\t", eol=>"\n"});
   $csv_out->print($profile,['ST',$self->gene_name]);
   
   
