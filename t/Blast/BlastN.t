@@ -27,6 +27,14 @@ ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
  )), 'initialise valid blastN with contamination');
 ok(defined($blastn_result->top_hit->{contamination}), 'contamination detected');
 
+ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
+   blast_database => $blast_database->location(),
+   query_file     => 't/data/adk_truncation.tfa',
+   word_sizes     => word_sizes('t/data/adk_truncation.tfa')
+ )), 'initialise valid blastN with contamination');
+ok((! defined($blastn_result->top_hit->{contamination})), 'contamination not detected where one allele is a truncation of another');
+is($blastn_result->top_hit->{allele_name}, 'adk-3', 'picks longer allele if one allele is a truncation of another');
+
 my $blast_database_near_match= Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs_near_match.fa');
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database_near_match->location(),

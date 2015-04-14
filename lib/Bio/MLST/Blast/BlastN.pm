@@ -63,8 +63,8 @@ sub _build_top_hit
   open(my $copy_stderr_fh, ">&STDERR"); open(STDERR, '>/dev/null'); # Redirect STDERR
   open( my $blast_output_fh, '-|',$self->_blastn_cmd);
   close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
-  my $highest_identity = 0;
   my %top_hit;
+  my $top_hit_percentage_identity = 0;
   my %contamination_check;
 
   while(<$blast_output_fh>)
@@ -73,30 +73,54 @@ sub _build_top_hit
     my $line = $_;
     my @blast_raw_results = split(/\t/,$line);
     next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
-    if(@blast_raw_results  > 8 && $blast_raw_results[2] >= $highest_identity)
+    my $percentage_identity = $blast_raw_results[2];
+
+    if(@blast_raw_results  > 8 && $percentage_identity >= $top_hit_percentage_identity)
     {
-      $top_hit{allele_name} = $blast_raw_results[0];
-      $top_hit{percentage_identity} = int($blast_raw_results[2]);
-      $top_hit{source_name} = $blast_raw_results[1];
-      $top_hit{reverse} = 0;
-      
       my $start  = $blast_raw_results[8];
       my $end  = $blast_raw_results[9];
-      if($start > $end)
+      ($start, $end, my $reverse) = $start <= $end ? ($start, $end, 0) : ($end, $start, 1);
+
+      my $allele_name = $blast_raw_results[0];
+
+      if ($top_hit_percentage_identity == 100)
       {
-        my $tmp = $start;
-        $start = $end;
-        $end = $tmp;
-        $top_hit{reverse} = 1;
+        # We've already found one 100% match, check this isn't a truncation
+        # FIXME: Favors shorter alleles if there are SNPs:
+        # If allele_2 is a truncation of allele_1 and allele_1 has a SNP in the truncated region
+        # only allele_2 is matched.  This is true more generally that contaminations are not
+        # picked up if one of them has a SNP.
+        if ($start >= $top_hit{source_start} && $end <= $top_hit{source_end}) {
+          # This is a truncation of the top_hit
+          # Move onto the next match without updating the top_hit or contamination
+          next;
+        } elsif ($start <= $top_hit{source_start} && $end >= $top_hit{source_end}) {
+          # The top_hit is a truncation of this
+          # Remove top_hit from hash of contaminants
+          delete $contamination_check{$top_hit{allele_name}};
+          $contamination_check{$allele_name} = $percentage_identity;
+          # Update the top hit
+        } else {
+          # There does appear to be some contamination
+          # Update the list of contaminants
+          $contamination_check{$allele_name} = $percentage_identity;
+          # Update the top hit
+          # FIXME: Always picks the last even if it is a shorter match, which it probably is because
+          # blastn prioritises its output (I think).
+        }
+      } elsif ($percentage_identity == 100) {
+        # This is the first 100% match
+        # Add this to the list of contaminants
+        $contamination_check{$allele_name} = $percentage_identity;
       }
-      
+
+      $top_hit{allele_name} = $allele_name;
+      $top_hit{percentage_identity} = int($percentage_identity); # NB rounded down to int
+      $top_hit_percentage_identity = $percentage_identity; # NB not rounded down
+      $top_hit{source_name} = $blast_raw_results[1];
       $top_hit{source_start} = $start;
       $top_hit{source_end} = $end;
-      $highest_identity = $blast_raw_results[2];
-      if($top_hit{percentage_identity} == 100)
-      {
-        $contamination_check{$top_hit{allele_name}} = $top_hit{percentage_identity};
-      }
+      $top_hit{reverse} = $reverse;
     }
   }
   
