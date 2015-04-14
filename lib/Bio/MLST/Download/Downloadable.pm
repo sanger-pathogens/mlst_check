@@ -33,7 +33,8 @@ sub _download_file
   }
   else
   {
-    getstore($filename, join('/',($destination_directory,$self->_get_filename_from_url($filename))));
+    my $status = getstore($filename, join('/',($destination_directory,$self->_get_filename_from_url($filename))));
+    die "Something went wrong, got a $status status code" if is_error($status);
   }
   1;
 }

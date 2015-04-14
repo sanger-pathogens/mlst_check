@@ -86,12 +86,13 @@ sub _generate_spreadsheet_rows
       my ($pid, $exit_code, $ident, $exit_signal, $core_dump, $data_structure_reference) = @_;
       # retrieve data structure from child
       if (defined($data_structure_reference)) {  # children are not forced to send anything
-        push(@{$self->_spreadsheet_header}, $data_structure_reference->[0]);
-        push(@{$self->_spreadsheet_allele_numbers_rows}, $data_structure_reference->[1]);
-        push(@{$self->_spreadsheet_genomic_rows}, $data_structure_reference->[2]);
+        my ($header_row, $allele_numbers_row, $genomic_row, $concat_name, $concat_sequence) = @{$data_structure_reference};
+        push(@{$self->_spreadsheet_header}, $header_row);
+        push(@{$self->_spreadsheet_allele_numbers_rows}, $allele_numbers_row);
+        push(@{$self->_spreadsheet_genomic_rows}, $genomic_row);
         
-        push(@{$self->_concat_names}, $data_structure_reference->[3]);
-        push(@{$self->_concat_sequences}, $data_structure_reference->[4]);
+        push(@{$self->_concat_names}, $concat_name);
+        push(@{$self->_concat_sequences}, $concat_sequence);
 
       } else {  # problems occuring during storage or retrieval will throw a warning
         print qq|No message received from child process $pid!\n|;
