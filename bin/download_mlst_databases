@@ -7,15 +7,18 @@ package Bio::MLST::Bin::Download;
 
 Downloads all the MLST databases to disk. It requires access to the Internet.
 
-   # download everything with defaults
-   download_mlst_databases
- 
-   # XML file containing details of the MLST databases (from pubmlst)
-   download_mlst_databases -c my_config_file.json
- 
-   # destination base directory defaults to the environment variable \$MLST_DATABASES
-   download_mlst_databases -b /path/to/destination
-   
+    # download everything with defaults
+    download_mlst_databases
+
+    # print version
+    download_mlst_databases -v
+
+    # XML file containing details of the MLST databases (from pubmlst)
+    download_mlst_databases -c my_config_file.json
+
+    # destination base directory defaults to the environment variable \$MLST_DATABASES
+    download_mlst_databases -b /path/to/destination
+
 =cut
 
 BEGIN { unshift( @INC, '../lib' ) }
@@ -25,12 +28,15 @@ use Getopt::Long;
 use Bio::MLST::DatabaseSettings;
 use Bio::MLST::Download::Databases;
 
-my ($config_file, $base_directory, $help);
+my ($config_file, $base_directory, $help, $version);
 
 GetOptions ('c|config=s'         => \$config_file,
             'b|base_directory=s' => \$base_directory,
             'h|help'             => \$help,
+            'v|version'          => \$version,
 );
+
+(! $version ) or die "$0 version " . Bio::MLST::Bin::Download->VERSION . "\n";
 
 (! $help)or die <<USAGE;
 Usage: $0 [options]
@@ -38,6 +44,9 @@ Downloads all the MLST databases to disk
 
 # download everything with defaults
 download_mlst_databases
+
+# print version
+download_mlst_databases -v
 
 # XML file containing details of the MLST databases (from pubmlst)
 download_mlst_databases -c my_config_file.json
