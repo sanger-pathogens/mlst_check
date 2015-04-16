@@ -7,15 +7,21 @@ package Bio::MLST::Bin::Download;
 
 Downloads all the MLST databases to disk. It requires access to the Internet.
 
-   # download everything with defaults
-   download_mlst_databases
+    # download everything with defaults
+    download_mlst_databases
+
+    # print version information
+    download_mlst_databases -v
+
+    # XML file containing details of the MLST databases (from pubmlst)
+    download_mlst_databases -c my_config_file.json
  
-   # XML file containing details of the MLST databases (from pubmlst)
-   download_mlst_databases -c my_config_file.json
- 
-   # destination base directory defaults to the environment variable \$MLST_DATABASES
-   download_mlst_databases -b /path/to/destination
-   
+    # Pass in a different url to download
+    download_mlst_databases -u http://example.com/myfasta.fa
+
+    # destination base directory defaults to the environment variable \$MLST_DATABASES
+    download_mlst_databases -b /path/to/destination
+
 =cut
 
 BEGIN { unshift( @INC, '../lib' ) }
@@ -45,6 +51,9 @@ download_mlst_databases
 
 # print version information
 download_mlst_databases -v
+
+# XML file containing details of the MLST databases (from pubmlst)
+download_mlst_databases -c my_config_file.json
 
 # Pass in a different url to download
 download_mlst_databases -u http://example.com/myfasta.fa

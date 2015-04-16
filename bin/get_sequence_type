@@ -20,9 +20,12 @@ It requires NBCI Blast+ to be available in your PATH.
    get_sequence_type -s "Clostridium difficile" -d 8 *.fa
    
    # output a fasta file with the concatenated alleles and unknown sequences
-   get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
-   
-   # Specify an output directory 
+   get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
+
+   # output a phylip file with the concatenated alleles and unknown sequences
+   get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
+
+   # Specify an output directory
    get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
    
    # Match against multiple MLST databases
@@ -36,7 +39,10 @@ It requires NBCI Blast+ to be available in your PATH.
    
    # This help message
    get_sequence_type -h
-   
+
+   # print version
+   get_sequence_type -v
+
 =cut
 
 

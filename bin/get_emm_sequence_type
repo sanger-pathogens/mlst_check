@@ -9,34 +9,29 @@ Given Fasta files and a Species regex, lookup the relevant MLST database and out
 It requires NBCI Blast+ to be available in your PATH.
 
    # Basic usage, sequence type result written to my_assembly.fa.st
-   get_emm_sequence_type -s "Streptococcus pyogenes" my_assembly.fa
-   
-   # Multiple fasta files 
-   get_emm_sequence_type -s "Streptococcus pyogenes" myfasta.fa anotherfasta.fa yetanother.fa
-   # or
-   get_emm_sequence_type -s "Streptococcus pyogenes" *.fa
-   
-   # Split into 8 parallel processes (much faster), default is 2
-   get_emm_sequence_type -s "Streptococcus pyogenes" -d 8 *.fa
-   
-   # output a fasta file with the concatenated alleles and unknown sequences
-   get_emm_sequence_type -s "Streptococcus pyogenes" -c  my_assembly.fa 
-   
-   # Specify an output directory 
-   get_emm_sequence_type  -s "Streptococcus pyogenes" -o /path/to/results my_assembly.fa
-   
-   # Match against multiple MLST databases
-   get_emm_sequence_type -s "Clostridium botulinum, Streptococcus pyogenes" my_assembly.fa
-   
-   # Match against all MLST databases
    get_emm_sequence_type my_assembly.fa
-   
-   # list all available MLST databases
-   get_emm_sequence_type -a
-   
+
+   # Multiple fasta files
+   get_emm_sequence_type myfasta.fa anotherfasta.fa yetanother.fa
+
+   # Split into 8 parallel processes (much faster), default is 2
+   get_emm_sequence_type -d 8 *.fa
+
+   # output a fasta file with the concatenated alleles and unknown sequences
+   get_emm_sequence_type -c  my_assembly.fa
+
+   # output a phylip file with the concatenated alleles and unknown sequences
+   get_emm_sequence_type -y  my_assembly.fa
+
+   # Specify an output directory
+   get_emm_sequence_type  -o /path/to/results my_assembly.fa
+
    # This help message
    get_emm_sequence_type -h
-   
+
+   # print version
+   get_emm_sequence_type -v
+
 =cut
 
 
