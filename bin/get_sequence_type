@@ -10,15 +10,15 @@ It requires NBCI Blast+ to be available in your PATH.
 
    # Basic usage, sequence type result written to my_assembly.fa.st
    get_sequence_type -s "Clostridium difficile" my_assembly.fa
-   
-   # Multiple fasta files 
+
+   # Multiple fasta files
    get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
    # or
    get_sequence_type -s "Clostridium difficile" *.fa
-   
+
    # Split into 8 parallel processes (much faster), default is 2
    get_sequence_type -s "Clostridium difficile" -d 8 *.fa
-   
+
    # output a fasta file with the concatenated alleles and unknown sequences
    get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
 
@@ -27,16 +27,16 @@ It requires NBCI Blast+ to be available in your PATH.
 
    # Specify an output directory
    get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
-   
+
    # Match against multiple MLST databases
    get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
-   
+
    # Match against all MLST databases
    get_sequence_type my_assembly.fa
-   
+
    # list all available MLST databases
    get_sequence_type -a
-   
+
    # This help message
    get_sequence_type -h
 
@@ -83,7 +83,7 @@ Usage: $0 [options]
 # Basic usage, sequence type result written to my_assembly.fa.st
 get_sequence_type -s "Clostridium difficile" my_assembly.fa
 
-# Multiple fasta files 
+# Multiple fasta files
 get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
 # or
 get_sequence_type -s "Clostridium difficile" *.fa
@@ -92,12 +92,12 @@ get_sequence_type -s "Clostridium difficile" *.fa
 get_sequence_type -s "Clostridium difficile" -d 8 *.fa
 
 # output a fasta file with the concatenated alleles and unknown sequences
-get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa 
+get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
 
 # output a phylip file with the concatenated alleles and unknown sequences
 get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
 
-# Specify an output directory 
+# Specify an output directory
 get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
 
 # Match against multiple MLST databases
