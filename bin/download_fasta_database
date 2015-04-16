@@ -24,14 +24,17 @@ use Moose;
 use Getopt::Long;
 use Bio::MLST::CDC::Convert;
 
-my ($config_file, $base_directory,$url, $species,$gene_name, $help);
+my ($config_file, $base_directory,$url, $species,$gene_name, $help, $version);
 
 GetOptions ('u|url=s'            => \$url,
             'b|base_directory=s' => \$base_directory,
             's|species=s',       => \$species,
             'g|gene_name=s',     => \$gene_name,
             'h|help'             => \$help,
+            'v|version'          => \$version,
 );
+
+(! $version ) or die "$0 version " . Bio::MLST::Bin::Download->VERSION . "\n";
 
 (! $help)or die <<USAGE;
 Usage: $0 [options]
@@ -39,6 +42,9 @@ Downloads all the MLST databases to disk
 
 # download everything with defaults
 download_mlst_databases
+
+# print version information
+download_mlst_databases -v
 
 # Pass in a different url to download
 download_mlst_databases -u http://example.com/myfasta.fa

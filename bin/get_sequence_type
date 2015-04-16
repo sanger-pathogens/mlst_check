@@ -51,7 +51,7 @@ use Bio::MLST::Validate::Executable;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CheckMultipleSpecies;
 
-my ($species, $output_fasta_files, $output_directory, $show_alternatives, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $report_lowest_st, $help);
+my ($species, $output_fasta_files, $output_directory, $show_alternatives, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $report_lowest_st, $help, $version);
 
 GetOptions ('s|species=s'              => \$species,
             'o|output_directory=s'     => \$output_directory,
@@ -66,7 +66,10 @@ GetOptions ('s|species=s'              => \$species,
             'show_alternatives'        => \$show_alternatives,
             'report_lowest_st'         => \$report_lowest_st,
             'h|help'                   => \$help,
+            'v|version'                => \$version,
 );
+
+(! $version ) or die "$0 version " . Bio::MLST::Bin::GetSequenceType->VERSION . "\n";
 
 ( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
 Usage: $0 [options]
@@ -102,6 +105,9 @@ get_sequence_type -a
 
 # This help message
 get_sequence_type -h
+
+# print version
+get_sequence_type -v
 
 USAGE
 ;

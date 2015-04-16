@@ -25,12 +25,15 @@ use Getopt::Long;
 use Bio::MLST::DatabaseSettings;
 use Bio::MLST::Download::Databases;
 
-my ($config_file, $base_directory, $help);
+my ($config_file, $base_directory, $help, $version);
 
 GetOptions ('c|config=s'         => \$config_file,
             'b|base_directory=s' => \$base_directory,
             'h|help'             => \$help,
+            'v|version'          => \$version,
 );
+
+(! $version ) or die "$0 version " . Bio::MLST::Bin::Download->VERSION . "\n";
 
 (! $help)or die <<USAGE;
 Usage: $0 [options]
@@ -38,6 +41,9 @@ Downloads all the MLST databases to disk
 
 # download everything with defaults
 download_mlst_databases
+
+# print version
+download_mlst_databases -v
 
 # XML file containing details of the MLST databases (from pubmlst)
 download_mlst_databases -c my_config_file.json

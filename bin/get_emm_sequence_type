@@ -51,7 +51,7 @@ use Bio::MLST::Validate::Executable;
 use Bio::MLST::SearchForFiles;
 use Bio::MLST::CheckMultipleSpecies;
 
-my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help);
+my ($species, $output_fasta_files, $output_directory, $output_phylip_files, $available_databases, $base_directory, $makeblastdb_exec, $blastn_exec, $spreadsheet_basename,$parallel_processes, $help, $version);
 
 GetOptions ('s|species=s'              => \$species,
             'o|output_directory=s'     => \$output_directory,
@@ -64,7 +64,10 @@ GetOptions ('s|species=s'              => \$species,
             'p|spreadsheet_basename=s' => \$spreadsheet_basename,
             'd|parallel_processes=i'   => \$parallel_processes,
             'h|help'                   => \$help,
+            'v|version'                => \$version,
 );
+
+(! $version ) or die "$0 version " . Bio::MLST::Bin::GetEmmSequenceType->VERSION . "\n";
 
 ( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
 Usage: $0 [options]
@@ -89,6 +92,9 @@ get_emm_sequence_type  -o /path/to/results my_assembly.fa
 
 # This help message
 get_emm_sequence_type -h
+
+# print version
+get_emm_sequence_type -v
 
 USAGE
 ;
