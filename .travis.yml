@@ -1,0 +1,16 @@
+language: perl
+addons:
+  apt:
+    packages:
+    - libssl-dev
+    - libxml2
+    - libxml2-dev
+    - zlibc
+    - zlib1g
+    - zlib1g-dev
+python:
+  - "5.14.4"
+sudo: false
+install:
+  - "source ./install_dependencies.sh"
+script: "dzil test"
