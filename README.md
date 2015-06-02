@@ -1,5 +1,7 @@
-Multilocus sequence typing 
------
+# Multilocus sequence typing 
+
+[![Build Status](https://travis-ci.org/sanger-pathogens/mlst_check.svg)](https://travis-ci.org/sanger-pathogens/mlst_check)
+
 This application is for taking MLST sources from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
 Then you can provide FASTA files and get out sequence types for a given MLST database.
 Two spreadsheets are outputted, one contains the allele number for each locus, and the ST (or nearest ST), the other contains the genomic sequence for each allele.  
@@ -12,14 +14,19 @@ It requires NCBI Blast+ to be installed and for blastn and makeblastdb to be in 
 For any queries, contact path-help@sanger.ac.uk
 
 
-Example usage
--------------
+## Example usage
 
-# Add this environment variable to your ~/.bashrc file - do this once
+Add this environment variable to your ~/.bashrc file - do this once
+```
 export MLST_DATABASES=/path/to/where_you_want_to_store_the_databases
+```
 
-# Download the latest copy of the databases (run it once per month)
+Download the latest copy of the databases (run it once per month)
+```
 download_mlst_databases
+```
 
-# Find the sequence types for all fasta files in your current directory
+Find the sequence types for all fasta files in your current directory
+```
 get_sequence_type -s "Clostridium difficile" *.fa
+```
