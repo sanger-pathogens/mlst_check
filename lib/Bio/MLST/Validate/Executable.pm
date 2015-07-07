@@ -32,6 +32,35 @@ sub does_executable_exist
   return 1;
 }
 
+sub is_executable
+{
+  my($self, $executable) = @_;
+  if (defined $executable and -x $executable) {
+    return 1;
+  } elsif ( which($executable) ) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+sub preferred_executable
+{
+  my($self, $executable, $defaults) = @_;
+  if ($self->is_executable($executable)) {
+    return $executable;
+  }
+  if (defined $executable) {
+    warn "Could not find executable '".$executable."', attempting to use defaults\n";
+  }
+  for my $default (@{$defaults}) {
+    if ($self->is_executable($default)) {
+      return $default;
+    }
+  }
+  die "Could not find any usable default executables in '".join(", ", @{$defaults})."'\n";
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
