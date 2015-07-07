@@ -122,14 +122,14 @@ $base_directory ||= $ENV{MLST_DATABASES};
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 
 # Multiple versions of blast lying around, so use a particular one if possible
-$makeblastdb_exec ||= '/software/pubseq/bin/ncbi-blast-2.2.28+/bin/makeblastdb';
-$blastn_exec  ||= '/software/pubseq/bin/ncbi-blast-2.2.28+/bin/blastn';
-# FIXME this doesn't do what you think it should.  does_executable_exist
-# returns 1 if it is given a full path, which we just did immediatly above.
-# I think that if -m or -n is set, it should fail rather than silently using
-# a different executable.
-$makeblastdb_exec = 'makeblastdb' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($makeblastdb_exec));
-$blastn_exec = 'blastn' unless(Bio::MLST::Validate::Executable->new()->does_executable_exist($blastn_exec));
+# Warns if the user's preferred executable cannot be found; errors if defaults are also missing
+my $validator = Bio::MLST::Validate::Executable->new()
+$makeblastdb_exec = $validator->preferred_executable($makeblastdb_exec,
+                                                     ['/software/pubseq/bin/ncbi-blast-2.2.28+/bin/makeblastdb',
+                                                      'makeblastdb']);
+$blastn_exec = $validator->preferred_executable($blastn_exec,
+                                                ['/software/pubseq/bin/ncbi-blast-2.2.28+/bin/blastn',
+                                                 'blastn']);
 
 $spreadsheet_basename ||= 'mlst_results';
 $output_directory    ||= getcwd;

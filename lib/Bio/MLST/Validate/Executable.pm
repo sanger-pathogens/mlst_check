@@ -22,18 +22,6 @@ use File::Which;
 
 sub does_executable_exist
 {
-  my($self, $exec) = @_;
-  # if its a full path then skip over it
-  return 1 if($exec =~ m!/!);
-
-  my @full_paths_to_exec = which($exec);
-  return 0 if(@full_paths_to_exec == 0);
-  
-  return 1;
-}
-
-sub is_executable
-{
   my($self, $executable) = @_;
   if (defined $executable and -x $executable) {
     return 1;
@@ -47,14 +35,14 @@ sub is_executable
 sub preferred_executable
 {
   my($self, $executable, $defaults) = @_;
-  if ($self->is_executable($executable)) {
+  if ($self->does_executable_exist($executable)) {
     return $executable;
   }
   if (defined $executable) {
     warn "Could not find executable '".$executable."', attempting to use defaults\n";
   }
   for my $default (@{$defaults}) {
-    if ($self->is_executable($default)) {
+    if ($self->does_executable_exist($default)) {
       return $default;
     }
   }
