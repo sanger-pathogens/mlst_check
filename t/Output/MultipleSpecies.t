@@ -14,7 +14,7 @@ my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 # valid instance
 ok((my $multi_mlst_A = Bio::MLST::CheckMultipleSpecies->new( species               => ['E.coli','H.pylori'],
-							     base_directory        => 't/data',
+							     base_directory        => 't/data/databases',
 							     raw_input_fasta_files => ['t/data/contigs.fa'],
 							     makeblastdb_exec      => 'makeblastdb',
 							     blastn_exec           => 'blastn',
@@ -31,7 +31,7 @@ compare_files('t/data/expected_multi_mlst_results.genomic.csv',$tmpdirectory.'/m
 
 # invalid instance
 ok((my $multi_mlst_B = Bio::MLST::CheckMultipleSpecies->new( species               => [],
-							     base_directory        => 't/data',
+							     base_directory        => 't/data/databases',
 							     raw_input_fasta_files => ['t/data/contigs.fa','nonexist.fa'],
 							     makeblastdb_exec      => 'makeblastdb',
 							     blastn_exec           => 'blastn',
@@ -55,7 +55,7 @@ ok(!$input_file_test,'input file check');
 ok(!$input_option_test,'options check');
 
 # list all species
-ok(('Escherichia_coli_1,Helicobacter_pylori,Streptococcus_pyogenes,Streptococcus_pyogenes_emmST' eq join(',',@{$multi_mlst_B->_species_list})),'species list');
+is_deeply(['Escherichia_coli_1', 'Helicobacter_pylori', 'Streptococcus_pyogenes', 'Streptococcus_pyogenes_emmST'], $multi_mlst_B->_species_list,'species list');
 
 done_testing();
 

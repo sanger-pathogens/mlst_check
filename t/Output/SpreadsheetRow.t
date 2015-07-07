@@ -14,11 +14,11 @@ BEGIN {
 my $compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames  => ['t/data/adk.tfa','t/data/purA.tfa','t/data/recA.tfa'],
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
   contamination_alleles => 'test_contamination'
 );
 my $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
   sequence_names    => $compare_alleles->found_sequence_names,
   report_lowest_st  => 1
 );
@@ -54,10 +54,10 @@ $compare_alleles->new_st(0);
 $compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames  => ['t/data/adk_less_than_95_percent.tfa','t/data/purA.tfa','t/data/recA.tfa'],
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
   sequence_names    => $compare_alleles->found_sequence_names,
   report_lowest_st  => 1
 );
@@ -73,10 +73,10 @@ is_deeply($spreadsheet_row_obj->genomic_row, ['contigs', 1,'Unknown','','U',
 $compare_alleles = Bio::MLST::CompareAlleles->new(
   sequence_filename => 't/data/contigs.fa',
   allele_filenames  => ['t/data/adk_contamination.tfa','t/data/purA.tfa','t/data/recA.tfa'],
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
   sequence_names    => $compare_alleles->found_sequence_names,
   report_lowest_st  => 1
 );
@@ -90,10 +90,10 @@ is_deeply($spreadsheet_row_obj->genomic_row, ['contigs', 1,'Novel ST','adk-2,adk
 $compare_alleles = Bio::MLST::CompareAlleles->new(
    sequence_filename => 't/data/contigs_novel.fa',
      allele_filenames  => ['t/data/adk.tfa','t/data/purA.tfa','t/data/recA.tfa'],
-     profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+     profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-   profiles_filename => 't/data/Escherichia_coli_1/profiles/escherichia_coli.txt',
+   profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
    sequence_names    => $compare_alleles->found_sequence_names,
    report_lowest_st  => 1
 );

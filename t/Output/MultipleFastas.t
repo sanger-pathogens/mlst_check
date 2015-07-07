@@ -18,7 +18,7 @@ my $tmpdirectory = $tmpdirectory_obj->dirname();
 
 ok((my $multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  base_directory        => 't/data',
+  base_directory        => 't/data/databases',
   raw_input_fasta_files => ['t/data/contigs.fa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',
@@ -36,7 +36,7 @@ $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  base_directory        => 't/data',
+  base_directory        => 't/data/databases',
   raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',
@@ -104,7 +104,7 @@ $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  base_directory        => 't/data',
+  base_directory        => 't/data/databases',
   raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa','t/data/contigs_one_unknown.tfa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',
@@ -129,7 +129,7 @@ $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  base_directory        => 't/data',
+  base_directory        => 't/data/databases',
   raw_input_fasta_files => ['t/data/contigs.fa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',
@@ -145,7 +145,7 @@ $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
-  base_directory        => 't/data',
+  base_directory        => 't/data/databases',
   raw_input_fasta_files => ['t/data/nonexistent_file.fa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',

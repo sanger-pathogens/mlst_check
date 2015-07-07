@@ -22,14 +22,31 @@ use File::Which;
 
 sub does_executable_exist
 {
-  my($self, $exec) = @_;
-  # if its a full path then skip over it
-  return 1 if($exec =~ m!/!);
+  my($self, $executable) = @_;
+  if (defined $executable and -x $executable) {
+    return 1;
+  } elsif ( which($executable) ) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
-  my @full_paths_to_exec = which($exec);
-  return 0 if(@full_paths_to_exec == 0);
-  
-  return 1;
+sub preferred_executable
+{
+  my($self, $executable, $defaults) = @_;
+  if ($self->does_executable_exist($executable)) {
+    return $executable;
+  }
+  if (defined $executable) {
+    warn "Could not find executable '".$executable."', attempting to use defaults\n";
+  }
+  for my $default (@{$defaults}) {
+    if ($self->does_executable_exist($default)) {
+      return $default;
+    }
+  }
+  die "Could not find any usable default executables in '".join(", ", @{$defaults})."'\n";
 }
 
 no Moose;
