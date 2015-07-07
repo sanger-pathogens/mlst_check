@@ -26,8 +26,8 @@ ok((-d $destination_directory.'/Streptococcus_pyogenes_emmST'), 'should create t
 ok((-e $destination_directory.'/Streptococcus_pyogenes_emmST/alleles/emmST.tfa'), 'should create an allele fasta file');
 ok((-e $destination_directory.'/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogenes_emmST.txt'), 'Should create the profile text file');
 
-compare_files('t/data/Streptococcus_pyogenes_emmST/alleles/emmST.tfa', $destination_directory.'/Streptococcus_pyogenes_emmST/alleles/emmST.tfa');
-compare_files('t/data/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogenes_emmST.txt', $destination_directory.'/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogenes_emmST.txt' );
+compare_files('t/data/databases/Streptococcus_pyogenes_emmST/alleles/emmST.tfa', $destination_directory.'/Streptococcus_pyogenes_emmST/alleles/emmST.tfa');
+compare_files('t/data/databases/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogenes_emmST.txt', $destination_directory.'/Streptococcus_pyogenes_emmST/profiles/Streptococcus_pyogenes_emmST.txt' );
 
 
 # Check the the converted files can be used

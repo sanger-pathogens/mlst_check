@@ -24,11 +24,11 @@ sub species_name_regex
  my $regex = shift;
   ok(($search_results = Bio::MLST::SearchForFiles->new(
     species_name => $regex,
-    base_directory => 't/data'
+    base_directory => 't/data/databases'
   )),"initialise searching for files with $regex");
   my @results = sort @{$search_results->allele_filenames()};
-  my @expected_results = ('t/data/Escherichia_coli_1/alleles/adk.tfa', 't/data/Escherichia_coli_1/alleles/purA.tfa','t/data/Escherichia_coli_1/alleles/recA.tfa');
+  my @expected_results = ('t/data/databases/Escherichia_coli_1/alleles/adk.tfa', 't/data/databases/Escherichia_coli_1/alleles/purA.tfa','t/data/databases/Escherichia_coli_1/alleles/recA.tfa');
   is_deeply(\@results, \@expected_results, "allele filenames for $regex");
-  is('t/data/Escherichia_coli_1/profiles/escherichia_coli.txt', $search_results->profiles_filename(),"profiles filename for $regex");
+  is('t/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt', $search_results->profiles_filename(),"profiles filename for $regex");
   
 }
