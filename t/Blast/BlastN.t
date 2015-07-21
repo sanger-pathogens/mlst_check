@@ -498,7 +498,7 @@ ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    word_sizes     => word_sizes('t/data/adk_99_percent.tfa')
  )), 'initialise valid blastN 99% match');
 
-is($blastn_result->top_hit->{allele_name}, 'adk-2', 'correct allele close match');
+is($blastn_result->top_hit->{allele_name}, 'adk-2*', 'correct allele close match');
 is($blastn_result->top_hit->{percentage_identity}, 99,'correct allele close match');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(

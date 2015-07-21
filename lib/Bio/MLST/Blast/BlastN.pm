@@ -187,77 +187,39 @@ sub _blastn_cmd
 sub _build_top_hit
 {
   my($self) = @_;
+  my $top_hit = {};
+  my @contaminants = ();
   open(my $copy_stderr_fh, ">&STDERR"); open(STDERR, '>/dev/null'); # Redirect STDERR
   open( my $blast_output_fh, '-|',$self->_blastn_cmd);
   close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
-  my %top_hit;
-  my $top_hit_percentage_identity = 0;
-  my %contamination_check;
 
-  while(<$blast_output_fh>)
+  # Find all of the best non-overlapping matches
+  my $hits = $self->_build_hits($blast_output_fh);
+  $hits = $self->_filter_by_alignment_length($hits, $self->word_sizes);
+  my $best_hits = $self->_filter_best_hits($hits);
+  my $groups = $self->_group_overlapping_hits($best_hits);
+  my @best_in_groups = map { $self->_best_hit_in_group($_) } @$groups;
+  my $best_in_groups = $self->_highlight_imperfect_matches(\@best_in_groups);
+
+  # Find the best match and the contaminants, if any
+  $top_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @$best_in_groups;
+  @contaminants = grep { $_->{'allele_name'} ne $top_hit->{'allele_name'} } @$best_in_groups;
+  @contaminants = map { $_->{'allele_name'} } @contaminants;
+
+  if (defined $top_hit)
   {
-    chomp;
-    my $line = $_;
-    my @blast_raw_results = split(/\t/,$line);
-    next unless($blast_raw_results[3] >= $self->word_sizes->{$blast_raw_results[0]});
-    my $percentage_identity = $blast_raw_results[2];
-
-    if(@blast_raw_results  > 8 && $percentage_identity >= $top_hit_percentage_identity)
-    {
-      my $start  = $blast_raw_results[8];
-      my $end  = $blast_raw_results[9];
-      ($start, $end, my $reverse) = $start <= $end ? ($start, $end, 0) : ($end, $start, 1);
-
-      my $allele_name = $blast_raw_results[0];
-
-      if ($top_hit_percentage_identity == 100)
-      {
-        # We've already found one 100% match, check this isn't a truncation
-        # FIXME: Favors shorter alleles if there are SNPs:
-        # If allele_2 is a truncation of allele_1 and allele_1 has a SNP in the truncated region
-        # only allele_2 is matched.  This is true more generally that contaminations are not
-        # picked up if one of them has a SNP.
-        if ($start >= $top_hit{source_start} && $end <= $top_hit{source_end}) {
-          # This is a truncation of the top_hit
-          # Move onto the next match without updating the top_hit or contamination
-          next;
-        } elsif ($start <= $top_hit{source_start} && $end >= $top_hit{source_end}) {
-          # The top_hit is a truncation of this
-          # Remove top_hit from hash of contaminants
-          delete $contamination_check{$top_hit{allele_name}};
-          $contamination_check{$allele_name} = $percentage_identity;
-          # Update the top hit
-        } else {
-          # There does appear to be some contamination
-          # Update the list of contaminants
-          $contamination_check{$allele_name} = $percentage_identity;
-          # Update the top hit
-          # FIXME: Always picks the last even if it is a shorter match, which it probably is because
-          # blastn prioritises its output (I think).
-        }
-      } elsif ($percentage_identity == 100) {
-        # This is the first 100% match
-        # Add this to the list of contaminants
-        $contamination_check{$allele_name} = $percentage_identity;
-      }
-
-      $top_hit{allele_name} = $allele_name;
-      $top_hit{percentage_identity} = int($percentage_identity); # NB rounded down to int
-      $top_hit_percentage_identity = $percentage_identity; # NB not rounded down
-      $top_hit{source_name} = $blast_raw_results[1];
-      $top_hit{source_start} = $start;
-      $top_hit{source_end} = $end;
-      $top_hit{reverse} = $reverse;
-    }
+    $top_hit->{'percentage_identity'} = int($top_hit->{'percentage_identity'});
+    delete $top_hit->{'alignment_length'};
+  }
+  else {
+    $top_hit = {};
+  }
+  if ( scalar @contaminants > 0 )
+  {
+    $top_hit->{contamination} = \@contaminants;
   }
   
-  if((keys %contamination_check) >= 2)
-  {
-    my @found_alleles = keys(%contamination_check);
-    $top_hit{contamination} = \@found_alleles;
-  }
-  
-  return \%top_hit;
+  return $top_hit;
 }
 
 no Moose;
