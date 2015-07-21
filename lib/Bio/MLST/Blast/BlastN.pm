@@ -158,6 +158,23 @@ sub _best_hit_in_group
   return $best_hit;
 }
 
+sub _highlight_imperfect_matches
+{
+  ###
+  # If a match isn't 100% add a * to the allele_name to make this clear
+  ###
+  my($self, $hits) = @_;
+  my @output = map {
+    my $hit = { %$_ }; # make a shallow copy of the original hit
+    if ($hit->{'percentage_identity'} < 100.0) {
+      $hit->{'allele_name'} = "$hit->{'allele_name'}*";
+    }
+    $hit;
+  } @$hits;
+
+  return \@output;
+}
+
 sub _blastn_cmd
 {
   my($self) = @_;
