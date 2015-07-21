@@ -92,6 +92,60 @@ my $expected_hits = [
 my $fake_blast_output_fh = new IO::Scalar \$fake_blast_output;
 is_deeply($blastn_result->_build_hits($fake_blast_output_fh), $expected_hits, "extract array of hits");
 
+my $input_hits = $expected_hits;
+$expected_hits = [
+  {
+    'allele_name' => 'adk-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.13',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-4',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.88',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+];
+is_deeply($blastn_result->_filter_best_hits($input_hits), $expected_hits, "filter best hits");
+
+$expected_hits = [
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-4',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.88',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+];
+is_deeply($blastn_result->_filter_best_hits($input_hits, 1.5), $expected_hits, "filter fewer best hits");
+
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',

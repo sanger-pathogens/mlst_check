@@ -37,6 +37,7 @@ The attributes returned in the hash are:
 
 use Moose;
 use Bio::MLST::Types;
+use List::Util qw(max);
 
 # input variables
 has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 ); 
@@ -75,6 +76,16 @@ sub _build_hits
     push @hits, $self->_build_hit($_);
   }
   return \@hits;
+}
+
+sub _filter_best_hits
+{
+  my($self, $hits, $tollerance) = @_;
+  $tollerance = defined($tollerance) ? $tollerance : 2.0;
+  my @percentages = map { $_->{'percentage_identity'} } @$hits;
+  my $top_percentage = max @percentages;
+  my @top_hits = grep { $_->{'percentage_identity'} >= $top_percentage - $tollerance } @$hits;
+  return \@top_hits;
 }
 
 sub _blastn_cmd
