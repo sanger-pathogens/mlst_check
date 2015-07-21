@@ -92,7 +92,100 @@ my $expected_hits = [
 my $fake_blast_output_fh = new IO::Scalar \$fake_blast_output;
 is_deeply($blastn_result->_build_hits($fake_blast_output_fh), $expected_hits, "extract array of hits");
 
-my $input_hits = $expected_hits;
+my $input_hits = [
+  {
+    'allele_name' => 'adk-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.13',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '436',
+    'source_start' => '178',
+    'source_end' => '613',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-3',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.88',
+    'alignment_length' => '336',
+    'source_start' => '178',
+    'source_end' => '513',
+    'reverse' => 0,
+  },
+];
+$expected_hits = [
+  {
+    'allele_name' => 'adk-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.13',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '436',
+    'source_start' => '178',
+    'source_end' => '613',
+    'reverse' => 0,
+  },
+];
+my $word_sizes = {
+  'adk-1' => 500,
+  'adk-2' => 436,
+  'adk-3' => 400
+};
+is_deeply($blastn_result->_filter_by_alignment_length($input_hits, $word_sizes), $expected_hits, "filter alignment length");
+
+$input_hits = [
+  {
+    'allele_name' => 'adk-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.13',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-3',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '97.76',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 1,
+  },
+  {
+    'allele_name' => 'adk-4',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.88',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+];
 $expected_hits = [
   {
     'allele_name' => 'adk-1',

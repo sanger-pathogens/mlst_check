@@ -78,6 +78,17 @@ sub _build_hits
   return \@hits;
 }
 
+sub _filter_by_alignment_length
+{
+  ###
+  # For each allele there is a minimum length of sequence it must be aligned
+  # against before it can be considered a match.
+  ###
+  my ($self, $hits, $word_sizes) = @_;
+  my @long_hits = grep { $_->{'alignment_length'} >= $word_sizes->{$_->{'allele_name'}} } @$hits;
+  return \@long_hits;
+}
+
 sub _filter_best_hits
 {
   my($self, $hits, $tollerance) = @_;
