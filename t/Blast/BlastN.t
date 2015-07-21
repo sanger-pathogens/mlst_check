@@ -18,6 +18,42 @@ ok((my $blastn_result = Bio::MLST::Blast::BlastN->new(
    query_file     => 't/data/adk.tfa',
    word_sizes     => word_sizes('t/data/adk.tfa')
  )), 'initialise valid blastN');
+
+# Example Blastn Output:
+# adk-1   SomeSequenceName        98.13   536     10      0       1       536     178     713     0.0       922
+# adk-2   SomeSequenceName        100.00  536     0       0       1       536     178     713     0.0       967
+# adk-3   SomeSequenceName        97.76   536     12      0       1       536     178     713     0.0       913
+# adk-4   SomeSequenceName        98.88   536     6       0       1       536     178     713     0.0       940
+
+my $blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	178	713	0.0	922\n";
+my %expected_hit = (
+  'allele_name' => 'adk-1',
+  'source_name' => 'SomeSequenceName',
+  'percentage_identity' => '98.13',
+  'alignment_length' => '536',
+  'source_start' => '178',
+  'source_end' => '713',
+  'reverse' => 0,
+);
+is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "extract one hit");
+
+$blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	713	178	0.0	922\n";
+%expected_hit = (
+  'allele_name' => 'adk-1',
+  'source_name' => 'SomeSequenceName',
+  'percentage_identity' => '98.13',
+  'alignment_length' => '536',
+  'source_start' => '178',
+  'source_end' => '713',
+  'reverse' => 1,
+);
+is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "extract one reverse hit");
+
+ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
+   blast_database => $blast_database->location(),
+   query_file     => 't/data/adk.tfa',
+   word_sizes     => word_sizes('t/data/adk.tfa')
+ )), 'initialise valid blastN');
 is_deeply($blastn_result->top_hit, {allele_name => 'adk-2', percentage_identity => 100, source_name => 'SomeSequenceName', source_start => 178, source_end => 713, reverse => 0 }, 'Hit correctly returned');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(

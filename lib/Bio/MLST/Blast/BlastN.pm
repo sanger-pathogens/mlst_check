@@ -48,6 +48,24 @@ has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 95 );
 # Generated
 has 'top_hit'           => ( is => 'ro', isa => 'Maybe[HashRef]', lazy => 1,  builder => '_build_top_hit' ); 
 
+sub _build_hit
+{
+  my($self, $line) = @_;
+  chomp($line);
+  my @row = split(/\t/,$line);
+  my ($start, $end) = ($row[8], $row[9]);
+  ($start, $end, my $reverse) = $start <= $end ? ($start, $end, 0) : ($end, $start, 1);
+  return {
+    'allele_name' => $row[0],
+    'source_name' => $row[1],
+    'percentage_identity' => $row[2],
+    'alignment_length' => $row[3],
+    'source_start' => $start,
+    'source_end' => $end,
+    'reverse' => $reverse,
+  };
+}
+
 sub _blastn_cmd
 {
   my($self) = @_;
