@@ -1,8 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use File::Temp;
 use Bio::SeqIO;
+use File::Temp;
+use IO::Scalar;
 
 BEGIN { unshift(@INC, './lib') }
 BEGIN {
@@ -19,11 +20,12 @@ ok((my $blastn_result = Bio::MLST::Blast::BlastN->new(
    word_sizes     => word_sizes('t/data/adk.tfa')
  )), 'initialise valid blastN');
 
-# Example Blastn Output:
-# adk-1   SomeSequenceName        98.13   536     10      0       1       536     178     713     0.0       922
-# adk-2   SomeSequenceName        100.00  536     0       0       1       536     178     713     0.0       967
-# adk-3   SomeSequenceName        97.76   536     12      0       1       536     178     713     0.0       913
-# adk-4   SomeSequenceName        98.88   536     6       0       1       536     178     713     0.0       940
+my $fake_blast_output = <<'END_OUTPUT';
+adk-1	SomeSequenceName	98.13	536	10	0	1	536	178	713	0.0	922
+adk-2	SomeSequenceName	100.00	536	0	0	1	536	178	713	0.0	967
+adk-3	SomeSequenceName	97.76	536	12	0	1	536	713	178	0.0	913
+adk-4	SomeSequenceName	98.88	536	6	0	1	536	178	713	0.0	940
+END_OUTPUT
 
 my $blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	178	713	0.0	922\n";
 my %expected_hit = (
@@ -75,7 +77,7 @@ my $expected_hits = [
     'alignment_length' => '536',
     'source_start' => '178',
     'source_end' => '713',
-    'reverse' => 0,
+    'reverse' => 1,
   },
   {
     'allele_name' => 'adk-4',
@@ -87,7 +89,8 @@ my $expected_hits = [
     'reverse' => 0,
   },
 ];
-is_deeply($blastn_result->_build_hits(), $expected_hits, "extract array of hits");
+my $fake_blast_output_fh = new IO::Scalar \$fake_blast_output;
+is_deeply($blastn_result->_build_hits($fake_blast_output_fh), $expected_hits, "extract array of hits");
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),

@@ -68,10 +68,7 @@ sub _build_hit
 
 sub _build_hits
 {
-  my ($self) = @_;
-  open(my $copy_stderr_fh, ">&STDERR"); open(STDERR, '>/dev/null'); # Redirect STDERR
-  open( my $blast_output_fh, '-|',$self->_blastn_cmd);
-  close(STDERR); open(STDERR, ">&", $copy_stderr_fh); # Restore STDERR
+  my ($self, $blast_output_fh) = @_;
   my @hits;
   while(<$blast_output_fh>)
   {
