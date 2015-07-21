@@ -49,6 +49,46 @@ $blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	713	178	0.0	922\n";
 );
 is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "extract one reverse hit");
 
+my $expected_hits = [
+  {
+    'allele_name' => 'adk-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.13',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-3',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '97.76',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'adk-4',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '98.88',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+];
+is_deeply($blastn_result->_build_hits(), $expected_hits, "extract array of hits");
+
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',
