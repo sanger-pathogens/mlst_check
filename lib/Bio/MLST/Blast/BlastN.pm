@@ -37,7 +37,7 @@ The attributes returned in the hash are:
 
 use Moose;
 use Bio::MLST::Types;
-use List::Util qw(max);
+use List::Util qw(reduce max);
 
 # input variables
 has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 ); 
@@ -90,6 +90,10 @@ sub _filter_best_hits
 
 sub _group_overlapping_hits
 {
+  ###
+  # Hits can overlap, this groups hits which overlap and returns a reference to
+  # an array of references to these groups.
+  ###
   my($self, $hits) = @_;
   my @bins = ();
   foreach my $hit (@$hits)
@@ -127,6 +131,20 @@ sub _group_overlapping_hits
   }
   my @groups = map { $_->{hits} } @bins;
   return \@groups;
+}
+
+sub _best_hit_in_group
+{
+  ###
+  # The best hit must be the longest.  If there is more than one hit with the
+  # maximum length, return the one with the best percentage_identity
+  ###
+  my($self, $hits) = @_;
+  my @lengths = map { $_->{'source_end'} - $_->{'source_start'} + 1 } @$hits;
+  my $max_length = max @lengths;
+  my @longest_hits = grep { $_->{'source_end'} - $_->{'source_start'} + 1 >= $max_length } @$hits;
+  my $best_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @longest_hits;
+  return $best_hit;
 }
 
 sub _blastn_cmd

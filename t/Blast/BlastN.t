@@ -284,6 +284,46 @@ $expected_hits = [
 ];
 is_deeply($blastn_result->_group_overlapping_hits($overlapping_hits), $expected_hits, "group overlapping hits");
 
+$input_hits = [
+  {
+    'allele_name' => 'allele-1',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '90.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'allele-1-truncation-end',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '100.00',
+    'alignment_length' => '336',
+    'source_start' => '178',
+    'source_end' => '513',
+    'reverse' => 0,
+  },
+  {
+    'allele_name' => 'allele-2',
+    'source_name' => 'SomeSequenceName',
+    'percentage_identity' => '95.00',
+    'alignment_length' => '536',
+    'source_start' => '178',
+    'source_end' => '713',
+    'reverse' => 0,
+  },
+];
+my $expected_hit = {
+  'allele_name' => 'allele-2',
+  'source_name' => 'SomeSequenceName',
+  'percentage_identity' => '95.00',
+  'alignment_length' => '536',
+  'source_start' => '178',
+  'source_end' => '713',
+  'reverse' => 0,
+};
+is_deeply($blastn_result->_best_hit_in_group($input_hits), $expected_hit, "best hit in group");
+
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',
