@@ -88,6 +88,47 @@ sub _filter_best_hits
   return \@top_hits;
 }
 
+sub _group_overlapping_hits
+{
+  my($self, $hits) = @_;
+  my @bins = ();
+  foreach my $hit (@$hits)
+  {
+    my $found_a_bin = 0;
+    foreach my $bin (@bins)
+    {
+      # check if hit is in bin
+      if (($hit->{'source_start'} >= $bin->{'start'}) and ($hit->{'source_end'} <= $bin->{'end'}))
+      {
+        push $bin->{'hits'}, $hit;
+        $found_a_bin = 1;
+        last;
+      }
+      # check if bin is in hit
+      elsif (($hit->{'source_start'} <= $bin->{'start'}) and ($hit->{'source_end'} >= $bin->{'end'}))
+      {
+        push $bin->{'hits'}, $hit;
+        $bin->{'start'} = $hit->{'source_start'};
+        $bin->{'end'} = $hit->{'source_end'};
+        $found_a_bin = 1;
+        last;
+      }
+    }
+    # If we've not found a bin for this hit, make a new one
+    if (!$found_a_bin)
+    {
+      my $new_bin = {
+        'start' => $hit->{'source_start'},
+        'end' => $hit->{'source_end'},
+        'hits' => [$hit]
+      };
+      push @bins, $new_bin;
+    }
+  }
+  my @groups = map { $_->{hits} } @bins;
+  return \@groups;
+}
+
 sub _blastn_cmd
 {
   my($self) = @_;
