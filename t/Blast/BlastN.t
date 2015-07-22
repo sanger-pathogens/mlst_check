@@ -417,49 +417,6 @@ my $expected_hit = {
 };
 is_deeply($blastn_result->_best_hit_in_group($input_hits), $expected_hit, "best hit in group");
 
-$input_hits = [
-  {
-    'allele_name' => 'allele-1',
-    'source_name' => 'SomeSequenceName',
-    'percentage_identity' => '90.00',
-    'alignment_length' => '536',
-    'source_start' => '178',
-    'source_end' => '713',
-    'reverse' => 0,
-  },
-  {
-    'allele_name' => 'allele-1-truncation-end',
-    'source_name' => 'SomeSequenceName',
-    'percentage_identity' => '100.00',
-    'alignment_length' => '336',
-    'source_start' => '178',
-    'source_end' => '513',
-    'reverse' => 0,
-  },
-];
-$expected_hits = [
-  {
-    'allele_name' => 'allele-1*',
-    'source_name' => 'SomeSequenceName',
-    'percentage_identity' => '90.00',
-    'alignment_length' => '536',
-    'source_start' => '178',
-    'source_end' => '713',
-    'reverse' => 0,
-  },
-  {
-    'allele_name' => 'allele-1-truncation-end',
-    'source_name' => 'SomeSequenceName',
-    'percentage_identity' => '100.00',
-    'alignment_length' => '336',
-    'source_start' => '178',
-    'source_end' => '513',
-    'reverse' => 0,
-  },
-];
-is_deeply($blastn_result->_highlight_imperfect_matches($input_hits), $expected_hits, "add * to imperfect patches");
-is(@$input_hits[0]->{'allele_name'}, 'allele-1', "_highlight_imperfect_matches is idempotent");
-
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',
@@ -498,7 +455,7 @@ ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    word_sizes     => word_sizes('t/data/adk_99_percent.tfa')
  )), 'initialise valid blastN 99% match');
 
-is($blastn_result->top_hit->{allele_name}, 'adk-2*', 'correct allele close match');
+is($blastn_result->top_hit->{allele_name}, 'adk-2', 'correct allele close match');
 is($blastn_result->top_hit->{percentage_identity}, 99,'correct allele close match');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(

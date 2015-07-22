@@ -121,8 +121,8 @@ compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_th
 compare_files( $tmpdirectory.'/concatenated_alleles.fa',     't/data/expected_three_concatenated_alleles.fa');
 ###
 compare_phylip_files( $tmpdirectory.'/concatenated_alleles.phylip', 't/data/expected_three_concatenated_alleles.phylip' );
-compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2.fa',  't/data/expected_three_contigs_one_unknown.unknown_allele.adk-2.fa' );
-compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1.fa', 't/data/expected_three_contigs_one_unknown.unknown_allele.recA-1.fa');
+compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2~.fa',  't/data/expected_three_contigs_one_unknown.unknown_allele.adk-2~.fa' );
+compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1~.fa', 't/data/expected_three_contigs_one_unknown.unknown_allele.recA-1~.fa');
 
 
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);

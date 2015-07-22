@@ -158,23 +158,6 @@ sub _best_hit_in_group
   return $best_hit;
 }
 
-sub _highlight_imperfect_matches
-{
-  ###
-  # If a match isn't 100% add a * to the allele_name to make this clear
-  ###
-  my($self, $hits) = @_;
-  my @output = map {
-    my $hit = { %$_ }; # make a shallow copy of the original hit
-    if ($hit->{'percentage_identity'} < 100.0) {
-      $hit->{'allele_name'} = "$hit->{'allele_name'}*";
-    }
-    $hit;
-  } @$hits;
-
-  return \@output;
-}
-
 sub _blastn_cmd
 {
   my($self) = @_;
@@ -198,12 +181,10 @@ sub _build_top_hit
   $hits = $self->_filter_by_alignment_length($hits, $self->word_sizes);
   my $best_hits = $self->_filter_best_hits($hits);
   my $groups = $self->_group_overlapping_hits($best_hits);
-  my @best_in_groups = map { $self->_best_hit_in_group($_) } @$groups;
-  my $best_in_groups = $self->_highlight_imperfect_matches(\@best_in_groups);
 
-  # Find the best match and the contaminants, if any
-  $top_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @$best_in_groups;
-  @contaminants = map { $_->{'allele_name'} } @$best_in_groups;
+  # Find the best match
+  my @best_in_groups = map { $self->_best_hit_in_group($_) } @$groups;
+  $top_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @best_in_groups;
 
   if (defined $top_hit)
   {
@@ -213,9 +194,9 @@ sub _build_top_hit
   else {
     $top_hit = {};
   }
-  if ( scalar @contaminants > 1 )
+  if ( scalar @best_in_groups > 1 )
   {
-    $top_hit->{contamination} = \@contaminants;
+    $top_hit->{contamination} = \@best_in_groups;
   }
   
   return $top_hit;

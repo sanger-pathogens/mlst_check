@@ -178,13 +178,17 @@ sub _build_matching_sequences
       next;
     }
     
-    # more than 1 allele has 100% match
+    # more than 1 allele has a good match
     if(defined($top_blast_hit{contamination}))
     {
       $self->contamination(1);
-      my $contamination_alleles = join( ',', sort @{ $top_blast_hit{contamination} } );
+      my $contaminants = $top_blast_hit{contamination};
+      my @contaminant_names = map { $_->{allele_name} } @$contaminants;
+      # Add tilde to matches which are not 100%
+      my @contaminant_names_with_tilde = map { $_->{percentage_identity} == 100 ? $_->{allele_name} : "$_->{allele_name}~" } @$contaminants;
+      my $contamination_alleles = join( ',', sort @contaminant_names_with_tilde );
       $self->contamination_alleles( $contamination_alleles );
-      $self->_translate_contamination_names_into_sequence_types($top_blast_hit{contamination},$top_blast_hit{allele_name});
+      $self->_translate_contamination_names_into_sequence_types(\@contaminant_names, $top_blast_hit{allele_name});
     }
     
     $top_blast_hit{allele_name} =~ s![-_]+!-!g;
@@ -195,7 +199,9 @@ sub _build_matching_sequences
     }
     else
     {
-      $non_matching_sequence_names{$top_blast_hit{allele_name}} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});
+      # If the top hit isn't 100%, add a tilde to the allele_name
+      my $name_with_tilde = "$top_blast_hit{allele_name}~";
+      $non_matching_sequence_names{$name_with_tilde} = $self->_get_blast_hit_sequence($top_blast_hit{source_name}, $top_blast_hit{source_start},$top_blast_hit{source_end},$word_size,$top_blast_hit{reverse});
       $self->new_st(1);
     }
   }
