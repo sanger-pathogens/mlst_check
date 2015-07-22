@@ -66,6 +66,14 @@ sub _build_allele_to_number
   my($self) = @_;
   my %allele_to_number;
 
+  for my $sequence_name (@{$self->non_matching_names})
+  {
+    my @sequence_name_details = split(/[-_]/,$sequence_name);
+    my $num = pop @sequence_name_details;
+    my $name = join( "-", @sequence_name_details );
+    $allele_to_number{$name} = $num;
+  }
+
   for my $sequence_name (@{$self->matching_names})
   {
     my @sequence_name_details = split(/[-_]/,$sequence_name);
@@ -78,6 +86,20 @@ sub _build_allele_to_number
   #print Dumper \%allele_to_number;
   
   return \%allele_to_number;
+}
+
+sub _allele_numbers_similar
+{
+  my($self, $number_a, $number_b) = @_;
+  if ($number_a eq $number_b) {
+    return 1;
+  } elsif ("$number_a~" eq $number_b) {
+    return 1;
+  } elsif ("$number_b~" eq $number_a) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 sub _build_sequence_type
@@ -105,8 +127,9 @@ sub _build_sequence_type
       next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex" || $header_row[$col] eq "mlst_clade");
       $num_loci++ if($row == 1);
 
-      next if(!defined($self->allele_to_number->{$header_row[$col]}) );
-      next if($self->allele_to_number->{$header_row[$col]} != $current_row[$col]);
+      my $allele_number = $self->allele_to_number->{$header_row[$col]};
+      next if(!defined($allele_number) );
+      next if(!$self->_allele_numbers_similar($allele_number, $current_row[$col]));
       $sequence_type_freq{$current_row[0]}++;
     }
   }

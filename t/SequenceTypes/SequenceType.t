@@ -56,4 +56,17 @@ ok(($sequence_type = Bio::MLST::SequenceType->new(
 is( $sequence_type->sequence_type, undef, 'lookup the sequence type missing an allele');
 like($sequence_type->nearest_sequence_type, 'm/[14]/', 'lookup the nearest sequence type for missing an allele');
 
+# check if two sequence types are similar
+$sequence_type = Bio::MLST::SequenceType->new(
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names => [],
+  non_matching_names => []
+);
+is($sequence_type->_allele_numbers_similar('1', '1'), 1, 'same alleles');
+is($sequence_type->_allele_numbers_similar('1', '2'), 0, 'different alleles');
+is($sequence_type->_allele_numbers_similar('1', '1~'), 1, 'similar alleles');
+is($sequence_type->_allele_numbers_similar('1~', '1'), 1, 'other similar alleles');
+is($sequence_type->_allele_numbers_similar('1~', '1~'), 1, 'other same alleles');
+is($sequence_type->_allele_numbers_similar('1', '2~'), 0, 'more different alleles');
+
 done_testing();

@@ -179,5 +179,5 @@ sub compare_files
   my @sorted_expected = sort(@split_expected);
   my @sorted_actual  = sort(@split_actual);
   
-  return is_deeply(\@sorted_expected,\@sorted_actual, "Content matches expected $expected_file");
+  return is_deeply(\@sorted_actual, \@sorted_expected, "Content matches expected $expected_file");
 }
