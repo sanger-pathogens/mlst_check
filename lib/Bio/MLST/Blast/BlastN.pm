@@ -203,8 +203,7 @@ sub _build_top_hit
 
   # Find the best match and the contaminants, if any
   $top_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @$best_in_groups;
-  @contaminants = grep { $_->{'allele_name'} ne $top_hit->{'allele_name'} } @$best_in_groups;
-  @contaminants = map { $_->{'allele_name'} } @contaminants;
+  @contaminants = map { $_->{'allele_name'} } @$best_in_groups;
 
   if (defined $top_hit)
   {
@@ -214,7 +213,7 @@ sub _build_top_hit
   else {
     $top_hit = {};
   }
-  if ( scalar @contaminants > 0 )
+  if ( scalar @contaminants > 1 )
   {
     $top_hit->{contamination} = \@contaminants;
   }
