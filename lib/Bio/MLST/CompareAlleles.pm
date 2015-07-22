@@ -232,8 +232,9 @@ sub _translate_contamination_names_into_sequence_types
   {
     next if($main_allele_name eq $allele_number);
     my $st = Bio::MLST::SequenceType->new(
-      profiles_filename => $self->profiles_filename,
-      sequence_names => [$allele_number]
+      profiles_filename  => $self->profiles_filename,
+      matching_names     => [$allele_number],
+      non_matching_names => []
     );
     
     if(defined($st->sequence_type()) )

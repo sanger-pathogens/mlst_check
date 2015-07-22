@@ -18,9 +18,10 @@ my $compare_alleles = Bio::MLST::CompareAlleles->new(
   contamination_alleles => 'test_contamination'
 );
 my $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names    => $compare_alleles->found_sequence_names,
-  report_lowest_st  => 1
+  profiles_filename  => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names     => $compare_alleles->found_sequence_names,
+  non_matching_names => [],
+  report_lowest_st   => 1
 );
 
 
@@ -57,9 +58,10 @@ $compare_alleles = Bio::MLST::CompareAlleles->new(
   profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names    => $compare_alleles->found_sequence_names,
-  report_lowest_st  => 1
+  profiles_filename  => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names     => $compare_alleles->found_sequence_names,
+  non_matching_names => [],
+  report_lowest_st   => 1
 );
 ok(($spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(sequence_type_obj => $sequence_type_obj, compare_alleles => $compare_alleles)),'create a valid spreadsheet row obj no hit for adk');
 
@@ -76,9 +78,10 @@ $compare_alleles = Bio::MLST::CompareAlleles->new(
   profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
-  sequence_names    => $compare_alleles->found_sequence_names,
-  report_lowest_st  => 1
+  profiles_filename  => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names     => $compare_alleles->found_sequence_names,
+  non_matching_names => [],
+  report_lowest_st   => 1
 );
 ok(($spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(sequence_type_obj => $sequence_type_obj, compare_alleles => $compare_alleles)),'create a valid spreadsheet row obj with contamination');
 is_deeply($spreadsheet_row_obj->allele_numbers_row, ['contigs', 1,'Novel ST','adk-2,adk-3',3,3,1], 'valid allele_number row with contamination');
@@ -93,9 +96,10 @@ $compare_alleles = Bio::MLST::CompareAlleles->new(
      profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
 );
 $sequence_type_obj = Bio::MLST::SequenceType->new(
-   profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
-   sequence_names    => $compare_alleles->found_sequence_names,
-   report_lowest_st  => 1
+  profiles_filename  => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names     => $compare_alleles->found_sequence_names,
+  non_matching_names => [],
+  report_lowest_st   => 1
 );
 ok(($spreadsheet_row_obj = Bio::MLST::Spreadsheet::Row->new(sequence_type_obj => $sequence_type_obj, compare_alleles => $compare_alleles)),'create a valid spreadsheet with a novel ST');
 is_deeply($spreadsheet_row_obj->allele_numbers_row, ['contigs_novel', 1,'Novel ST','',3,3,1], 'valid allele_number row with novel');

@@ -98,9 +98,10 @@ sub _build__sequence_type_obj
 {
   my($self) = @_;
   my $sequence_type_obj = Bio::MLST::SequenceType->new(
-    profiles_filename => $self->_search_results->profiles_filename(),
-    sequence_names    => $self->_compare_alleles->found_sequence_names,
-    report_lowest_st  => $self->report_lowest_st
+    profiles_filename  => $self->_search_results->profiles_filename(),
+    matching_names     => $self->_compare_alleles->found_sequence_names,
+    non_matching_names => $self->_compare_alleles->found_non_matching_sequence_names,
+    report_lowest_st   => $self->report_lowest_st
   );
 }
 
