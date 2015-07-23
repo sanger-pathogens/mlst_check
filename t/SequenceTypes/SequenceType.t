@@ -56,6 +56,36 @@ ok(($sequence_type = Bio::MLST::SequenceType->new(
 is( $sequence_type->sequence_type, undef, 'lookup the sequence type missing an allele');
 like($sequence_type->nearest_sequence_type, 'm/[14]/', 'lookup the nearest sequence type for missing an allele');
 
+# Only partial matches
+ok(($sequence_type = Bio::MLST::SequenceType->new(
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names => [],
+  non_matching_names => ['adk-2~','purA-3~','recA-1~'],
+  report_lowest_st => 0
+)), 'initialise ST with imperfect alleles');
+is( $sequence_type->sequence_type, undef, 'no perfect alleles, no perfect ST');
+is($sequence_type->nearest_sequence_type, '4', 'no perfect alleles, imperfect ST');
+
+# Mixture of perfect and imperfect matches
+ok(($sequence_type = Bio::MLST::SequenceType->new(
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names => ['adk-2'],
+  non_matching_names => ['purA-3~','recA-1~'],
+  report_lowest_st => 0
+)), 'initialise ST with mixture of alleles');
+is( $sequence_type->sequence_type, undef, 'one perfect alleles, no perfect ST');
+is($sequence_type->nearest_sequence_type, '4', 'one perfect alleles, imperfect ST');
+
+# Multiple possible matches, some bad alelles
+ok(($sequence_type = Bio::MLST::SequenceType->new(
+  profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
+  matching_names => ['adk-2'],
+  non_matching_names => ['purA-3~'],
+  report_lowest_st => 0
+)), 'initialise ST with mixture of alleles and miss one');
+is( $sequence_type->sequence_type, undef, 'one perfect, one partial, one missing');
+is($sequence_type->nearest_sequence_type, '1', 'one perfect, one partial, one missing');
+
 # check if two sequence types are similar
 $sequence_type = Bio::MLST::SequenceType->new(
   profiles_filename => 't/data/databases/Escherichia_coli_1/profiles/escherichia_coli.txt',
