@@ -29,6 +29,7 @@ Returns the nearest matching sequence type if there is no exact match, randomly 
 
 use Data::Dumper;
 use Text::CSV;
+use List::Util qw(min reduce);
 
 use Moose;
 use Bio::MLST::Types;
@@ -48,6 +49,8 @@ sub sequence_type_or_nearest
 {
   my($self) = @_;
   return $self->sequence_type if(defined($self->sequence_type));
+  # If there isn't a perfect match, add a tilde to the sequence type
+  return $self->nearest_sequence_type."~" if(defined($self->nearest_sequence_type));
   return $self->nearest_sequence_type;
 }
 
@@ -117,7 +120,8 @@ sub _build_sequence_type
   }
   
   my $num_loci = 0;
-  my %sequence_type_freq;
+  my %sequence_type_match_freq;
+  my %sequence_type_part_match_freq;
   
   for(my $row = 1; $row < @{$self->_profiles}; $row++)
   {
@@ -129,41 +133,60 @@ sub _build_sequence_type
 
       my $allele_number = $self->allele_to_number->{$header_row[$col]};
       next if(!defined($allele_number) );
-      next if(!$self->_allele_numbers_similar($allele_number, $current_row[$col]));
-      $sequence_type_freq{$current_row[0]}++;
+      if ($allele_number eq $current_row[$col]) {
+        $sequence_type_match_freq{$current_row[0]}++;
+      } elsif ($self->_allele_numbers_similar($allele_number, $current_row[$col])) {
+        $sequence_type_part_match_freq{$current_row[0]}++;
+      }
     }
   }
   
-  return $self->_get_sequence_type_or_set_nearest_match(\%sequence_type_freq, $num_loci);	
+  return $self->_get_sequence_type_or_set_nearest_match(\%sequence_type_match_freq,
+                                                        \%sequence_type_part_match_freq,
+                                                        $num_loci);	
 }
 
 sub _get_sequence_type_or_set_nearest_match
 {
-  my($self,$sequence_type_f, $num_loci) = @_;
-  my %sequence_type_freq = %{$sequence_type_f};
+  my($self,$st_match_f, $st_part_match_f, $num_loci) = @_;
+  my %st_match_freq = %{$st_match_f};
+
+  # Combine the frequencies of the perfect matches (%st_match_freq) and the
+  # partial matches ($st_part_match_f)
+  my %st_nearest_match_freq = %{$st_match_f};
+  while (my($sequence_type, $freq) = each(%{$st_part_match_f})) {
+    my $nearest_match_frequency = ( $st_nearest_match_freq{$sequence_type} || 0 );
+    $st_nearest_match_freq{$sequence_type} = $nearest_match_frequency + $freq;
+  }
   
-  # if $num_loci is in $sequence_type_freq vals, return that, otherwise return lowest numbered sequence type
-  if( grep( /^$num_loci$/, values %sequence_type_freq ) ){
-    for my $sequence_type (sort { $sequence_type_freq{$b} <=> $sequence_type_freq{$a} } keys %sequence_type_freq) 
-    {
-      if($sequence_type_freq{$sequence_type} == $num_loci){
-        return $sequence_type;
-      }
+  # if $num_loci is in $st_match_freq vals, return that, otherwise return lowest numbered sequence type
+  while (my($sequence_type, $freq) = each(%st_match_freq)) {
+    if ($freq == $num_loci) {
+      return $sequence_type;
     }
+  }
+  my $best_sequence_type;
+  if ( $self->report_lowest_st ){
+
+    $best_sequence_type = min (keys %st_nearest_match_freq);
   }
   else {
-    my @sorted_sts;
-    if ( $self->report_lowest_st ){
-      @sorted_sts = sort { $a <=> $b } keys %sequence_type_freq;
-    }
-    else {
-      @sorted_sts = sort { $sequence_type_freq{$a} <=> $sequence_type_freq{$b} } keys %sequence_type_freq;
-    }
-
-    $self->nearest_sequence_type($sorted_sts[0]);
-    return undef;	
+    # This reduce takes pairs of sequence types and compares them.  It looks
+    # for the ST with the highest number of matching alleles; if two matches
+    # are just as good, it picks the ST with the smaller number.
+    $best_sequence_type = reduce {
+      if ( $st_nearest_match_freq{$a} > $st_nearest_match_freq{$b} ) {
+        $a;
+      } elsif ( $st_nearest_match_freq{$a} < $st_nearest_match_freq{$b} ) {
+        $b;
+      } else {
+        min ($a, $b);
+      }
+    } keys %st_nearest_match_freq;
   }
-  return undef;
+
+  $self->nearest_sequence_type($best_sequence_type);
+  return undef;	
 }
 
 no Moose;

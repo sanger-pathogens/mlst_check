@@ -146,19 +146,18 @@ $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
   species               => "E.coli",
   base_directory        => 't/data/databases',
-  raw_input_fasta_files => ['t/data/nonexistent_file.fa'],
+  raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa','t/data/contigs_one_unknown.tfa'],
   makeblastdb_exec      => 'makeblastdb',
   blastn_exec           => 'blastn',
   output_directory      => $tmpdirectory,
   output_fasta_files    => 1,
+  output_phylip_files   => 1,
   spreadsheet_basename  => 'mlst_results',
-  parallel_processes    => 1
-)),'Initialise on nonexistent fasta file.');
-open(my $copy_stdout, ">&STDOUT"); open(STDOUT, '>/dev/null'); # Redirect STDOUT
-$files_exist = $multiple_fastas->input_fasta_files_exist;
-close(STDOUT); open(STDOUT, ">&", $copy_stdout); # Restore STDOUT
-ok(!$files_exist,'test fasta file exists - returns false for nonexistent file');
-
+  parallel_processes    => 3
+)),'Initialise 3 files where 1 has near matches and report best');
+ok(($multiple_fastas->create_result_files),'create all the best results files for three fastas');
+compare_files( $tmpdirectory.'/mlst_results.genomic.csv',    't/data/expected_three_mlst_best_results.genomic.csv' );
+compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_three_mlst_best_results.allele.csv' );
 
 done_testing();
 
