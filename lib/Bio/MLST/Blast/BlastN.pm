@@ -44,7 +44,7 @@ has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 );
 has 'query_file'         => ( is => 'ro', isa => 'Str', required => 1 ); 
 has 'word_sizes'         => ( is => 'ro', isa => 'HashRef', required => 1 ); 
 has 'exec'               => ( is => 'ro', isa => 'Bio::MLST::Executable', default  => 'blastn' ); 
-has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 95 );
+has 'perc_identity'      => ( is => 'ro', isa => 'Int', default  => 0 );
 
 # Generated
 has 'top_hit'           => ( is => 'ro', isa => 'Maybe[HashRef]', lazy => 1,  builder => '_build_top_hit' ); 
