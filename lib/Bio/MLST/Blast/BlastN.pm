@@ -37,7 +37,7 @@ The attributes returned in the hash are:
 
 use Moose;
 use Bio::MLST::Types;
-use List::Util qw(reduce max);
+use List::Util qw(reduce max min);
 
 # input variables
 has 'blast_database'     => ( is => 'ro', isa => 'Str', required => 1 ); 
@@ -142,6 +142,33 @@ sub _group_overlapping_hits
   }
   my @groups = map { $_->{hits} } @bins;
   return \@groups;
+}
+
+sub _merge_similar_bins
+{
+  ###
+  # Some alleles differ from others due to indels at their beginning or end,
+  # this merges the bins if they have a lot of overlap
+  ###
+  my ($self, $bins_ref) = @_;
+  my @bins = sort { $a->{'start'} <=> $b->{'start'} } @$bins_ref;
+  my $previous_bin = shift @bins;
+  my @combined_bins = $previous_bin;
+  my $bin;
+  foreach $bin (@bins) {
+    # Check if there is any overlap between the new_bin and the previous_bin
+    my $overlap = max (0, ($previous_bin->{'end'} - $bin->{'start'}));
+    my $length = min(($bin->{'end'} - $bin->{'start'}), ($previous_bin->{'end'} - $previous_bin->{'start'})) + 1;
+    my $overlap_prop = $overlap / $length;
+    if ($overlap_prop > 0.9) {
+      $previous_bin->{'end'} = $bin->{'end'};
+      push $previous_bin->{'hits'}, @{$bin->{'hits'}};
+    } else {
+      push @combined_bins, $bin;
+      $previous_bin = $bin;
+    }
+  }
+  return \@combined_bins;
 }
 
 sub _best_hit_in_group

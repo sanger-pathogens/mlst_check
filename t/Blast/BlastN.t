@@ -377,6 +377,114 @@ $expected_hits = [
 ];
 is_deeply($blastn_result->_group_overlapping_hits($overlapping_hits), $expected_hits, "group overlapping hits");
 
+my $bins = [
+  {
+    'start' => 178,
+    'end' => 713,
+    'hits' => [
+      {
+        'allele_name' => 'allele-1-truncation-middle',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '278',
+        'source_end' => '613',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '178',
+        'source_end' => '713',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 478,
+    'end' => 1013,
+    'hits' => [
+      {
+        'allele_name' => 'allele-some-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '478',
+        'source_end' => '1013',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 180,
+    'end' => 715,
+    'hits' => [
+      {
+        'allele_name' => 'allele-lots-of-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '180',
+        'source_end' => '715',
+        'reverse' => 0,
+      },
+    ],
+  },
+];
+my $merged_bins = [
+  {
+    'start' => 178,
+    'end' => 715,
+    'hits' => [
+      {
+        'allele_name' => 'allele-1-truncation-middle',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '278',
+        'source_end' => '613',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '178',
+        'source_end' => '713',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-lots-of-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '180',
+        'source_end' => '715',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 478,
+    'end' => 1013,
+    'hits' => [
+      {
+        'allele_name' => 'allele-some-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '478',
+        'source_end' => '1013',
+        'reverse' => 0,
+      },
+    ],
+  },
+];
+is_deeply($blastn_result->_merge_similar_bins($bins), $merged_bins, "merge bins with lots of overlap");
+
 $input_hits = [
   {
     'allele_name' => 'allele-1',
