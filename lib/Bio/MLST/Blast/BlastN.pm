@@ -214,6 +214,7 @@ sub _build_top_hit
   $hits = $self->_filter_by_alignment_length($hits, $self->word_sizes);
   my $best_hits = $self->_filter_best_hits($hits);
   my $bins = $self->_group_overlapping_hits($best_hits);
+  $bins = $self->_merge_similar_bins($bins);
   my $groups = $self->_bins_to_groups($bins);
 
   # Find the best match

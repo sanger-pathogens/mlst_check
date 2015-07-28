@@ -680,6 +680,19 @@ ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
 
 is_deeply($blastn_result->top_hit, {}, 'no hits found');
 
+ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
+   blast_database => $blast_database->location(),
+   query_file     => 't/data/adk.tfa', # << ignore this, not used
+   word_sizes     => {
+                       'gdh_18'  => 460,
+                       'gdh_9'   => 460,
+                       'gdh_325' => 460,
+                       'gdh_32'  => 460,
+                     },
+   'exec'         => 't/data/gdh_fake_blast_output.sh' # ignores arguments and outputs some fake output to stdout
+ )), 'initialise with fake blastn command');
+ok(!defined($blastn_result->top_hit->{contamination}), 'contamination not detected for mostly overlapping alleles');
+
 
 # Exec not available
 dies_ok( sub {
