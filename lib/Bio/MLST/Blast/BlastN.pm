@@ -140,8 +140,7 @@ sub _group_overlapping_hits
       push @bins, $new_bin;
     }
   }
-  my @groups = map { $_->{hits} } @bins;
-  return \@groups;
+  return \@bins;
 }
 
 sub _merge_similar_bins
@@ -169,6 +168,13 @@ sub _merge_similar_bins
     }
   }
   return \@combined_bins;
+}
+
+sub _bins_to_groups
+{
+  my($self, $bins) = @_;
+  my @groups = map { $_->{hits} } @$bins;
+  return \@groups;
 }
 
 sub _best_hit_in_group
@@ -207,7 +213,8 @@ sub _build_top_hit
   my $hits = $self->_build_hits($blast_output_fh);
   $hits = $self->_filter_by_alignment_length($hits, $self->word_sizes);
   my $best_hits = $self->_filter_best_hits($hits);
-  my $groups = $self->_group_overlapping_hits($best_hits);
+  my $bins = $self->_group_overlapping_hits($best_hits);
+  my $groups = $self->_bins_to_groups($bins);
 
   # Find the best match
   my @best_in_groups = map { $self->_best_hit_in_group($_) } @$groups;

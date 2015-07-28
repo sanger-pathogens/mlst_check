@@ -305,75 +305,87 @@ my $overlapping_hits = [
   },
 ];
 $expected_hits = [
-  [
-    {
-      'allele_name' => 'allele-1',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '536',
-      'source_start' => '178',
-      'source_end' => '713',
-      'reverse' => 0,
-    },
-    {
-      'allele_name' => 'allele-1-truncation-end',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '336',
-      'source_start' => '178',
-      'source_end' => '513',
-      'reverse' => 0,
-    },
-    {
-      'allele_name' => 'allele-1-truncation-start',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '336',
-      'source_start' => '378',
-      'source_end' => '713',
-      'reverse' => 0,
-    },
-    {
-      'allele_name' => 'allele-1-truncation-middle',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '336',
-      'source_start' => '278',
-      'source_end' => '613',
-      'reverse' => 0,
-    },
-  ],
-  [
-    {
-      'allele_name' => 'allele-spill-over-end',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '336',
-      'source_start' => '478',
-      'source_end' => '813',
-      'reverse' => 0,
-    },
-  ],
-  [
-    {
-      'allele_name' => 'allele-completely-different-truncation',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '336',
-      'source_start' => '1278',
-      'source_end' => '1613',
-      'reverse' => 0,
-    },
-    {
-      'allele_name' => 'allele-completely-different',
-      'source_name' => 'SomeSequenceName',
-      'percentage_identity' => '100.00',
-      'alignment_length' => '536',
-      'source_start' => '1178',
-      'source_end' => '1713',
-      'reverse' => 0,
-    },
-  ],
+  {
+    'start' => 178,
+    'end' => 713,
+    'hits' => [
+      {
+        'allele_name' => 'allele-1',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '178',
+        'source_end' => '713',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1-truncation-end',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '178',
+        'source_end' => '513',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1-truncation-start',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '378',
+        'source_end' => '713',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1-truncation-middle',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '278',
+        'source_end' => '613',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 478,
+    'end' => 813,
+    'hits' => [
+      {
+        'allele_name' => 'allele-spill-over-end',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '478',
+        'source_end' => '813',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 1178,
+    'end' => 1713,
+    'hits' => [
+      {
+        'allele_name' => 'allele-completely-different-truncation',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '1278',
+        'source_end' => '1613',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-completely-different',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '1178',
+        'source_end' => '1713',
+        'reverse' => 0,
+      },
+    ],
+  },
 ];
 is_deeply($blastn_result->_group_overlapping_hits($overlapping_hits), $expected_hits, "group overlapping hits");
 
@@ -484,6 +496,100 @@ my $merged_bins = [
   },
 ];
 is_deeply($blastn_result->_merge_similar_bins($bins), $merged_bins, "merge bins with lots of overlap");
+
+$bins = [
+  {
+    'start' => 178,
+    'end' => 715,
+    'hits' => [
+      {
+        'allele_name' => 'allele-1-truncation-middle',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '278',
+        'source_end' => '613',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-1',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '178',
+        'source_end' => '713',
+        'reverse' => 0,
+      },
+      {
+        'allele_name' => 'allele-lots-of-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '536',
+        'source_start' => '180',
+        'source_end' => '715',
+        'reverse' => 0,
+      },
+    ],
+  },
+  {
+    'start' => 478,
+    'end' => 1013,
+    'hits' => [
+      {
+        'allele_name' => 'allele-some-overlap',
+        'source_name' => 'SomeSequenceName',
+        'percentage_identity' => '100.00',
+        'alignment_length' => '336',
+        'source_start' => '478',
+        'source_end' => '1013',
+        'reverse' => 0,
+      },
+    ],
+  },
+];
+my $groups = [
+  [
+    {
+      'allele_name' => 'allele-1-truncation-middle',
+      'source_name' => 'SomeSequenceName',
+      'percentage_identity' => '100.00',
+      'alignment_length' => '336',
+      'source_start' => '278',
+      'source_end' => '613',
+      'reverse' => 0,
+    },
+    {
+      'allele_name' => 'allele-1',
+      'source_name' => 'SomeSequenceName',
+      'percentage_identity' => '100.00',
+      'alignment_length' => '536',
+      'source_start' => '178',
+      'source_end' => '713',
+      'reverse' => 0,
+    },
+    {
+      'allele_name' => 'allele-lots-of-overlap',
+      'source_name' => 'SomeSequenceName',
+      'percentage_identity' => '100.00',
+      'alignment_length' => '536',
+      'source_start' => '180',
+      'source_end' => '715',
+      'reverse' => 0,
+    },
+  ],
+  [
+    {
+      'allele_name' => 'allele-some-overlap',
+      'source_name' => 'SomeSequenceName',
+      'percentage_identity' => '100.00',
+      'alignment_length' => '336',
+      'source_start' => '478',
+      'source_end' => '1013',
+      'reverse' => 0,
+    },
+  ],
+];
+is_deeply($blastn_result->_bins_to_groups($bins), $groups, "turns bins into groups");
 
 $input_hits = [
   {
