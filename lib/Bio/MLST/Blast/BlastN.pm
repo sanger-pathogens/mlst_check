@@ -60,7 +60,7 @@ sub _build_hit
     'allele_name' => $row[0],
     'source_name' => $row[1],
     'percentage_identity' => $row[2],
-    'alignment_length' => $row[7],
+    'alignment_length' => $row[3],
     'source_start' => $start,
     'source_end' => $end,
     'reverse' => $reverse,
