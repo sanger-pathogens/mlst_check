@@ -60,7 +60,7 @@ sub _build_hit
     'allele_name' => $row[0],
     'source_name' => $row[1],
     'percentage_identity' => $row[2],
-    'alignment_length' => $row[3],
+    'alignment_length' => $row[7],
     'source_start' => $start,
     'source_end' => $end,
     'reverse' => $reverse,
@@ -184,9 +184,9 @@ sub _best_hit_in_group
   # maximum length, return the one with the best percentage_identity
   ###
   my($self, $hits) = @_;
-  my @lengths = map { $_->{'source_end'} - $_->{'source_start'} + 1 } @$hits;
+  my @lengths = map { $_->{'allignment_length'} } @$hits;
   my $max_length = max @lengths;
-  my @longest_hits = grep { $_->{'source_end'} - $_->{'source_start'} + 1 >= $max_length } @$hits;
+  my @longest_hits = grep { $_->{'allignment_length'} == $max_length } @$hits;
   my $best_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @longest_hits;
   return $best_hit;
 }
