@@ -60,7 +60,8 @@ sub _build_hit
     'allele_name' => $row[0],
     'source_name' => $row[1],
     'percentage_identity' => $row[2],
-    'alignment_length' => $row[3],
+    'sample_alignment_length' => $row[3],
+    'matches' => $row[12],
     'source_start' => $start,
     'source_end' => $end,
     'reverse' => $reverse,
@@ -85,7 +86,7 @@ sub _filter_by_alignment_length
   # against before it can be considered a match.
   ###
   my ($self, $hits, $word_sizes) = @_;
-  my @long_hits = grep { $_->{'alignment_length'} >= $word_sizes->{$_->{'allele_name'}} } @$hits;
+  my @long_hits = grep { $_->{'sample_alignment_length'} >= $word_sizes->{$_->{'allele_name'}} } @$hits;
   return \@long_hits;
 }
 
@@ -180,13 +181,15 @@ sub _bins_to_groups
 sub _best_hit_in_group
 {
   ###
-  # The best hit must be the longest.  If there is more than one hit with the
-  # maximum length, return the one with the best percentage_identity
+  # The best hit has the greatest number of matching bases.  If two hits have
+  # the same number of matching bases, the one with the greater
+  # percentage identity is selected.
   ###
   my($self, $hits) = @_;
-  my @lengths = map { $_->{'allignment_length'} } @$hits;
+  my @lengths = map { $_->{'matches'} } @$hits;
   my $max_length = max @lengths;
-  my @longest_hits = grep { $_->{'allignment_length'} == $max_length } @$hits;
+  my @longest_hits = grep { $_->{'matches'} == $max_length } @$hits;
+
   my $best_hit = reduce { $a->{'percentage_identity'} > $b->{'percentage_identity'} ? $a : $b } @longest_hits;
   return $best_hit;
 }
@@ -196,8 +199,9 @@ sub _blastn_cmd
   my($self) = @_;
   my $word_size = int(100/(100 - $self->perc_identity ));
   $word_size = 11 if($word_size < 11);
+  my $outfmt = "\"6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore nident\""; # standard format + n. identical base matches
   
-  join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt 6', '-word_size', $word_size , '-perc_identity', $self->perc_identity ));
+  join(' ',($self->exec, '-task blastn', '-query', $self->query_file, '-db', $self->blast_database, '-outfmt', $outfmt, '-word_size', $word_size , '-perc_identity', $self->perc_identity ));
 }
 
 sub _build_top_hit
@@ -224,7 +228,8 @@ sub _build_top_hit
   if (defined $top_hit)
   {
     $top_hit->{'percentage_identity'} = int($top_hit->{'percentage_identity'});
-    delete $top_hit->{'alignment_length'};
+    delete $top_hit->{'sample_alignment_length'};
+    delete $top_hit->{'matches'};
   }
   else {
     $top_hit = {};
