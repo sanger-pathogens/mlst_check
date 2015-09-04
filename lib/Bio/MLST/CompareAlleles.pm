@@ -153,6 +153,11 @@ sub _build_matching_sequences
   for my $allele_filename (@{$self->allele_filenames})
   {
     my $word_sizes = $self->_word_sizes_for_given_allele_file($allele_filename);
+    # TODO: You'll never get matches or contamination noted if there is a SNP
+    # near the end of the allele.  This is because we filter all matches which
+    # are shorter than the length of the allele in the profiles.  This could
+    # mean that we're missing contamination of falsly noting matches against
+    # truncated alleles.
     my $blast_results = Bio::MLST::Blast::BlastN->new(
       blast_database => $self->_blast_db_location,
       query_file     => $allele_filename,
