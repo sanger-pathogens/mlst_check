@@ -262,8 +262,8 @@ sub create_result_files
 {
     my($self) = @_;
 
-    exit unless $self->_check_input_files_exist;
-    exit unless $self->_check_fasta_phylip_options;
+    exit 1 unless $self->_check_input_files_exist;
+    exit 1 unless $self->_check_fasta_phylip_options;
     $self->_run_mlst_for_species_list();
     $self->_concatenate_result_files();
 
