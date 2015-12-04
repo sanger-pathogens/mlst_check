@@ -21,12 +21,12 @@ our @EXPORT_OK = qw(only_keep_alleles is_metadata);
 # contents of the alleles directory or from the
 # config file downloaded from the internet.
 my @allele_blacklist = (
-#  'CC',
-#  'Lineage',
+  'CC',
+  'Lineage',
   'ST',
   'clonal_complex',
   'mlst_clade',
-#  'species'
+  'species'
 );
 
 sub is_metadata
