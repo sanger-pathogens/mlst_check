@@ -32,6 +32,8 @@ Returns the spreadsheet row of results containing the genomic sequences of the m
 use Data::Dumper;
 use Text::CSV;
 
+use Bio::MLST::FilterAlleles qw(only_keep_alleles);
+
 use Moose;
 
 has 'sequence_type_obj'  => ( is => 'ro', isa => 'Bio::MLST::SequenceType',     required => 1 ); 
@@ -91,8 +93,7 @@ sub _build__allele_order {
   open( my $profile_fh, '<', $profile_path );
 
   my @alleles = @{$csv->getline($profile_fh)};
-  @alleles = grep { $_ ne 'ST' } @alleles;
-  @alleles = grep { $_ ne 'clonal_complex' } @alleles;
+  @alleles = @{only_keep_alleles(\@alleles)};
 
   my @fixed_alleles;
   foreach my $allele ( @alleles ){
