@@ -142,7 +142,7 @@ sub _build__input_fasta_files
 sub create_result_files
 {
   my($self) = @_;
-  exit unless $self->input_fasta_files_exist;
+  exit 1 unless $self->input_fasta_files_exist;
   $self->_generate_spreadsheet_rows;
 
   my $spreadsheet = Bio::MLST::Spreadsheet::File->new(

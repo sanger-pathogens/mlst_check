@@ -33,6 +33,7 @@ use List::Util qw(min reduce);
 
 use Moose;
 use Bio::MLST::Types;
+use Bio::MLST::FilterAlleles qw(is_metadata);
 
 has 'profiles_filename'     => ( is => 'ro', isa => 'Bio::MLST::File',        required => 1 );
 has 'matching_names'        => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
@@ -113,8 +114,7 @@ sub _build_sequence_type
 
   for(my $i=0; $i< @header_row; $i++)
   {
-    next if($header_row[$i] eq "clonal_complex");
-    next if($header_row[$i] eq "mlst_clade");
+    next if(is_metadata($header_row[$i]));
     $header_row[$i] =~ s!_!!g;
     $header_row[$i] =~ s!-!!g;
   }
@@ -128,7 +128,7 @@ sub _build_sequence_type
     my @current_row = @{$self->_profiles->[$row]};
     for(my $col = 0; $col< @current_row; $col++)
     {
-      next if($header_row[$col] eq "ST" || $header_row[$col] eq "clonal_complex" || $header_row[$col] eq "mlst_clade");
+      next if(is_metadata($header_row[$col]));
       $num_loci++ if($row == 1);
 
       my $allele_number = $self->allele_to_number->{$header_row[$col]};
