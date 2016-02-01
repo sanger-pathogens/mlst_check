@@ -50,6 +50,24 @@ compare_files('t/data/expected_two_mlst_results.genomic.csv', $tmpdirectory.'/ml
 compare_files('t/data/expected_two_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
 compare_files('t/data/expected_two_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
 
+$tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
+$tmpdirectory = $tmpdirectory_obj->dirname();
+ok(($multiple_fastas = Bio::MLST::Check->new(
+  species               => "E.coli",
+  base_directory        => 't/data/databases',
+  raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_check_concat_allele_order.fa'],
+  makeblastdb_exec      => 'makeblastdb',
+  blastn_exec           => 'blastn',
+  output_directory      => $tmpdirectory,
+  output_fasta_files    => 1,
+  spreadsheet_basename  => 'mlst_results',
+  parallel_processes    => 1
+)),'Initialise 2 files, check consistent allele ordering in concatenated results');
+ok(($multiple_fastas->create_result_files),'correctly sort alleles in concatenated fasta');
+compare_files('t/data/expected_sorted_mlst_results.genomic.csv', $tmpdirectory.'/mlst_results.genomic.csv');
+compare_files('t/data/expected_sorted_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
+compare_files('t/data/expected_sorted_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
+
 sub get_sequences_from_file {
 
   my($FILE) = @_;
