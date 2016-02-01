@@ -28,9 +28,9 @@ ok((my $multiple_fastas = Bio::MLST::Check->new(
   parallel_processes    => 1
 )),'Initialise single valid fasta');
 ok(($multiple_fastas->create_result_files),'create all the results files for a single valid fasta');
-compare_files('t/data/expected_mlst_results.genomic.csv', $tmpdirectory.'/mlst_results.genomic.csv');
-compare_files('t/data/expected_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
-compare_files('t/data/expected_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_mlst_results.genomic.csv');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_mlst_results.allele.csv');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_concatenated_alleles.fa');
 
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
@@ -46,9 +46,9 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   parallel_processes    => 1
 )),'Initialise 2 files, one with pipe char and no hits');
 ok(($multiple_fastas->create_result_files),'create all the results files for two fastas');
-compare_files('t/data/expected_two_mlst_results.genomic.csv', $tmpdirectory.'/mlst_results.genomic.csv');
-compare_files('t/data/expected_two_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
-compare_files('t/data/expected_two_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_two_mlst_results.genomic.csv');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_two_mlst_results.allele.csv');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_two_concatenated_alleles.fa');
 
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
@@ -64,9 +64,9 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   parallel_processes    => 1
 )),'Initialise 2 files, check consistent allele ordering in concatenated results');
 ok(($multiple_fastas->create_result_files),'correctly sort alleles in concatenated fasta');
-compare_files('t/data/expected_sorted_mlst_results.genomic.csv', $tmpdirectory.'/mlst_results.genomic.csv');
-compare_files('t/data/expected_sorted_mlst_results.allele.csv', $tmpdirectory.'/mlst_results.allele.csv');
-compare_files('t/data/expected_sorted_concatenated_alleles.fa', $tmpdirectory.'/concatenated_alleles.fa');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_sorted_mlst_results.genomic.csv');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_sorted_mlst_results.allele.csv');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_sorted_concatenated_alleles.fa');
 
 sub get_sequences_from_file {
 
