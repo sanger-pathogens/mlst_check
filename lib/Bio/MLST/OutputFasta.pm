@@ -48,7 +48,9 @@ sub _build__fasta_filename
 sub _sort_and_join_sequences
 {
   my($self, $combined_sequences) = @_;
-  join("",sort(values(%{$combined_sequences})));
+  my @allele_names = sort keys %{$combined_sequences};
+  my @sorted_sequences = map { $combined_sequences->{$_} } @allele_names;
+  join("", @sorted_sequences);
 }
 
 sub create_files
