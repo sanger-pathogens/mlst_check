@@ -1,12 +1,11 @@
-=head NAME
+package Bio::MLST::FilterAlleles;
+# ABSTRACT: Filter Alleles
+
+=head1 SYNOPSIS
 
 FilterAlleles.pm - Filter header row  from profile to remove non-alleles
 
-=head 1 SYNOPSIS
-
 =cut
-
-package Bio::MLST::FilterAlleles;
 
 use strict;
 use warnings;
