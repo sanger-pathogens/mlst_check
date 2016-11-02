@@ -5,7 +5,7 @@ set -e
 
 start_dir=$(pwd)
 
-BLAST_VERSION="2.2.30"
+BLAST_VERSION="2.5.0"
 BLAST_DOWNLOAD_FILENAME="ncbi-blast-${BLAST_VERSION}+-x64-linux.tar.gz"
 BLAST_PLUS_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/${BLAST_VERSION}/${BLAST_DOWNLOAD_FILENAME}"
 
