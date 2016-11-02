@@ -24,7 +24,7 @@ my $validator = Bio::MLST::Validate::Executable->new();
 
 {
   my @warnings;
-  local $SIG{__WARN__} = sub { push @warnings, @_ };
+  local $SIG{__WARN__} = sub { push( @warnings, @_) };
   dies_ok( sub { $validator->preferred_executable($not_defined, []) }, "Not defined, no defaults");
   dies_ok( sub { $validator->preferred_executable($not_defined, [$does_not_exist]) }, "Not defined, default doesn't exist" );
   dies_ok( sub { $validator->preferred_executable($not_defined, [$does_not_exist, $not_executable]) }, "Not defined, bad defaults");
@@ -40,7 +40,7 @@ is($validator->preferred_executable($executable, [$not_executable, $another_exec
 
 {
   my @warnings;
-  local $SIG{__WARN__} = sub { push @warnings, @_ };
+  local $SIG{__WARN__} = sub { push( @warnings, @_ )};
   is($validator->preferred_executable($not_executable, [$executable, $another_executable]), $executable, "Not executable, good defaults");
   is($validator->preferred_executable($not_defined, [$executable, $another_executable]), $executable, "Not defined, good defaults");
   is($validator->preferred_executable($not_defined, [$another_executable, $executable]), $another_executable, "Reversed good defaults");

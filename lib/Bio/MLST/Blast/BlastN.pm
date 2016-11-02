@@ -74,7 +74,7 @@ sub _build_hits
   my @hits;
   while(<$blast_output_fh>)
   {
-    push @hits, $self->_build_hit($_);
+    push(@hits, $self->_build_hit($_));
   }
   return \@hits;
 }
@@ -116,14 +116,14 @@ sub _group_overlapping_hits
       # check if hit is in bin
       if (($hit->{'source_start'} >= $bin->{'start'}) and ($hit->{'source_end'} <= $bin->{'end'}))
       {
-        push $bin->{'hits'}, $hit;
+        push(@{$bin->{'hits'}}, $hit);
         $found_a_bin = 1;
         last;
       }
       # check if bin is in hit
       elsif (($hit->{'source_start'} <= $bin->{'start'}) and ($hit->{'source_end'} >= $bin->{'end'}))
       {
-        push $bin->{'hits'}, $hit;
+        push(@{$bin->{'hits'}}, $hit);
         $bin->{'start'} = $hit->{'source_start'};
         $bin->{'end'} = $hit->{'source_end'};
         $found_a_bin = 1;
@@ -138,7 +138,7 @@ sub _group_overlapping_hits
         'end' => $hit->{'source_end'},
         'hits' => [$hit]
       };
-      push @bins, $new_bin;
+      push(@bins, $new_bin);
     }
   }
   return \@bins;
@@ -162,9 +162,9 @@ sub _merge_similar_bins
     my $overlap_prop = $overlap / $length;
     if ($overlap_prop > 0.9) {
       $previous_bin->{'end'} = $bin->{'end'};
-      push $previous_bin->{'hits'}, @{$bin->{'hits'}};
+      push(@{$previous_bin->{'hits'}}, @{$bin->{'hits'}});
     } else {
-      push @combined_bins, $bin;
+      push( @combined_bins, $bin);
       $previous_bin = $bin;
     }
   }
