@@ -31,7 +31,14 @@ my @allele_blacklist = (
 sub is_metadata
 {
   my ($column_heading) = @_;
-  return grep( /^$column_heading$/, @allele_blacklist );
+  if(defined($column_heading))
+  {
+     return grep( /^$column_heading$/, @allele_blacklist );
+  }
+  else
+  {
+     return 0;
+  }
 }
 
 sub only_keep_alleles
