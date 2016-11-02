@@ -80,7 +80,7 @@ sub get_sequences_from_file {
     my $trimmed_line = trim($line);
     if ($number_of_known_sequences == 0) {
       # We don't know how many sequences there are so create a new one
-      push @sequences, [$trimmed_line];
+      push( @sequences, [$trimmed_line]);
       # The first time we find a blank 'sequence' we now know the number of sequences
       if ($trimmed_line eq '') {
         $number_of_known_sequences = $line_number + 1;
@@ -88,7 +88,7 @@ sub get_sequences_from_file {
     } else {
       # Now that we know the number of sequences, append this line to it's corresponding sequence
       my $sequence_number = $line_number % $number_of_known_sequences;
-      push @{$sequences[$sequence_number]}, $trimmed_line;
+      push( @{$sequences[$sequence_number]}, $trimmed_line);
     }
     $line_number++;
   }
