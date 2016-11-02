@@ -47,6 +47,7 @@ It requires NBCI Blast+ to be available in your PATH.
 
 
 BEGIN { unshift( @INC, '../lib' ) }
+BEGIN { unshift( @INC, './lib' ) }
 use lib "/software/pathogen/internal/prod/lib";
 use Moose;
 use Getopt::Long;
