@@ -128,7 +128,7 @@ sub _build_sequence_type
     my @current_row = @{$self->_profiles->[$row]};
     for(my $col = 0; $col< @current_row; $col++)
     {
-      next unless(defined($header_row[$col));
+      next unless(defined($header_row[$col]));
       next if(is_metadata($header_row[$col]) == 1);
       $num_loci++ if($row == 1);
 
