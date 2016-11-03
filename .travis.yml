@@ -9,7 +9,7 @@ addons:
     - zlib1g
     - zlib1g-dev
 perl:
-  - "5.14"
+  - "5.24"
 sudo: false
 install:
   - "source ./install_dependencies.sh"
