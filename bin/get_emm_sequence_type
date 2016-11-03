@@ -65,31 +65,16 @@ GetOptions ('s|species=s'              => \$species,
 (! $version ) or die "$0 version " . Bio::MLST::Bin::GetEmmSequenceType->VERSION . "\n";
 
 ( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
-Usage: $0 [options]
+Usage: get_emm_sequence_type [options] *.fasta
 
-# Basic usage, sequence type result written to my_assembly.fa.st
-get_emm_sequence_type my_assembly.fa
-
-# Multiple fasta files
-get_emm_sequence_type myfasta.fa anotherfasta.fa yetanother.fa
-
-# Split into 8 parallel processes (much faster), default is 2
-get_emm_sequence_type -d 8 *.fa
-
-# output a fasta file with the concatenated alleles and unknown sequences
-get_emm_sequence_type -c  my_assembly.fa
-
-# output a phylip file with the concatenated alleles and unknown sequences
-get_emm_sequence_type -y  my_assembly.fa
-
-# Specify an output directory
-get_emm_sequence_type  -o /path/to/results my_assembly.fa
-
-# This help message
-get_emm_sequence_type -h
-
-# print version
-get_emm_sequence_type -v
+   -s STR Species of MLST scheme (0 or more comma separated)
+   -d INT Number of threads [1]
+   -c     Output a FASTA file of concatenated alleles and unknown sequences 
+   -y     Output a phylip file of concatenated alleles and unknown sequences
+   -o STR Output directory [.]
+   -a     Print out all available MLST schemes and exit
+   -h     Print this message and exit
+   -v     Print version number and exit
 
 USAGE
 ;

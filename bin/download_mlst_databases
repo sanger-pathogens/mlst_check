@@ -39,20 +39,11 @@ GetOptions ('c|config=s'         => \$config_file,
 (! $version ) or die "$0 version " . Bio::MLST::Bin::Download->VERSION . "\n";
 
 (! $help)or die <<USAGE;
-Usage: $0 [options]
-Downloads all the MLST databases to disk
-
-# download everything with defaults
-download_mlst_databases
-
-# print version
-download_mlst_databases -v
-
-# XML file containing details of the MLST databases (from pubmlst)
-download_mlst_databases -c my_config_file.json
-
-# destination base directory defaults to the environment variable \$MLST_DATABASES
-download_mlst_databases -b /path/to/destination
+Usage: download_mlst_databases [options]
+   -c STR Config file containing details of MLST databases from pubMLST
+   -b STR Directory where MLST databases are stored [\$MLST_DATABASES]
+   -h     Print this message and exit
+   -v     Print version number and exit
 
 USAGE
 ;

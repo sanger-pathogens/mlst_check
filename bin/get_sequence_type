@@ -8,40 +8,16 @@ package Bio::MLST::Bin::GetSequenceType;
 Given Fasta files and a Species regex, lookup the relevant MLST database and output the sequence type to a file.
 It requires NBCI Blast+ to be available in your PATH.
 
-   # Basic usage, sequence type result written to my_assembly.fa.st
-   get_sequence_type -s "Clostridium difficile" my_assembly.fa
+Usage: get_sequence_type [options] *.fasta
 
-   # Multiple fasta files
-   get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
-   # or
-   get_sequence_type -s "Clostridium difficile" *.fa
-
-   # Split into 8 parallel processes (much faster), default is 2
-   get_sequence_type -s "Clostridium difficile" -d 8 *.fa
-
-   # output a fasta file with the concatenated alleles and unknown sequences
-   get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
-
-   # output a phylip file with the concatenated alleles and unknown sequences
-   get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
-
-   # Specify an output directory
-   get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
-
-   # Match against multiple MLST databases
-   get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
-
-   # Match against all MLST databases
-   get_sequence_type my_assembly.fa
-
-   # list all available MLST databases
-   get_sequence_type -a
-
-   # This help message
-   get_sequence_type -h
-
-   # print version
-   get_sequence_type -v
+   -s STR Species of MLST scheme (0 or more comma separated)
+   -d INT Number of threads [1]
+   -c     Output a FASTA file of concatenated alleles and unknown sequences 
+   -y     Output a phylip file of concatenated alleles and unknown sequences
+   -o STR Output directory [.]
+   -a     Print out all available MLST schemes and exit
+   -h     Print this message and exit
+   -v     Print version number and exit
 
 =cut
 
@@ -79,42 +55,16 @@ GetOptions ('s|species=s'              => \$species,
 (! $version ) or die "$0 version " . Bio::MLST::Bin::GetSequenceType->VERSION . "\n";
 
 ( ((@ARGV > 0) || (defined($available_databases))) && ! $help ) or die <<USAGE;
-Usage: $0 [options]
+Usage: get_sequence_type [options] *.fasta
 
-# Basic usage, sequence type result written to my_assembly.fa.st
-get_sequence_type -s "Clostridium difficile" my_assembly.fa
-
-# Multiple fasta files
-get_sequence_type -s "Clostridium difficile" myfasta.fa anotherfasta.fa yetanother.fa
-# or
-get_sequence_type -s "Clostridium difficile" *.fa
-
-# Split into 8 parallel processes (much faster), default is 2
-get_sequence_type -s "Clostridium difficile" -d 8 *.fa
-
-# output a fasta file with the concatenated alleles and unknown sequences
-get_sequence_type -s "Clostridium difficile" -c  my_assembly.fa
-
-# output a phylip file with the concatenated alleles and unknown sequences
-get_sequence_type -s "Clostridium difficile" -y  my_assembly.fa
-
-# Specify an output directory
-get_sequence_type  -s "Clostridium difficile" -o /path/to/results my_assembly.fa
-
-# Match against multiple MLST databases
-get_sequence_type -s "Clostridium botulinum, Clostridium difficile" my_assembly.fa
-
-# Match against all MLST databases
-get_sequence_type my_assembly.fa
-
-# list all available MLST databases
-get_sequence_type -a
-
-# This help message
-get_sequence_type -h
-
-# print version
-get_sequence_type -v
+   -s STR Species of MLST scheme (0 or more comma separated)
+   -d INT Number of threads [1]
+   -c     Output a FASTA file of concatenated alleles and unknown sequences 
+   -y     Output a phylip file of concatenated alleles and unknown sequences
+   -o STR Output directory [.]
+   -a     Print out all available MLST schemes and exit
+   -h     Print this message and exit
+   -v     Print version number and exit
 
 USAGE
 ;

@@ -22,3 +22,8 @@ RUN apt-get update -qq && apt-get install -y ncbi-blast+ cpanminus gcc autoconf 
 # Download the databases from PubMLST
 #
 RUN download_mlst_databases
+
+#
+# Set the directory to be the shared dir
+#
+WORKDIR /data
