@@ -9,8 +9,6 @@ If more than 1 allele gives 100% identity for a locus, the contaminated flag is 
 Optionally you can output a concatenated sequence in FASTA format, which you can then use with tree building programs.
 New, unseen alleles are saved in FASTA format, with 1 per file, for submission to back to MLST databases.
 
-For any queries, contact path-help@sanger.ac.uk
-
 # Usage
 The MLST databases must be downloaded first. This is something you would only do every now and again. You need to set the $MLST_DATABASES environment variable first to a location where you want to save your databases. If you use Docker, you can skip this step as the databases are bundled with the container.
 ```
@@ -35,7 +33,6 @@ Usage: The get_sequence_type [options] *.fasta
    -v     Print version number and exit
 ```
 
-
 # Input format
 The input files must be in FASTA format.
 
@@ -51,8 +48,14 @@ sample2 | 518 |         |                  | 101  | 41   | 40   | 184  | 76   | 
 sample3 | 150 |         | purE-422,purE-84 | 130  | 97   | 25   | 125  | 422  | 9    | 101
 sample4 | ~150| Novel   |                  | 130  | 95   | 25   | 125  | 422  | 9    | 101
 
-##mlst_results.genomic.csv
+## mlst_results.genomic.csv
 This spreadsheet is similar to the mlst_results.allele.csv spreadsheet, however it gives the full sequences of each allele instead of the allele number.
+
+## *unknown.fa
+You can choose to output any new alleles (-c) which are not contained in the MLST database. These can then be used to feedback to the curators maintaining the MLST databases, where they can be assigned allele numbers and profiles.
+
+## concatenated_alleles.fa and concatenated_alleles.phylip
+You can choose to output a multiple FASTA/Phylip alignment of all of the MLST genes concatenated together, where each sample is represented by a single sequence. This file can then be used as input to a phylogenetic tree building application (such as RAxML or FastTree) to create a phylogenetic tree (dendrogram).
 
 
 #Installation
@@ -96,3 +99,8 @@ Now you can use the script. For example,find the sequence types for all fasta fi
 get_sequence_type -s "Clostridium difficile" *.fa
 ```
 
+#Reporting bugs and getting support
+For any queries, please file an [Issue on GitHub](https://github.com/sanger-pathogens/mlst_check/issues) or failing that contact path-help@sanger.ac.uk
+
+#Contribute to the software
+If you wish to fix a bug or add new features to the software we welcome Pull Requests. Please fork the repo, make the change, then submit a Pull Request with details about what the change is and what it fixes/adds.
