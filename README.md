@@ -70,7 +70,7 @@ docker pull sangerpathogens/mlst_check
 
 To use it you would use a command such as this (substituting in your directories), where your FASTA files are assumed to be stored in /home/ubuntu/data:
 ```
-docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/mlst_check get_sequence_type -s "Clostridium difficile" /data/*.fa
+docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/mlst_check get_sequence_type -s 'Salmonella enterica' /data/sample1.fa /data/sample2.fa /data/sample3.fa
 ```
 
 Your results will then be in the /home/ubuntu/data directory (or whatever you have called it).
