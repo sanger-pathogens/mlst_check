@@ -12,6 +12,7 @@ BEGIN { unshift(@INC, './lib') }
 BEGIN {
     use Test::Most;
 }
+note('Check that the databases can be downloaded correctly with mocked out interfaces. Once successful the previously downloaded databases are overwritten.');
 
 my $lwp = new Test::MockModule('LWP::Simple');
 $lwp->mock(getstore => sub { return RC_OK });

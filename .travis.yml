@@ -13,4 +13,4 @@ perl:
 sudo: false
 install:
   - "source ./install_dependencies.sh"
-script: "dzil test"
+script: "dzil test --test-verbose"

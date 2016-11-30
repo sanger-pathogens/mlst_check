@@ -8,10 +8,10 @@ BEGIN {
     use Test::Most;
     use_ok('Bio::MLST::Blast::Database');
 }
+note('Make sure a blast database can be created with makeblastdb.');
 
-ok((my $blast_database= Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs.fa')),'Initialise creation of a blast database');
-
-is($blast_database->location, $blast_database->_working_directory->dirname().'/output_contigs', 'location returned correctly');
+ok((my $blast_database= Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs.fa')),'Initialise creation of a Blast database');
+is($blast_database->location, $blast_database->_working_directory->dirname().'/output_contigs', 'Find the location of the created blast database');
 
 for my $extension  (('nsq','nsi','nsd','nog','nin','nhr') )
 {
@@ -19,6 +19,6 @@ for my $extension  (('nsq','nsi','nsd','nog','nin','nhr') )
 }
 
 # Exec not available
-dies_ok( sub {Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs.fa', exec => 'non_existant_executable'); }, 'Validate if the exec is available');
+dies_ok( sub {Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs.fa', exec => 'non_existant_executable'); }, 'Validate if the executable is available and die if it is not.');
 
 done_testing();

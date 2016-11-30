@@ -8,11 +8,11 @@ BEGIN {
     use Test::Most;
     use_ok('Bio::MLST::CheckMultipleSpecies');
 }
-
+note('Check you can search input assemblies against multiple MLST databases as the same time.');
 my $tmpdirectory_obj = File::Temp->newdir(CLEANUP => 1);
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
-# valid instance
+
 ok((my $multi_mlst_A = Bio::MLST::CheckMultipleSpecies->new( species               => ['E.coli','H.pylori'],
 							     base_directory        => 't/data/databases',
 							     raw_input_fasta_files => ['t/data/contigs.fa'],
@@ -23,13 +23,12 @@ ok((my $multi_mlst_A = Bio::MLST::CheckMultipleSpecies->new( species            
 							     parallel_processes    => 2,
 							     output_fasta_files    => 0,
 							     output_phylip_files   => 0,
-							     verbose               => 0)),'initialise valid');
-# valid instance produces expected files
-ok(($multi_mlst_A->create_result_files),'mlst for valid instance');
-compare_files('t/data/expected_multi_mlst_results.allele.csv', $tmpdirectory.'/multi_mlst_results.allele.csv');
-compare_files('t/data/expected_multi_mlst_results.genomic.csv',$tmpdirectory.'/multi_mlst_results.genomic.csv');
+							     verbose               => 0)),'For a single assembly lookup two different MLST databases at once.');
+							     
+ok(($multi_mlst_A->create_result_files),'Create the output file set.');
+compare_files('t/data/expected_multi_mlst_results.allele.csv', $tmpdirectory.'/multi_mlst_results.allele.csv', 'There should be full allele numbers and an ST for one of the databases and partial for the other.');
+compare_files('t/data/expected_multi_mlst_results.genomic.csv',$tmpdirectory.'/multi_mlst_results.genomic.csv', 'There should be full allele sequences and an ST for one of the databases and partial for the other.');
 
-# invalid instance
 ok((my $multi_mlst_B = Bio::MLST::CheckMultipleSpecies->new( species               => [],
 							     base_directory        => 't/data/databases',
 							     raw_input_fasta_files => ['t/data/contigs.fa','nonexist.fa'],
@@ -40,22 +39,18 @@ ok((my $multi_mlst_B = Bio::MLST::CheckMultipleSpecies->new( species            
 							     parallel_processes    => 2,
 							     output_fasta_files    => 1,
 							     output_phylip_files   => 1,
-							     verbose               => 0)),'initialise invalid');
+							     verbose               => 0)),'Pass in 2 assemblies, where one is valid, and the other invalid and lookup all MLST databases.');
 
-# redirect stdout and check input errors
 open(my $copy_stdout, ">&STDOUT"); open(STDOUT, '>/dev/null'); # redirect stdout
 my $input_file_test   = $multi_mlst_B->_check_input_files_exist;
 my $input_option_test = $multi_mlst_B->_check_fasta_phylip_options;
 close(STDOUT); open(STDOUT, ">&", $copy_stdout); # restore stdout
 
-# check for nonexist fasta
-ok(!$input_file_test,'input file check');
+ok(!$input_file_test,'The non-existant file should be flagged.');
 
-# check for fasta + phylip option
-ok(!$input_option_test,'options check');
+ok(!$input_option_test,'The output FASTA and PHYLIP options shouldnt give anything because the input is non-existant.');
 
-# list all species
-is_deeply(['Escherichia_coli_1', 'Helicobacter_pylori', 'Streptococcus_pyogenes', 'Streptococcus_pyogenes_emmST'], $multi_mlst_B->_species_list,'species list');
+is_deeply(['Escherichia_coli_1', 'Helicobacter_pylori', 'Streptococcus_pyogenes', 'Streptococcus_pyogenes_emmST'], $multi_mlst_B->_species_list,'Listing out all the species available should always work, even if the input file doesnt exist.');
 
 done_testing();
 
