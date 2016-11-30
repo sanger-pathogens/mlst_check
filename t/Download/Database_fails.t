@@ -13,6 +13,8 @@ BEGIN {
     use Test::Most;
 }
 
+note('Occasionally downloading the database from a remote server fails, and we have to handle this in a graceful manner which doesnt mess up existing data.');
+
 my $lwp = new Test::MockModule('LWP::Simple');
 $lwp->mock(getstore => sub { return RC_NOT_FOUND });
 $lwp->mock(is_success => sub { return 0 });
@@ -36,7 +38,7 @@ my $database = Bio::MLST::Download::Database->new(
   species => "ABC EFG#1"
   );
 
-dies_ok( sub { $database->_download_file("http://www.definitlynotactuallyawebsiteexample.com", "/tmp/not/actually/a/path") }, "Mock downloading a missing file - IGNORE Prototype warnings above and below");
+dies_ok( sub { $database->_download_file("http://example.com", "/tmp/not/actually/a/path") }, "Mock downloading a missing file - IGNORE Prototype warnings above and below");
 
 my $database_settings = Bio::MLST::DatabaseSettings->new(filename => 't/data/missing_web_database.xml')->settings;
 my $databases = Bio::MLST::Download::Databases->new(

@@ -13,6 +13,8 @@ BEGIN {
     use_ok('Bio::MLST::Check');
 }
 
+note("At a high level pass in assemblies and check that the expected output result files are generated.");
+
 my $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 my $tmpdirectory = $tmpdirectory_obj->dirname();
 
@@ -26,12 +28,13 @@ ok((my $multiple_fastas = Bio::MLST::Check->new(
   output_fasta_files    => 1,
   spreadsheet_basename  => 'mlst_results',
   parallel_processes    => 1
-)),'Initialise single valid fasta');
-ok(($multiple_fastas->create_result_files),'create all the results files for a single valid fasta');
-compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_mlst_results.genomic.csv');
-compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_mlst_results.allele.csv');
-compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_concatenated_alleles.fa');
+)),'Pass in a single assembly with full length alleles and a known ST');
+ok(($multiple_fastas->create_result_files),'Create all the results files for a single valid assembly.');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_mlst_results.genomic.csv', 'Spreadsheet with sequences of each matching allele for a valid assembly has been created.');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_mlst_results.allele.csv','Spreadsheet with each matching allele number and ST for a valid assembly has been created.');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_concatenated_alleles.fa', 'A multi-FASTA file of concatenated MLST sequences for a valid assembly has been created.');
 
+note('Check we can deal with sequences from GenBank which contain pipe characters in the sequence names of the assemblies.');
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
@@ -44,12 +47,13 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   output_fasta_files    => 1,
   spreadsheet_basename  => 'mlst_results',
   parallel_processes    => 1
-)),'Initialise 2 files, one with pipe char and no hits');
-ok(($multiple_fastas->create_result_files),'create all the results files for two fastas');
-compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_two_mlst_results.genomic.csv');
-compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_two_mlst_results.allele.csv');
-compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_two_concatenated_alleles.fa');
+)),'Pass in 2 assembly files,one valid normal file, and one with pipe character in the sequence name and no hits');
+ok(($multiple_fastas->create_result_files),'Create one set of combined results files for the input assemblies.');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_two_mlst_results.genomic.csv', 'Spreadsheet with sequences for each matching allele for the two assemblies.');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_two_mlst_results.allele.csv', 'Spreadsheet with each matching allele number and ST for the two assemblies.');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_two_concatenated_alleles.fa','Create a multi-FASTA file of concatenated MLST sequences, where the assembly with no hits is padded out with Ns');
 
+note('Make sure the the allele sequences are concatenated in the correct order, otherwise treebuilding wont make any sense.');
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
@@ -62,11 +66,11 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   output_fasta_files    => 1,
   spreadsheet_basename  => 'mlst_results',
   parallel_processes    => 1
-)),'Initialise 2 files, check consistent allele ordering in concatenated results');
-ok(($multiple_fastas->create_result_files),'correctly sort alleles in concatenated fasta');
-compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_sorted_mlst_results.genomic.csv');
-compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_sorted_mlst_results.allele.csv');
-compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_sorted_concatenated_alleles.fa');
+)),'Pass in 2 assemblies, one valid, the other with alleles in a different order in the assembly.');
+ok(($multiple_fastas->create_result_files),'Sort the alleles consistently and create the results files.');
+compare_files($tmpdirectory.'/mlst_results.genomic.csv', 't/data/expected_sorted_mlst_results.genomic.csv', 'Spreadsheet with sequences for each matching allele for the two assemblies.');
+compare_files($tmpdirectory.'/mlst_results.allele.csv', 't/data/expected_sorted_mlst_results.allele.csv', 'Spreadsheet with each matching allele number and ST for the two assemblies.');
+compare_files($tmpdirectory.'/concatenated_alleles.fa', 't/data/expected_sorted_concatenated_alleles.fa', 'Create a multi-FASTA file of concatenated MLST sequences, where the alleles are in the correct order.');
 
 sub get_sequences_from_file {
 
@@ -118,6 +122,7 @@ sub compare_phylip_files {
 
 }
 
+note('Check it can handle multiple assemblies where some have partial allele matches.');
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
 $tmpdirectory = $tmpdirectory_obj->dirname();
 ok(($multiple_fastas = Bio::MLST::Check->new(
@@ -132,15 +137,15 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   spreadsheet_basename  => 'mlst_results',
   parallel_processes    => 3,
   report_lowest_st      => 1
-)),'Initialise 3 files where 1 has near matches');
-ok(($multiple_fastas->create_result_files),'create all the results files for three fastas');
-compare_files( $tmpdirectory.'/mlst_results.genomic.csv',    't/data/expected_three_mlst_results.genomic.csv' );
-compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_three_mlst_results.allele.csv' );
-compare_files( $tmpdirectory.'/concatenated_alleles.fa',     't/data/expected_three_concatenated_alleles.fa');
+)),'Pass in 3 assemblies, 2 perfect and where 1 has partial matches.');
+ok(($multiple_fastas->create_result_files),'Create all the results files for three assemblies.');
+compare_files( $tmpdirectory.'/mlst_results.genomic.csv',    't/data/expected_three_mlst_results.genomic.csv', 'Create a spreadsheet with the 3 sets of assemblies combined and the sequences, and give one best guess ST.' );
+compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_three_mlst_results.allele.csv', 'Create a spreadsheet with the 3 sets of assemblies combined and the allele numbers, and give one best guess ST.' );
+compare_files( $tmpdirectory.'/concatenated_alleles.fa',     't/data/expected_three_concatenated_alleles.fa', 'Create a multi-FASTA file containing the concatenated sequences.');
 ###
-compare_phylip_files( $tmpdirectory.'/concatenated_alleles.phylip', 't/data/expected_three_concatenated_alleles.phylip' );
-compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2~.fa',  't/data/expected_three_contigs_one_unknown.unknown_allele.adk-2~.fa' );
-compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1~.fa', 't/data/expected_three_contigs_one_unknown.unknown_allele.recA-1~.fa');
+compare_phylip_files( $tmpdirectory.'/concatenated_alleles.phylip', 't/data/expected_three_concatenated_alleles.phylip', 'Output the alignment of the concatenated gene sequences in phylip format, which is used as input to some tree building applications.' );
+compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.adk-2~.fa',  't/data/expected_three_contigs_one_unknown.unknown_allele.adk-2~.fa', 'Create FASTA files for alleles which are not in the database, so that they can be added later.' );
+compare_files( $tmpdirectory.'/contigs_one_unknown.unknown_allele.recA-1~.fa', 't/data/expected_three_contigs_one_unknown.unknown_allele.recA-1~.fa', 'Create FASTA files for alleles which are not in the database, so that they can be added later.' );
 
 
 $tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
@@ -155,27 +160,8 @@ ok(($multiple_fastas = Bio::MLST::Check->new(
   output_fasta_files    => 1,
   spreadsheet_basename  => 'mlst_results',
   parallel_processes    => 1
-)),'Initialise on existing fasta file.');
-my $files_exist = $multiple_fastas->input_fasta_files_exist;
-ok($files_exist,'test fasta file exists - returns true for existing file');
-
-$tmpdirectory_obj = File::Temp->newdir(DIR => getcwd, CLEANUP => 1);
-$tmpdirectory = $tmpdirectory_obj->dirname();
-ok(($multiple_fastas = Bio::MLST::Check->new(
-  species               => "E.coli",
-  base_directory        => 't/data/databases',
-  raw_input_fasta_files => ['t/data/contigs.fa','t/data/contigs_pipe_character_in_seq_name.fa','t/data/contigs_one_unknown.tfa'],
-  makeblastdb_exec      => 'makeblastdb',
-  blastn_exec           => 'blastn',
-  output_directory      => $tmpdirectory,
-  output_fasta_files    => 1,
-  output_phylip_files   => 1,
-  spreadsheet_basename  => 'mlst_results',
-  parallel_processes    => 3
-)),'Initialise 3 files where 1 has near matches and report best');
-ok(($multiple_fastas->create_result_files),'create all the best results files for three fastas');
-compare_files( $tmpdirectory.'/mlst_results.genomic.csv',    't/data/expected_three_mlst_best_results.genomic.csv' );
-compare_files( $tmpdirectory.'/mlst_results.allele.csv',     't/data/expected_three_mlst_best_results.allele.csv' );
+)),'Make sure the input files exist.');
+ok($multiple_fastas->input_fasta_files_exist,'Check the input FASTA file exists.');
 
 done_testing();
 

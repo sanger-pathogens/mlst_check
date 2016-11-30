@@ -12,13 +12,15 @@ BEGIN {
     use_ok('Bio::MLST::Blast::BlastN');
 }
 
+note('A wrapper around NCBI blastn which allows for a sequence to be queried against a database and the results returned in a hash.');
+
 my $blast_database= Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs.fa');
 
 ok((my $blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',
    word_sizes     => word_sizes('t/data/adk.tfa')
- )), 'initialise valid blastN');
+ )), 'Setup a blast runner with a valid database and allele.');
 
 my $fake_blast_output = <<'END_OUTPUT';
 adk-1	SomeSequenceName	98.13	536	10	0	1	536	178	713	0.0	922	527
@@ -38,7 +40,7 @@ my %expected_hit = (
   'source_end' => '713',
   'reverse' => 0,
 );
-is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "extract one hit");
+is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "Given a fake hit, check that its parsed into the hash correctly.");
 
 $blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	713	178	0.0	922	527\n";
 %expected_hit = (
@@ -51,7 +53,7 @@ $blastn_line	= "adk-1	SomeSequenceName	98.13	536	10	0	1	536	713	178	0.0	922	527\
   'source_end' => '713',
   'reverse' => 1,
 );
-is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "extract one reverse hit");
+is_deeply($blastn_result->_build_hit($blastn_line), \%expected_hit, "Given a fake hit thats reversed, make sure the coordinates are correct.");
 
 my $expected_hits = [
   {
@@ -96,7 +98,7 @@ my $expected_hits = [
   },
 ];
 my $fake_blast_output_fh = new IO::Scalar \$fake_blast_output;
-is_deeply($blastn_result->_build_hits($fake_blast_output_fh), $expected_hits, "extract array of hits");
+is_deeply($blastn_result->_build_hits($fake_blast_output_fh), $expected_hits, "Given a set of hits, extract all into a hash correctly.");
 
 my $input_hits = [
   {
@@ -157,7 +159,7 @@ my $word_sizes = {
   'adk-2' => 436,
   'adk-3' => 400
 };
-is_deeply($blastn_result->_filter_by_alignment_length($input_hits, $word_sizes), $expected_hits, "filter alignment length");
+is_deeply($blastn_result->_filter_by_alignment_length($input_hits, $word_sizes), $expected_hits, "Given a set of hits, filter them by alignment length to remove lower quality hits.");
 
 $input_hits = [
   {
@@ -233,7 +235,7 @@ $expected_hits = [
     'reverse' => 0,
   },
 ];
-is_deeply($blastn_result->_filter_best_hits($input_hits), $expected_hits, "filter best hits");
+is_deeply($blastn_result->_filter_best_hits($input_hits), $expected_hits, "Given fake blast hits, filter out the low quality results to leave the best ones.");
 
 $expected_hits = [
   {
@@ -257,7 +259,7 @@ $expected_hits = [
     'reverse' => 0,
   },
 ];
-is_deeply($blastn_result->_filter_best_hits($input_hits, 1.5), $expected_hits, "filter fewer best hits");
+is_deeply($blastn_result->_filter_best_hits($input_hits, 1.5), $expected_hits, "Given fake hits, filter out low quality results.");
 
 my $overlapping_hits = [
   {
@@ -421,7 +423,7 @@ $expected_hits = [
     ],
   },
 ];
-is_deeply($blastn_result->_group_overlapping_hits($overlapping_hits), $expected_hits, "group overlapping hits");
+is_deeply($blastn_result->_group_overlapping_hits($overlapping_hits), $expected_hits, "Group overlapping blast hits because they are often split up over the same gene.");
 
 my $bins = [
   {
@@ -537,7 +539,7 @@ my $merged_bins = [
     ],
   },
 ];
-is_deeply($blastn_result->_merge_similar_bins($bins), $merged_bins, "merge bins with lots of overlap");
+is_deeply($blastn_result->_merge_similar_bins($bins), $merged_bins, "Merge hits on a the same genes so that they form bigger hits.");
 
 $bins = [
   {
@@ -639,7 +641,7 @@ my $groups = [
     },
   ],
 ];
-is_deeply($blastn_result->_bins_to_groups($bins), $groups, "turns bins into groups");
+is_deeply($blastn_result->_bins_to_groups($bins), $groups, "Convert sets of hits into summerised groups of hits over an allele.");
 
 $input_hits = [
   {
@@ -683,56 +685,56 @@ my $expected_hit = {
   'source_end' => '713',
   'reverse' => 0,
 };
-is_deeply($blastn_result->_best_hit_in_group($input_hits), $expected_hit, "best hit in group");
+is_deeply($blastn_result->_best_hit_in_group($input_hits), $expected_hit, "Report the best match in the group based.");
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk.tfa',
    word_sizes     => word_sizes('t/data/adk.tfa')
- )), 'initialise valid blastN');
-is_deeply($blastn_result->top_hit, {allele_name => 'adk-2', percentage_identity => 100, source_name => 'SomeSequenceName', source_start => 178, source_end => 713, reverse => 0 }, 'Hit correctly returned');
+ )), 'Prepare the blast hits with perfect data.');
+is_deeply($blastn_result->top_hit, {allele_name => 'adk-2', percentage_identity => 100, source_name => 'SomeSequenceName', source_start => 178, source_end => 713, reverse => 0 }, 'An exact match to an allele of full length should be the best hit.');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk_contamination.tfa',
    word_sizes     => word_sizes('t/data/adk_contamination.tfa')
- )), 'initialise valid blastN with contamination');
-ok(defined($blastn_result->top_hit->{contamination}), 'contamination detected');
+ )), 'Prepare the blast hits with some contamination.');
+ok(defined($blastn_result->top_hit->{contamination}), 'Contamination should be flagged');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk_truncation.tfa',
    word_sizes     => word_sizes('t/data/adk_truncation.tfa')
- )), 'initialise valid blastN with contamination');
-ok((! defined($blastn_result->top_hit->{contamination})), 'contamination not detected where one allele is a truncation of another');
-is($blastn_result->top_hit->{allele_name}, 'adk-3', 'picks longer allele if one allele is a truncation of another');
+ )), 'Prepare the blast hits with a truncated gene.');
+ok((! defined($blastn_result->top_hit->{contamination})), 'Contamination not detected where one allele is a truncation of another');
+is($blastn_result->top_hit->{allele_name}, 'adk-3', 'Picks longer allele if one allele is a truncation of another');
 
 my $blast_database_near_match= Bio::MLST::Blast::Database->new(fasta_file => 't/data/contigs_near_match.fa');
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database_near_match->location(),
    query_file     => 't/data/adk_top_hit_low_hit.tfa',
    word_sizes     => word_sizes('t/data/adk_top_hit_low_hit.tfa')
- )), 'initialise valid blastN with multiple close matches');
+ )), 'Prepare the blast hits where there are multiple close matches');
 
-is($blastn_result->top_hit->{allele_name}, 'adk-2', 'correct allele found out of multiple hits');
-is($blastn_result->top_hit->{percentage_identity}, 100,'correct allele found out of multiple hits');
+is($blastn_result->top_hit->{allele_name}, 'adk-2', 'Correct allele found out of multiple hits');
+is($blastn_result->top_hit->{percentage_identity}, 100,'Correct allele found out of multiple hits');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk_99_percent.tfa',
    word_sizes     => word_sizes('t/data/adk_99_percent.tfa')
- )), 'initialise valid blastN 99% match');
+ )), 'Prepare the blast hits when there is a 99% match');
 
-is($blastn_result->top_hit->{allele_name}, 'adk-2', 'correct allele close match');
-is($blastn_result->top_hit->{percentage_identity}, 99,'correct allele close match');
+is($blastn_result->top_hit->{allele_name}, 'adk-2', 'Correct allele close match');
+is($blastn_result->top_hit->{percentage_identity}, 99,'Correct allele close match');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
    query_file     => 't/data/adk_less_than_95_percent.tfa',
    word_sizes     => word_sizes('t/data/adk_less_than_95_percent.tfa')
- )), 'initialise valid blastN with very low hit');
+ )), 'Prepare the blast hits where the match is less than 95% of any existing allele.');
 
-is_deeply($blastn_result->top_hit, {}, 'no hits found');
+is_deeply($blastn_result->top_hit, {}, 'Report no hits found if the hits are less than 95%.');
 
 ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
    blast_database => $blast_database->location(),
@@ -744,8 +746,8 @@ ok(($blastn_result = Bio::MLST::Blast::BlastN->new(
                        'gdh_32'  => 460,
                      },
    'exec'         => 't/data/gdh_fake_blast_output.sh' # ignores arguments and outputs some fake output to stdout
- )), 'initialise with fake blastn command');
-ok(!defined($blastn_result->top_hit->{contamination}), 'contamination not detected for mostly overlapping alleles');
+ )), 'Check overlapping reads.');
+ok(!defined($blastn_result->top_hit->{contamination}), 'Contamination not detected for mostly overlapping alleles');
 
 
 # Exec not available
@@ -756,7 +758,7 @@ dies_ok( sub {
     word_sizes     => {},
     exec           => 'non_existant_executable'
   );
-}, 'Validate if the exec is available');
+}, 'Validate if the executable is available');
 
 sub word_sizes {
   my $filename = shift;
