@@ -1,6 +1,7 @@
 # Multilocus sequence typing 
 
 [![Build Status](https://travis-ci.org/sanger-pathogens/mlst_check.svg?branch=master)](https://travis-ci.org/sanger-pathogens/mlst_check)
+[![status](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056/status.svg)](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056)
 
 This application is for taking MLST databases from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
 Then you can provide FASTA files and get out sequence types (ST) for a given MLST database.
