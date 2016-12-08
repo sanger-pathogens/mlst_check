@@ -1,6 +1,8 @@
 Please cite this software:
 
-'Multilocus sequence typing by blast from de novo assemblies against PubMLST', Andrew J. Page, Ben Taylor, Jacqueline A. Keane (2016).
+"Multilocus sequence typing by blast from de novo assemblies against PubMLST", 
+Andrew J. Page, Ben Taylor, Jacqueline A. Keane, The Journal of Open Source Software, (2016). 
+doi: http://dx.doi.org/10.21105/joss.00118
 
 All of the data is downloaded from [PubMLST](http://pubmlst.org/), so please cite it:
 
