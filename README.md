@@ -10,6 +10,10 @@ If more than 1 allele gives 100% identity for a locus, the contaminated flag is 
 Optionally you can output a concatenated sequence in FASTA format, which you can then use with tree building programs.
 New, unseen alleles are saved in FASTA format, with 1 per file, for submission to back to MLST databases.
 
+
+# Citation
+```"Multilocus sequence typing by blast from de novo assemblies against PubMLST", Andrew J. Page, Ben Taylor, Jacqueline A. Keane, The Journal of Open Source Software, (2016). doi: http://dx.doi.org/10.21105/joss.00118```
+
 # Usage
 The MLST databases must be downloaded first. This is something you would only do every now and again. You need to set the $MLST_DATABASES environment variable first to a location where you want to save your databases. If you use Docker, you can skip this step as the databases are bundled with the container.
 ```
