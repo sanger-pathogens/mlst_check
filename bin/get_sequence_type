@@ -66,6 +66,11 @@ Usage: get_sequence_type [options] *.fasta
    -h     Print this message and exit
    -v     Print version number and exit
 
+If you use this software please cite:
+  "Multilocus sequence typing by blast from de novo assemblies against PubMLST", 
+  Andrew J. Page, Ben Taylor, Jacqueline A. Keane, The Journal of Open Source Software, (2016). 
+  doi: http://dx.doi.org/10.21105/joss.00118
+
 USAGE
 ;
 
