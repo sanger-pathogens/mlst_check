@@ -65,7 +65,7 @@ USAGE
 ;
 
 $base_directory ||= $ENV{MLST_DATABASES};
-$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+$base_directory ||= '/lustre//lustre/scratch118/infgen/pathogen/pathpipe/mlst';
 $url  ||= 'ftp://ftp.cdc.gov/pub/infectious_diseases/biotech/tsemm/tofasta.tfa';
 $species     ||= 'Streptococcus pyogenes emm';
 $gene_name   ||= 'emm';
