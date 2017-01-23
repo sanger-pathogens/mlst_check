@@ -80,7 +80,7 @@ USAGE
 ;
 
 $base_directory ||= $ENV{MLST_DATABASES};
-$base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
+$base_directory ||= '/lustre//lustre/scratch118/infgen/pathogen/pathpipe/mlst';
 
 # Multiple versions of blast lying around, so use a particular one if possible
 # Warns if the user's preferred executable cannot be found; errors if defaults are also missing
