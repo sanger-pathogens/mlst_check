@@ -49,7 +49,7 @@ USAGE
 ;
 
 $base_directory ||= $ENV{MLST_DATABASES};
-$base_directory ||= '/lustre//lustre/scratch118/infgen/pathogen/pathpipe/mlst';
+$base_directory ||= '/lustre/scratch118/infgen/pathogen/pathpipe/mlst';
 
 $config_file    ||= 'http://pubmlst.org/data/dbases.xml';
 
