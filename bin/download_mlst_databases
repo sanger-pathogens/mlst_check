@@ -51,7 +51,7 @@ USAGE
 $base_directory ||= $ENV{MLST_DATABASES};
 $base_directory ||= '/lustre/scratch108/pathogen/pathpipe/mlst';
 
-$config_file    ||= 'http://pubmlst.org/data/dbases.xml';
+$config_file    ||= 'https://pubmlst.org/data/dbases.xml';
 
 my $database_settings = Bio::MLST::DatabaseSettings->new(filename => $config_file)->settings;
 my $databases = Bio::MLST::Download::Databases->new(
