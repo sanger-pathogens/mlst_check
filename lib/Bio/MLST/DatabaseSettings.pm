@@ -17,19 +17,42 @@ Returns a hash containing the settings for the database, separated by species na
 
 =cut
 
-
-
 use Moose;
 use XML::LibXML;
+use LWP::UserAgent;
+use HTTP::Request;
 
 has 'filename'          => ( is => 'ro', isa => 'Str', required => 1 );
+
+sub generate_dom
+{
+	my($self, $location ) = @_;
+	
+	# local file and remote files need to be treated differently
+	if ( !( $location =~ /(http|ftp)/ ) ) {
+		return XML::LibXML->load_xml( location => $location );	
+	}
+	else
+	{
+		# its a remote file so download content
+	        my $ua = LWP::UserAgent->new;
+		if(defined($ENV{HTTPS_PROXY}))
+		{
+	        	$ua->proxy( [ 'http', 'https' ], $ENV{HTTPS_PROXY} );
+		}
+	        my $req = HTTP::Request->new( GET => $location );
+	        my $res = $ua->request($req);
+	        $res->is_success or die "Could not connect to $location\n";
+		XML::LibXML->load_xml( string => $res->content );
+	}
+}
 
 sub settings
 {
   my($self) = @_;
   my %databases_attributes;
   
-  my $dom = XML::LibXML->load_xml( location => $self->filename );
+  my $dom = $self->generate_dom($self->filename);
   
   for my $species ($dom->findnodes('/data/species')) 
   {
