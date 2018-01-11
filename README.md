@@ -7,7 +7,25 @@ Multilocus sequence typing by blast using the schemes from PubMLST.
 [![status](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056/status.svg)](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056)
 
 ## Contents
-
+* [Multilocus sequence typing](#multilocus-sequence-typing)
+  * [Contents](#contents)
+  * [Introduction](#introduction)
+  * [Installation](#installation)
+    * [Docker](#docker)
+    * [Debian/Ubuntu](#debianubuntu)
+    * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
+  * [Usage](#usage)
+  * [Input format](#input-format)
+  * [Outputs](#outputs)
+    * [mlst\_results\.allele\.csv](#mlst_resultsallelecsv)
+    * [mlst\_results\.genomic\.csv](#mlst_resultsgenomiccsv)
+    * [\*unknown\.fa](#unknownfa)
+    * [concatenated\_alleles\.fa and concatenated\_alleles\.phylip](#concatenated_allelesfa-and-concatenated_allelesphylip)
+  * [License](#license)
+  * [Feedback/Issues](#feedbackissues)
+  * [Citation](#citation)
+  * [Method](#method)
+  * [Contribute to the software](#contribute-to-the-software)
 
 ## Introduction
 This application is for taking MLST databases from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
