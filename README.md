@@ -1,8 +1,32 @@
 # Multilocus sequence typing 
 
+Multilocus sequence typing by blast using the schemes from PubMLST.
+
 [![Build Status](https://travis-ci.org/sanger-pathogens/mlst_check.svg?branch=master)](https://travis-ci.org/sanger-pathogens/mlst_check)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/mlst_check/blob/master/GPL-LICENSE)
 [![status](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056/status.svg)](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056)
 
+# Contents
+* [Multilocus sequence typing](#multilocus-sequence-typing)
+* [Contents](#contents)
+  * [Introduction](#introduction)
+* [Citation](#citation)
+* [Usage](#usage)
+* [Input format](#input-format)
+* [Outputs](#outputs)
+  * [mlst\_results\.allele\.csv](#mlst_resultsallelecsv)
+  * [mlst\_results\.genomic\.csv](#mlst_resultsgenomiccsv)
+  * [\*unknown\.fa](#unknownfa)
+  * [concatenated\_alleles\.fa and concatenated\_alleles\.phylip](#concatenated_allelesfa-and-concatenated_allelesphylip)
+* [Method](#method)
+* [Installation](#installation)
+  * [Docker](#docker)
+  * [Debian/Ubuntu](#debianubuntu)
+  * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
+* [Reporting bugs and getting support](#reporting-bugs-and-getting-support)
+* [Contribute to the software](#contribute-to-the-software)
+
+## Introduction
 This application is for taking MLST databases from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
 Then you can provide FASTA files and get out sequence types (ST) for a given MLST database.
 Two spreadsheets are outputted, one contains the allele number for each locus, and the ST (or nearest ST), the other contains the genomic sequence for each allele.  
@@ -10,8 +34,7 @@ If more than 1 allele gives 100% identity for a locus, the contaminated flag is 
 Optionally you can output a concatenated sequence in FASTA format, which you can then use with tree building programs.
 New, unseen alleles are saved in FASTA format, with 1 per file, for submission to back to MLST databases.
 
-
-# Citation
+# Citation
 ```"Multilocus sequence typing by blast from de novo assemblies against PubMLST", Andrew J. Page, Ben Taylor, Jacqueline A. Keane, The Journal of Open Source Software, (2016). doi: http://dx.doi.org/10.21105/joss.00118```
 
 # Usage
@@ -66,10 +89,10 @@ You can choose to output a multiple FASTA/Phylip alignment of all of the MLST ge
 # Method
 The user can decide to use a specific MLST scheme or search all of them. The first step is to generate a blastn database using makeblastdb from the alleles.  The input sequences are then blasted against the database using blastn.  If there is a 100% match to the full length of an allele, the corresponding allele number is noted. If there is a partial match to an allele, the best hit is chosen, where it has the highest number of matching bases and the highest percentage identity. This nearest allele number is noted and it is flagged as 'Unknown'.  If there is contamination, and more than 1 allele for a single gene is 100% present, the corresponding allele numbers are presented in the contamination column. The first allele in the blast results is used for the gene.  The profile for the MLST scheme links the combination of allele numbers for each gene to an ST number.  This number is presented if there is an exact match.  If one or more of the alleles is _Unknown_, the nearest ST with the lowest integer number is used. Where the combination of allele numbers is unique, the ST is marked as _Novel_ and the ST with the closest number of matches and the lowest integer is presented and indicated with a tilda (~).
 
-#Installation
+# Installation
 Instructions are given for installing the software via Docker (can be run on all operating systems),for Debian/Ubuntu distributions and HomeBrew/LinuxBrew.
 
-##Docker
+## Docker
 We have a docker container which is setup and ready to go. It includes a snapshot of the MLST databases from the day it was built.  To install it:
 
 ```
@@ -89,7 +112,7 @@ docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/mlst_check get_se
 ```
 Your results will then be in the /home/ubuntu/data directory as previous. 
 
-##Debian/Ubuntu
+## Debian/Ubuntu
 If you run Debian or Ubuntu it should be straightforward to install the software. These instructions assume you have root access. Run:
 
 ```
@@ -112,7 +135,7 @@ Now you can use the script. For example,find the sequence types for all fasta fi
 get_sequence_type -s "Clostridium difficile" *.fa
 ```
 
-##HomeBrew/LinuxBrew
+## HomeBrew/LinuxBrew
 If you run OSX, a non-Debian Linux or you do not have root access on your machine, you can use HomeBrew/LinuxBrew to install the dependancies.  First of all install [Homebrew](http://brew.sh/) (OSX) or [LinuxBrew](http://linuxbrew.sh/) (Linux).
 
 ```
@@ -139,8 +162,8 @@ Now you can use the script. For example,find the sequence types for all fasta fi
 get_sequence_type -s "Clostridium difficile" *.fa
 ```
 
-#Reporting bugs and getting support
+# Reporting bugs and getting support
 For any queries, please file an [Issue on GitHub](https://github.com/sanger-pathogens/mlst_check/issues) or failing that contact path-help@sanger.ac.uk
 
-#Contribute to the software
+# Contribute to the software
 If you wish to fix a bug or add new features to the software we welcome Pull Requests. Please fork the repo, make the change, then submit a Pull Request with details about what the change is and what it fixes/adds.
