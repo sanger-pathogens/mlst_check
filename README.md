@@ -171,6 +171,7 @@ The input files must be in [FASTA format](https://en.wikipedia.org/wiki/FASTA_fo
 ## Outputs
 The output is
 * mlst_results.allele.csv
+
   This is a tab separated spreadsheet containing the ST number of each input FASTA file and the corresponding allele numbers for each gene in the scheme. If one of the alleles is not contained in the database, then it will be flagged with 'U' and the 3rd column will describe it as 'Unknown'. If the combination of allele numbers has never been seen before, it will be flagged as 'Novel'. The ST column is populated with the nearest ST found. A whole number indicates an exact match was found for the ST. If it is prepended with a tilda (~) it indicates it is a 'best effort' and the nearest matching ST with the lowest number is used.  Should two diffent alleles for a single gene be found, then the allele numbers will be put into the 'Contamination' column (since there shouldnt be 2 copies of these genes). However some schemes are poorly defined so take it with a pinch of salt.  If there are no matches such as in _sample5_ below, the ST is blank and all alleles are marked with unknown (U).
 
   Isolate | ST  |"New ST" |Contamination     | aroC | dnaN | hemD | hisD | purE | sucA | thrA
@@ -182,12 +183,15 @@ The output is
   sample5 |     |	Unknown |                  | U    | U    | U    | U    | U    | U    | U 
 
 * mlst_results.genomic.csv
+
   This spreadsheet is similar to the mlst_results.allele.csv spreadsheet, however it gives the full sequences of each allele instead of the allele number.
 
 * *unknown.fa
+
   You can choose to output any new alleles (-c) which are not contained in the MLST database. These can then be used to feedback to the curators maintaining the MLST databases, where they can be assigned allele numbers and profiles.
 
 * concatenated_alleles.fa and concatenated_alleles.phylip
+
   You can choose to output a multiple FASTA/Phylip alignment of all of the MLST genes concatenated together, where each sample is represented by a single sequence. This file can then be used as input to a phylogenetic tree building application (such as RAxML or FastTree) to create a phylogenetic tree (dendrogram).
 
 ## License
