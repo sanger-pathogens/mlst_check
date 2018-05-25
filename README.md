@@ -2,26 +2,31 @@
 
 Multilocus sequence typing by blast using the schemes from PubMLST.
 
-[![Build Status](https://travis-ci.org/sanger-pathogens/mlst_check.svg?branch=master)](https://travis-ci.org/sanger-pathogens/mlst_check)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/mlst_check/blob/master/GPL-LICENSE)
-[![status](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056/status.svg)](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056)
+[![Build Status](https://travis-ci.org/sanger-pathogens/mlst_check.svg?branch=master)](https://travis-ci.org/sanger-pathogens/mlst_check)  
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/mlst_check/blob/master/GPL-LICENSE)  
+[![status](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056/status.svg)](http://joss.theoj.org/papers/0b801d23613c9b626c2b6028f8c14056)  
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/recipes/perl-bio-mlst-check/README.html)  
+[![Container ready](https://img.shields.io/badge/container-ready-brightgreen.svg)](https://quay.io/repository/biocontainers/perl-bio-mlst-check)  
+
+
 
 ## Contents
-* [Introduction](#introduction)
-* [Quick start](#quick-start)
-* [Installation](#installation)
-  * [Required dependencies](#required-dependencies)
-  * [Docker](#docker)
-  * [Debian/Ubuntu](#debianubuntu)
-  * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
-* [Usage](#usage)
-* [Input format](#input-format)
-* [Outputs](#outputs)
-* [License](#license)
-* [Feedback/Issues](#feedbackissues)
-* [Citation](#citation)
-* [Method](#method)
-* [Contribute to the software](#contribute-to-the-software)
+  * [Introduction](#introduction)
+  * [Quick start](#quick-start)
+  * [Installation](#installation)
+    * [Required dependencies](#required-dependencies)
+    * [Bioconda \- OSX/Linux](#bioconda---osxlinux)
+    * [Docker](#docker)
+    * [Debian/Ubuntu](#debianubuntu)
+    * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
+  * [Usage](#usage)
+  * [Input format](#input-format)
+  * [Outputs](#outputs)
+  * [License](#license)
+  * [Feedback/Issues](#feedbackissues)
+  * [Citation](#citation)
+  * [Method](#method)
+  * [Contribute to the software](#contribute-to-the-software)
 
 ## Introduction
 This application is for taking MLST databases from multiple locations and consolidating them in one place so that they can be easily used (and kept up to date).
@@ -71,6 +76,16 @@ mlst_check has the following dependencies:
 If you encounter an issue when installing mlst_check please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/mlst_check/issues) or email us at path-help@sanger.ac.uk.
 
 Instructions are given for installing the software via Docker (can be run on all operating systems), for Debian/Ubuntu distributions and HomeBrew/LinuxBrew.
+
+### Bioconda - OSX/Linux
+Install conda. Then install bioconda and mlst_check:
+
+```
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --add channels bioconda
+conda install perl-bio-mlst-check
+```
 
 ### Docker
 The docker container includes a snapshot of the MLST databases from the day it was built.  To install it:
