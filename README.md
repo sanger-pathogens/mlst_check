@@ -8,10 +8,7 @@ Multilocus sequence typing by blast using the schemes from PubMLST.
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/recipes/perl-bio-mlst-check/README.html)  
 [![Container ready](https://img.shields.io/badge/container-ready-brightgreen.svg)](https://quay.io/repository/biocontainers/perl-bio-mlst-check)  
 [![Docker Build Status](https://img.shields.io/docker/build/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/sangerpathogens/mlst_check)  
-[![Docker Pulls](https://img.shields.io/docker/pulls/mashape/kong.svg)](https://hub.docker.com/r/sangerpathogens/mlst_check)  
-
-
-
+[![Docker Pulls](https://img.shields.io/docker/pulls/sangerpathogens/mlst_check.svg)](https://hub.docker.com/r/sangerpathogens/mlst_check)  
 
 ## Contents
   * [Introduction](#introduction)
