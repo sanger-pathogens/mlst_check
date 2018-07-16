@@ -13,4 +13,10 @@ perl:
 sudo: false
 install:
   - "source ./install_dependencies.sh"
+before_script:
+  - cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Codecov
+
 script: "dzil test --test-verbose"
+
+after_success:
+  - dzil cover -test -report codecov
