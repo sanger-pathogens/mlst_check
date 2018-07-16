@@ -9,6 +9,8 @@ Multilocus sequence typing by blast using the schemes from PubMLST.
 [![Container ready](https://img.shields.io/badge/container-ready-brightgreen.svg)](https://quay.io/repository/biocontainers/perl-bio-mlst-check)  
 [![Docker Build Status](https://img.shields.io/docker/build/sangerpathogens/mlst_check.svg)](https://hub.docker.com/r/sangerpathogens/mlst_check)  
 [![Docker Pulls](https://img.shields.io/docker/pulls/sangerpathogens/mlst_check.svg)](https://hub.docker.com/r/sangerpathogens/mlst_check)  
+[![codecov](https://codecov.io/gh/sanger-pathogens/mlst_check/branch/master/graph/badge.svg)](https://codecov.io/gh/sanger-pathogens/mlst_check)   
+
 
 ## Contents
   * [Introduction](#introduction)
