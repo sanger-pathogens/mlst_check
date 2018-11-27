@@ -21,7 +21,7 @@ Multilocus sequence typing by blast using the schemes from PubMLST.
     * [Docker](#docker)
     * [Debian/Ubuntu](#debianubuntu)
     * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
-    *[Running the tests](#running-the-tests)
+    * [Running the tests](#running-the-tests)
   * [Usage](#usage)
   * [Input format](#input-format)
   * [Outputs](#outputs)
