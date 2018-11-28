@@ -21,6 +21,7 @@ Multilocus sequence typing by blast using the schemes from PubMLST.
     * [Docker](#docker)
     * [Debian/Ubuntu](#debianubuntu)
     * [HomeBrew/LinuxBrew](#homebrewlinuxbrew)
+    * [Running the tests](#running-the-tests)
   * [Usage](#usage)
   * [Input format](#input-format)
   * [Outputs](#outputs)
@@ -158,6 +159,11 @@ To use the software to find the sequence types for all fasta files in your curre
 get_sequence_type -s "Clostridium difficile" *.fa
 ```
 
+### Running the tests
+The test can be run from the top level directory:  
+```
+dzil test --test-verbose
+```
 ## Usage
 The MLST databases must be downloaded first. This is something you would only do every now and again. You need to set the $MLST_DATABASES environment variable first to a location where you want to save your databases. If you use Docker, you can skip this step as the databases are bundled with the container.
 ```
