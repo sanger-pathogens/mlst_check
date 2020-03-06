@@ -76,7 +76,7 @@ mlst_check has the following dependencies:
 ### Required dependencies
 * [NCBI BLAST](http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download) 
 
-If you encounter an issue when installing mlst_check please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/mlst_check/issues) or email us at path-help@sanger.ac.uk.
+If you encounter an issue when installing mlst_check please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/mlst_check/issues).
 
 Instructions are given for installing the software via Docker (can be run on all operating systems), for Debian/Ubuntu distributions and HomeBrew/LinuxBrew.
 
@@ -221,7 +221,7 @@ The output is
 mlst_check is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/mlst_check/blob/master/GPL-LICENSE).
 
 ## Feedback/Issues
-Please report any issues to the [issues page](https://github.com/sanger-pathogens/mlst_check/issues) or email path-help@sanger.ac.uk
+Please report any issues to the [issues page](https://github.com/sanger-pathogens/mlst_check/issues).
 
 ## Citation
 ```"Multilocus sequence typing by blast from de novo assemblies against PubMLST", Andrew J. Page, Ben Taylor, Jacqueline A. Keane, The Journal of Open Source Software, (2016). doi: http://dx.doi.org/10.21105/joss.00118```
