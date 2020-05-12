@@ -1,12 +1,18 @@
 #
 # This container will allow you to run MSLT by blast against assemblies using the schemes from PubMLST
 #
-FROM debian:testing
+FROM ubuntu:20.04
 
-#
-# Authorship
-#
-MAINTAINER ap13@sanger.ac.uk
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN   apt-get update -qq && \
+      apt-get install -y locales && \
+      sed -i -e 's/# \(en_GB\.UTF-8 .*\)/\1/' /etc/locale.gen && \
+      touch /usr/share/locale/locale.alias && \
+      locale-gen
+ENV   LANG     en_GB.UTF-8
+ENV   LANGUAGE en_GB:en
+ENV   LC_ALL   en_GB.UTF-8
 
 #
 # Set environment variables
@@ -16,12 +22,17 @@ ENV MLST_DATABASES /MLST_databases
 #
 # Update and Install dependencies
 #
-RUN apt-get update -qq && apt-get install -y wget ncbi-blast+ cpanminus gcc autoconf make libxml2-dev zlib1g zlib1g-dev libmodule-install-perl && cpanm -f Bio::MLST::Check
+RUN   apt-get update -qq && \
+      apt-get install -y wget ncbi-blast+ cpanminus gcc autoconf make libxml2-dev zlib1g zlib1g-dev libmodule-install-perl && \
+      # expat required for current versions of various XML packages in CPAN
+      apt-get install -y libexpat1-dev && \
+      # there's a known issue with one of the tests in XML::DOM::XPath
+      cpanm -notest XML::DOM::XPath && \
+      # install CPAN modules without --force so errors aren't hidden
+      cpanm Bio::MLST::Check
 
-RUN mkdir -p /example && cd /example && \
-    wget -O sample1.fa https://github.com/sanger-pathogens/mlst_check/raw/master/example/input_data/Salmonella_enterica_subsp_enterica_serovar_Typhi_str_CT18_v1.fa && \
-    wget -O sample2.fa https://github.com/sanger-pathogens/mlst_check/raw/master/example/input_data/Salmonella_enterica_subsp_enterica_serovar_Typhimurium_DT104_v1.fa && \
-    wget -O sample3.fa https://github.com/sanger-pathogens/mlst_check/raw/master/example/input_data/Salmonella_enterica_subsp_enterica_serovar_Weltevreden_str_10259_v0.2.fa
+# copy whatever example files are provided in the branch/tag that we're building from
+COPY  ./example/input_data/*.fa /example/
     
 #
 # Download the databases from PubMLST
