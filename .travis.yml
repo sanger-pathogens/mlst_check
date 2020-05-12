@@ -5,12 +5,11 @@ addons:
     - libssl-dev
     - libxml2
     - libxml2-dev
-    - libexpat1-dev
     - zlibc
     - zlib1g
     - zlib1g-dev
 perl:
-  - "5.30"
+  - "5.14"
 sudo: false
 install:
   - "source ./install_dependencies.sh"

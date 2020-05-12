@@ -58,7 +58,6 @@ else
   sudo apt-get install -y -q libssl-dev \
                              libxml2 \
                              libxml2-dev \
-                             libexpat1-dev \
                              zlibc \
                              zlib1g \
                              zlib1g-dev
