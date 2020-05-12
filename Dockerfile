@@ -3,8 +3,6 @@
 #
 FROM ubuntu:20.04
 
-LABEL maintainer=path-help@sanger.ac.uk
-
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN   apt-get update -qq && \
