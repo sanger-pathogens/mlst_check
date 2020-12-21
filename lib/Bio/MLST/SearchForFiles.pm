@@ -80,7 +80,7 @@ sub _build_profiles_filename
   my $profiles_base = join('/',($self->search_base_directory,'profiles'));
   
   opendir(my $dh, $profiles_base);
-  my @profiles = grep { /txt$/ } readdir($dh);
+  my @profiles = grep { /csv$/ } readdir($dh);
   if(@profiles > 1 || @profiles ==0)
   {
     die "Couldn't find a single MLST profile\n";
@@ -94,7 +94,7 @@ sub _build_allele_filenames
   my $alleles_base = join('/',($self->search_base_directory,'alleles'));
   
   opendir(my $dh, $alleles_base);
-  my @alleles = grep { /tfa$/ } readdir($dh);
+  my @alleles = grep { /fasta$/ } readdir($dh);
   my @alleles_with_full_path;
   for my $allele_filename (@alleles)
   {
