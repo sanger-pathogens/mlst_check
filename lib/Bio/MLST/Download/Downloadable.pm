@@ -41,12 +41,23 @@ sub _download_file
 
 sub _get_filename_from_url
 {
-  my ($self, $filename) = @_;
-  if($filename =~ m!/([^/]+)$!)
+  my ($url) = @_;
+  if ($url =~ m!/([^/]+)$!)
   {
-    return $1;
+    my ($original_filename) = $1;
+    if ($original_filename eq "profiles_csv") {
+      $url =~ m!/pubmlst_([^_]+)!;
+      return "$1.txt"
+    }
+    elsif ($original_filename eq "alleles_fasta") {
+      $url =~ m!/loci/([^/]+)!;
+      return "$1.tfa"
+    }
+    else {
+      die "Unexpected filename obtained from URL: $original_filename"
+    }
   }
-  
+
   return int(rand(10000)).".tfa";
 }
 
