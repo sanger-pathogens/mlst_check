@@ -31,6 +31,9 @@ ok((-e $destination_directory.'/ABC_EFG_1/alleles/efg.fas'),'Check that the seco
 ok((-e $destination_directory.'/ABC_EFG_1/profiles/bordetella.txt'),'Check that the profile file was updated correctly.');
 
 # check that urls are parsed correctly
-is( $database->_get_filename_from_url('http://mlst.abc.com/mlst/Ecoli_123/DB/publicSTs.txt'), 'publicSTs.txt','Make sure the profile name is correctly parsed from the url.');
+is( $database->_get_filename_from_url('https://rest.pubmlst.org/db/pubmlst_bsubtilis_seqdef/schemes/1/profiles_csv'), 'bsubtilis.txt', 'Make sure the profile filename is correctly parsed from the url.');
+is( $database->_get_filename_from_url('https://rest.pubmlst.org/db/pubmlst_blicheniformis_seqdef/loci/sucC/alleles_fasta'), 'sucC.txt', 'Make sure the alleles filename is correctly parsed from the url.');
+dies_ok( $database->_get_filename_from_url('https://rest.pubmlst.org/db/pubmlst_blicheniformis_seqdef/loci/sucC/invalid_filename'), 'Die if we encounter unexpected filename in the url.');
+dies_ok( $database->_get_filename_from_url('random_str_not_a_url'), 'Die if we cannot parse a filename from the url.');
 
 done_testing();
