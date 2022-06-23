@@ -54,11 +54,12 @@ sub _get_filename_from_url
       return "$1.tfa"
     }
     else {
-      die "Unexpected filename obtained from URL: $original_filename"
+      die "Unexpected filename obtained from URL: '$url'. Expected: 'profiles_csv' or 'alleles_fasta', but got '$original_filename'"
     }
   }
-
-  return int(rand(10000)).".tfa";
+  else {
+    die "Could not match a filename in the given URL: '$url'"
+  }
 }
 
 sub _build_destination_directory
